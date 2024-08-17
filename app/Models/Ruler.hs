@@ -1,4 +1,4 @@
-module Utils.Ruler where
+module Models.Ruler where
 
     data Ruler = Ruler {
         birth :: [Int],

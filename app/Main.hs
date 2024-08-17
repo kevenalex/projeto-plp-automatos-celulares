@@ -1,7 +1,7 @@
 module Main where
 
-import Utils.Grid
-import Utils.Ruler
+import Models.Grid
+import Models.Ruler
 
 main :: IO ()
 main = do
