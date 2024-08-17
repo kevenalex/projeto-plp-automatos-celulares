@@ -29,6 +29,7 @@ library
       Models.Cell
       Models.Grid
       Models.Ruler
+      Models.Teste
   other-modules:
       Paths_projeto_plp_haskell_automatos_celulares
   autogen-modules:
@@ -49,6 +50,7 @@ executable projeto-plp-haskell-automatos-celulares-exe
       Models.Cell
       Models.Grid
       Models.Ruler
+      Models.Teste
       Paths_projeto_plp_haskell_automatos_celulares
   autogen-modules:
       Paths_projeto_plp_haskell_automatos_celulares
