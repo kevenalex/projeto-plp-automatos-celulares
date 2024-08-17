@@ -1,6 +1,4 @@
 module Models.Grid where
-
-import qualified Utils.Terminal
 import System.IO
 import System.IO.Unsafe (unsafeDupablePerformIO)
 import Data.Matrix

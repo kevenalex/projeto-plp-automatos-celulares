@@ -25,12 +25,10 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
       Main
       Models.Cell
       Models.Grid
       Models.Ruler
-      Utils.Terminal
   other-modules:
       Paths_projeto_plp_haskell_automatos_celulares
   autogen-modules:
@@ -51,7 +49,6 @@ executable projeto-plp-haskell-automatos-celulares-exe
       Models.Cell
       Models.Grid
       Models.Ruler
-      Utils.Terminal
       Paths_projeto_plp_haskell_automatos_celulares
   autogen-modules:
       Paths_projeto_plp_haskell_automatos_celulares
