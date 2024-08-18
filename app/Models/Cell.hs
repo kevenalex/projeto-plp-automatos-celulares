@@ -11,6 +11,11 @@ module Models.Cell where
     instance Show Cell where
         show cell = show (status cell)
 
+    instance Eq Status where
+        (==) Live Live = True
+        (==) Dead Dead = True
+        (==) _ _ = False
+
     data Cell =   
         Cell {
         status :: Status,

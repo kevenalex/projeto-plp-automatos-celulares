@@ -2,7 +2,7 @@ module Models.Grid where
     import Data.Matrix
     import Models.Cell
     import Data.Maybe
-    
+
     data Grid = Grid {
         height :: Int,
         width :: Int,
@@ -11,21 +11,22 @@ module Models.Grid where
 
 
     gridGenerate :: Int -> Int -> Cell -> Grid
-    gridGenerate height width a = Grid height width (matrix height width (\_ -> a))
+    gridGenerate height width a = Grid height width (matrix height width (const a))
 
     insertCell :: Grid -> Cell -> (Int, Int) -> Grid
     insertCell grid cell (x,y) = Grid (height grid) (width grid) (setElem cell (x,y) (grade grid))
 
-    ---numOfLiveNeighbors :: Grid -> (Int, Int) -> Int
-    ---numOfLiveNeighbors grid (x,y) = length [1 | uv <- validCoord (x,y) grid, (status (getCell uv (grade grid))) == Live]
-    ---    where
-    ---        cells = grade grid
+    numOfLiveNeighbors :: (Int, Int) -> Grid -> Int
+    numOfLiveNeighbors (x,y) grid = length [uv | uv <- validCoord (x,y) grid, status (getCell uv (grade grid)) == Live]
+
+    numOfDeadNeighbors :: (Int, Int) -> Grid -> Int
+    numOfDeadNeighbors (x,y) grid = 8 - numOfLiveNeighbors (x,y) grid
 
     getCell :: (Int, Int) -> Matrix Cell -> Cell
     getCell (x,y) cells = getElem x y cells
 
-    -- gridUpdate :: Grid -> Grid
-    -- gridUpdate = 
+    --- gridUpdate :: Grid -> Grid
+    --- gridUpdate grid = Grid
 
     --- -----------------------------------------------------------------------------------------------------------------------
 
@@ -33,11 +34,11 @@ module Models.Grid where
 
     validCoord :: (Int, Int) -> Grid -> [(Int, Int)]
     validCoord (x,y) grid = [fromJust x | x <- list, isJust x]
-        where 
+        where
             list = listOfCoord (x,y) grid
 
     listOfCoord :: (Int,Int) -> Grid -> [Maybe  (Int, Int)]
-    listOfCoord (u,v) grid = [coordOnTopLeft (u,v) grid, coordOnTop (u,v) grid, coordOnTop (u,v) grid, coordOnTopRight (u,v) grid,
+    listOfCoord (u,v) grid = [coordOnTopLeft (u,v) grid, coordOnTop (u,v) grid, coordOnTopRight (u,v) grid,
                          coordInLeft (u,v) grid, coordInRight (u,v) grid,
                          coordInBelowLeft (u,v) grid, coordInBelow (u,v) grid, coordInBelowRight (u,v) grid]
 
@@ -47,7 +48,7 @@ module Models.Grid where
         | u >= 1 && u <= height grid = Just (u,v)
         | otherwise = Nothing
 
-        where 
+        where
             (u,v) = (x-1, y)
 
     coordInBelow :: (Int, Int) -> Grid -> Maybe (Int, Int)
@@ -56,7 +57,7 @@ module Models.Grid where
         | u >= 1 && u <= height grid = Just (u,v)
         | otherwise = Nothing
 
-        where 
+        where
             (u,v) = (x+1, y)
 
     coordInRight :: (Int, Int) -> Grid -> Maybe (Int, Int)
@@ -65,7 +66,7 @@ module Models.Grid where
         | v >= 1 && v <= width grid = Just (u,v)
         | otherwise = Nothing
 
-        where 
+        where
             (u,v) = (x, y + 1)
 
     coordInLeft :: (Int, Int) -> Grid -> Maybe (Int, Int)
@@ -74,7 +75,7 @@ module Models.Grid where
         | v >= 1 && v <= width grid = Just (u,v)
         | otherwise = Nothing
 
-        where 
+        where
             (u,v) = (x, y - 1)
 
     coordOnTopRight :: (Int, Int) -> Grid -> Maybe (Int, Int)
@@ -83,7 +84,7 @@ module Models.Grid where
         | u >= 1 && u <= height grid  && v >= 1 && v <= width grid = Just (u,v)
         | otherwise = Nothing
 
-        where 
+        where
             (u,v) = (x - 1, y + 1)
 
     coordInBelowRight :: (Int, Int) -> Grid -> Maybe (Int, Int)
@@ -92,7 +93,7 @@ module Models.Grid where
         | u >= 1 && u <= height grid  && v >= 1 && v <= width grid = Just (u,v)
         | otherwise = Nothing
 
-        where 
+        where
             (u,v) = (x + 1, y + 1)
 
     coordOnTopLeft :: (Int, Int) -> Grid -> Maybe (Int, Int)
@@ -101,7 +102,7 @@ module Models.Grid where
         | u >= 1 && u <= height grid  && v >= 1 && v <= width grid = Just (u,v)
         | otherwise = Nothing
 
-        where 
+        where
             (u,v) = (x - 1, y - 1)
 
     coordInBelowLeft :: (Int, Int) -> Grid -> Maybe (Int, Int)
@@ -110,7 +111,7 @@ module Models.Grid where
         | u >= 1 && u <= height grid  && v >= 1 && v <= width grid = Just (u,v)
         | otherwise = Nothing
 
-        where 
+        where
             (u,v) = (x + 1, y - 1)
 
     --- -----------------------------------------------------------------------------------------------------------------------
