@@ -1,10 +1,16 @@
 module Models.Teste where
 
-    coordOnTop :: (Int, Int) -> Maybe (Int, Int)
-    coordOnTop (x,y)
+    import Models.Cell
+    import Data.Matrix
 
-        | u < 0 = Nothing
-        | otherwise = Just (u,v)
+    import Models.Rule
 
-        where 
-            (u,v) = (x-1, y)
+    import Data.Maybe
+    import Data.List
+
+
+    gridGenerateFromList :: Int -> Int -> [Maybe Cell] -> Matrix (Maybe Cell)
+    gridGenerateFromList rows cols list = fromList rows cols list
+
+    getCell :: (Int, Int) -> Matrix (Maybe Cell) -> Maybe Cell
+    getCell (x,y) cells = getElem x y cells

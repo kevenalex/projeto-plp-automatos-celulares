@@ -2,28 +2,69 @@ module Models.Grid where
     import Data.Matrix
     import Models.Cell
     import Data.Maybe
+    import Models.Rule (Rule)
+    
+    --- Função que recebe a proporção de uma matriz - Linhas e Colunas - e cria uma matriz de Células Mortas
+    gridGenerate :: Int -> Int -> Matrix (Maybe Cell)
+    gridGenerate rows cols = matrix rows cols (const Nothing)
 
-    data Grid = Grid {
-        height :: Int,
-        width :: Int,
-        cells :: Matrix Cell
-    }
+    --- Função que recebe a proporção de uma matriz - Linhas e Colunas - e uma lista de células
+    gridGenerateFromList :: Int -> Int -> [Maybe Cell] -> Matrix (Maybe Cell)
+    gridGenerateFromList rows cols list = fromList rows cols list
 
+    --- Função que recebe uma matriz de células, uma célula e a posição ao qual a mesma será adicionada na matriz(indexada em 1)
+    insertCell :: Matrix (Maybe Cell) -> Cell -> (Int, Int) -> Matrix (Maybe Cell)
+    insertCell grid cell (x,y) = setElem (Just cell) (x,y) grid
 
-    gridGenerate :: Int -> Int -> Cell -> Grid
-    gridGenerate height width a = Grid height width (matrix height width (const a))
+    --- Função que retorna a quantidade de células existentes na vizinhança de uma célula da grade. Esta função recebe a posição 
+    --- da célula a ser analisada, e a matriz de celulas correspondente.
+    numOfLiveNeighbors :: (Int, Int) -> Matrix (Maybe Cell) -> Int
+    numOfLiveNeighbors (x,y) grid = length $ lifeCellsCoord (x,y) grid
 
-    insertCell :: Grid -> Cell -> (Int, Int) -> Grid
-    insertCell grid cell (x,y) = Grid (height grid) (width grid) (setElem cell (x,y) (cells grid))
-
-    numOfLiveNeighbors :: (Int, Int) -> Grid -> Int
-    numOfLiveNeighbors (x,y) grid = length [uv | uv <- validCoord (x,y) grid, status (getCell uv (cells grid)) == Live]
-
-    numOfDeadNeighbors :: (Int, Int) -> Grid -> Int
+    --- Função que retorna a quantidade de células mortas existentes na vizinhança de uma célula da grade. Esta função recebe
+    --- a posição da célula a ser analisada, e a matriz de células correspondentes.
+    numOfDeadNeighbors :: (Int, Int) -> Matrix (Maybe Cell) -> Int
     numOfDeadNeighbors (x,y) grid = 8 - numOfLiveNeighbors (x,y) grid
 
-    getCell :: (Int, Int) -> Matrix Cell -> Cell
+    --- Função que retorna uma Cell ou Nothing de uma matriz de Cell. A mesma recebe a posição da Cell e a matriz de células a ser
+    --- trabalhada.
+    getCell :: (Int, Int) -> Matrix (Maybe Cell) -> Maybe Cell
     getCell (x,y) cells = getElem x y cells
+
+    --- Função que retorna uma lista com as coordenadas de todas as células vizinhas a determinada célula, que sejam válidas(dentro do
+    -- escopo da matriz, ou seja, existe o tratamento para casos de coordenadas de borda)
+    lifeCellsCoord :: (Int, Int) -> Matrix (Maybe Cell) -> [(Int, Int)]
+    lifeCellsCoord (x,y) grid = [(row,col) | (row,col) <- list, isLive (getCell (row,col) grid)]
+        where
+            list = listOfCoord (x,y) grid
+
+    -- Função que verifica se uma determinada coordenada faz parte do escopo de coordenadas de uma matriz
+    validCoord :: (Int,Int) -> Int -> Int -> Bool
+    validCoord (row,col) rowLimit colLimit
+        | row < 1 || row > rowLimit = False
+        | col < 1 || col > colLimit = False
+        | otherwise = True
+
+    -- Função que lista todas as coordenadas que estão na vizinhança de determinada coordenada (INDEPENDENTE DO ESCOPO DA MATRIZ)
+    listOfCoord :: (Int,Int) -> Matrix (Maybe Cell) -> [(Int, Int)]
+    listOfCoord (u,v) grid = [
+                                coordOnTopLeft (u,v), coordOnTop (u,v), coordOnTopRight (u,v),
+                                coordInLeft (u,v), coordInRight (u,v),
+                                coordInBelowLeft (u,v), coordInBelow (u,v), coordInBelowRight (u,v)
+                             ]
+
+    -- Função que lista todas as coordenadas válidas da vizinhança de determinada coordenada, ou seja, todas aquelas coordenadas que
+    -- não ultrapassam os limites da matriz
+    listOfValidCoords :: [(Int,Int)] -> Int -> Int -> [(Int,Int)]
+    listOfValidCoords coords rowLimit colLimit = [(x,y) | (x,y) <- coords, validCoord (x,y) rowLimit colLimit]
+
+    --- mostFrequentyCell :: [(Int,Int)] -> Matrix (Maybe Cell) -> Rule
+    --- mostFrequentyCell neighbors grid = 
+    ---    where
+    ---        rules = [rule (getCell (row,col) grid) | (row,col) <- neighbors]
+
+    --- numTimesFoundRule :: Rule -> [Rule] -> Int
+    --- numTimesFoundRule rule rules = length (filter (\x = x == rule) rules) 
 
    --- gridUpdate :: Grid -> Grid
    --- gridUpdate grid = Grid rows cols (fromList rows cols newCells)
@@ -51,89 +92,30 @@ module Models.Grid where
 
     --- -----------------------------------------------------------------------------------------------------------------------
 
-    --- UM MOI DE FUNCAO QUE CALCULA A POSICAO DOS VIZINHOS DE CADA CELULA
+    --- Sequência de funções que calculam as coordenadas de todas as direções a partir de determinada coordenada
 
-    validCoord :: (Int, Int) -> Grid -> [(Int, Int)]
-    validCoord (x,y) grid = [fromJust x | x <- list, isJust x]
-        where
-            list = listOfCoord (x,y) grid
+    coordOnTop :: (Int, Int) -> (Int, Int)
+    coordOnTop (x,y) = (x-1, y)
 
-    listOfCoord :: (Int,Int) -> Grid -> [Maybe  (Int, Int)]
-    listOfCoord (u,v) grid = [coordOnTopLeft (u,v) grid, coordOnTop (u,v) grid, coordOnTopRight (u,v) grid,
-                         coordInLeft (u,v) grid, coordInRight (u,v) grid,
-                         coordInBelowLeft (u,v) grid, coordInBelow (u,v) grid, coordInBelowRight (u,v) grid]
+    coordInBelow :: (Int, Int) -> (Int, Int)
+    coordInBelow (x,y) = (x+1, y)
 
+    coordInRight :: (Int, Int) -> (Int, Int)
+    coordInRight (x,y) = (x, y + 1)
 
-    coordOnTop :: (Int, Int) -> Grid -> Maybe (Int, Int)
-    coordOnTop (x,y) grid
+    coordInLeft :: (Int, Int) -> (Int, Int)
+    coordInLeft (x,y) = (x, y - 1)
 
-        | u >= 1 && u <= height grid = Just (u,v)
-        | otherwise = Nothing
+    coordOnTopRight :: (Int, Int) -> (Int, Int)
+    coordOnTopRight (x,y) = (x - 1, y + 1)
 
-        where
-            (u,v) = (x-1, y)
+    coordInBelowRight :: (Int, Int) -> (Int, Int)
+    coordInBelowRight (x,y) = (x + 1, y + 1)
 
-    coordInBelow :: (Int, Int) -> Grid -> Maybe (Int, Int)
-    coordInBelow (x,y) grid
+    coordOnTopLeft :: (Int, Int) -> (Int, Int)
+    coordOnTopLeft (x,y) = (x - 1, y - 1)
 
-        | u >= 1 && u <= height grid = Just (u,v)
-        | otherwise = Nothing
-
-        where
-            (u,v) = (x+1, y)
-
-    coordInRight :: (Int, Int) -> Grid -> Maybe (Int, Int)
-    coordInRight (x,y) grid
-
-        | v >= 1 && v <= width grid = Just (u,v)
-        | otherwise = Nothing
-
-        where
-            (u,v) = (x, y + 1)
-
-    coordInLeft :: (Int, Int) -> Grid -> Maybe (Int, Int)
-    coordInLeft (x,y) grid
-
-        | v >= 1 && v <= width grid = Just (u,v)
-        | otherwise = Nothing
-
-        where
-            (u,v) = (x, y - 1)
-
-    coordOnTopRight :: (Int, Int) -> Grid -> Maybe (Int, Int)
-    coordOnTopRight (x,y) grid
-
-        | u >= 1 && u <= height grid  && v >= 1 && v <= width grid = Just (u,v)
-        | otherwise = Nothing
-
-        where
-            (u,v) = (x - 1, y + 1)
-
-    coordInBelowRight :: (Int, Int) -> Grid -> Maybe (Int, Int)
-    coordInBelowRight (x,y) grid
-
-        | u >= 1 && u <= height grid  && v >= 1 && v <= width grid = Just (u,v)
-        | otherwise = Nothing
-
-        where
-            (u,v) = (x + 1, y + 1)
-
-    coordOnTopLeft :: (Int, Int) -> Grid -> Maybe (Int, Int)
-    coordOnTopLeft (x,y) grid
-
-        | u >= 1 && u <= height grid  && v >= 1 && v <= width grid = Just (u,v)
-        | otherwise = Nothing
-
-        where
-            (u,v) = (x - 1, y - 1)
-
-    coordInBelowLeft :: (Int, Int) -> Grid -> Maybe (Int, Int)
-    coordInBelowLeft (x,y) grid
-
-        | u >= 1 && u <= height grid  && v >= 1 && v <= width grid = Just (u,v)
-        | otherwise = Nothing
-
-        where
-            (u,v) = (x + 1, y - 1)
+    coordInBelowLeft :: (Int, Int) -> (Int, Int)
+    coordInBelowLeft (x,y) = (x + 1, y - 1)
 
     --- -----------------------------------------------------------------------------------------------------------------------

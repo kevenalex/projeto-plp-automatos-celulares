@@ -1,28 +1,19 @@
 module Models.Cell where
 
     import Models.Rule
-
-    data Status = Live | Dead 
-
-    instance Show Status where
-        show Live = "Live"
-        show Dead = "Dead"
+    import Data.Maybe (isJust)
          
     instance Show Cell where
-        show cell = show (color cell)
-
-    instance Eq Status where
-        (==) Live Live = True
-        (==) Dead Dead = True
-        (==) _ _ = False
+        show cell = show (name cell)
 
     data Cell =   
         Cell {
-        status :: Status,
+        name :: String,
         rule :: Rule,
-        color :: String -- N sei ainda como representar
+        color :: String 
         }
     
-
+    isLive :: Maybe Cell -> Bool
+    isLive mCell = isJust mCell
      
 
