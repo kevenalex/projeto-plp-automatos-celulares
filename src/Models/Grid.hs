@@ -6,7 +6,7 @@ module Models.Grid where
     data Grid = Grid {
         height :: Int,
         width :: Int,
-        grade :: Matrix Cell
+        cells :: Matrix Cell
     }
 
 
@@ -14,10 +14,10 @@ module Models.Grid where
     gridGenerate height width a = Grid height width (matrix height width (const a))
 
     insertCell :: Grid -> Cell -> (Int, Int) -> Grid
-    insertCell grid cell (x,y) = Grid (height grid) (width grid) (setElem cell (x,y) (grade grid))
+    insertCell grid cell (x,y) = Grid (height grid) (width grid) (setElem cell (x,y) (cells grid))
 
     numOfLiveNeighbors :: (Int, Int) -> Grid -> Int
-    numOfLiveNeighbors (x,y) grid = length [uv | uv <- validCoord (x,y) grid, status (getCell uv (grade grid)) == Live]
+    numOfLiveNeighbors (x,y) grid = length [uv | uv <- validCoord (x,y) grid, status (getCell uv (cells grid)) == Live]
 
     numOfDeadNeighbors :: (Int, Int) -> Grid -> Int
     numOfDeadNeighbors (x,y) grid = 8 - numOfLiveNeighbors (x,y) grid
@@ -25,8 +25,29 @@ module Models.Grid where
     getCell :: (Int, Int) -> Matrix Cell -> Cell
     getCell (x,y) cells = getElem x y cells
 
-    --- gridUpdate :: Grid -> Grid
-    --- gridUpdate grid = Grid
+   --- gridUpdate :: Grid -> Grid
+   --- gridUpdate grid = Grid rows cols (fromList rows cols newCells)
+      ---  where
+      ---      newCells = [nextCell (row,col) (getCell (row,col) (cells grid)) grid | row <- [1..rows], col <- [1..cols]]
+      ---      rows = height grid
+      ---      cols = width grid
+
+
+   --- nextCell :: (Int,Int) -> Cell -> Grid -> Cell
+   --- nextCell (x,y) cell grid = do
+    ---    if status cell == Live then
+   ---         if numLiveNeighbors `elem` stay regra then liveCell
+      ---      else deadCell
+     ---   else
+      ---      if numOfLiveNeighbors `elem` birth regra then liveCell
+      ---      else deadCell 
+
+     ---   where 
+      ---      regra = rule cell
+      ---      live = stay (rule cell)
+       ---     numLiveNeighbors = numOfLiveNeighbors (x,y) grid
+        ---    liveCell = Cell Live (rule cell) (color cell)
+        ---    deadCell = Cell Dead (rule cell) (color cell)
 
     --- -----------------------------------------------------------------------------------------------------------------------
 
@@ -41,6 +62,7 @@ module Models.Grid where
     listOfCoord (u,v) grid = [coordOnTopLeft (u,v) grid, coordOnTop (u,v) grid, coordOnTopRight (u,v) grid,
                          coordInLeft (u,v) grid, coordInRight (u,v) grid,
                          coordInBelowLeft (u,v) grid, coordInBelow (u,v) grid, coordInBelowRight (u,v) grid]
+
 
     coordOnTop :: (Int, Int) -> Grid -> Maybe (Int, Int)
     coordOnTop (x,y) grid

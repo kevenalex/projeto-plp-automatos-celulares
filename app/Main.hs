@@ -1,7 +1,7 @@
 module Main where
 
     import Models.Grid
-    import Models.Ruler
+    import Models.Rule
 
     main :: IO ()
     main = do
@@ -18,7 +18,7 @@ module Main where
         let stayList = map (\x -> read [x] :: Int) stayStr
 
 
-        let regra = Ruler nascList stayList
+        let regra = Rule nascList stayList
 
         putStrLn ("A sua regra tem a seguinte forma " ++ (show regra))
 

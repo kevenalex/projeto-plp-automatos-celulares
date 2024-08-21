@@ -1,6 +1,6 @@
 module Models.Cell where
 
-    import Models.Ruler
+    import Models.Rule
 
     data Status = Live | Dead 
 
@@ -9,7 +9,7 @@ module Models.Cell where
         show Dead = "Dead"
          
     instance Show Cell where
-        show cell = show (status cell)
+        show cell = show (color cell)
 
     instance Eq Status where
         (==) Live Live = True
@@ -19,9 +19,10 @@ module Models.Cell where
     data Cell =   
         Cell {
         status :: Status,
-        ruler :: Maybe Ruler,
+        rule :: Rule,
         color :: String -- N sei ainda como representar
         }
+    
 
      
 
