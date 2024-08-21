@@ -2,7 +2,7 @@ module Models.Grid where
     import Data.Matrix
     import Models.Cell
     import Data.Maybe
-    import Models.Rule (Rule)
+    import Models.Rule
     
     --- Função que recebe a proporção de uma matriz - Linhas e Colunas - e cria uma matriz de Células Mortas
     gridGenerate :: Int -> Int -> Matrix (Maybe Cell)
@@ -64,7 +64,7 @@ module Models.Grid where
     ---        rules = [rule (getCell (row,col) grid) | (row,col) <- neighbors]
 
     --- numTimesFoundRule :: Rule -> [Rule] -> Int
-    --- numTimesFoundRule rule rules = length (filter (\x = x == rule) rules) 
+    --- numTimesFoundRule rule rules = length (filter (== rule) rules) 
 
    --- gridUpdate :: Grid -> Grid
    --- gridUpdate grid = Grid rows cols (fromList rows cols newCells)

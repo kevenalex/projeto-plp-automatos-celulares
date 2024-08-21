@@ -8,30 +8,6 @@ module Models.Rule where
     instance Show Rule where
         show (Rule birth stay)= "B" ++ (concatMap show birth) ++ "/S" ++ (concatMap show stay)
 
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-    (==) :: [Int] -> [Int] -> [Int] -> [Int] -> Bool
-    (==) bRuleA sRuleA bRuleB sRuleB =
-        if bRuleA == bRuleB && sRuleA == sRuleB then True
-        else False
+    instance Eq Rule where
+        (Rule birth1 stay1) == (Rule birth2 stay2) = (birth1 == birth2) && (stay1 == stay2) 
          
