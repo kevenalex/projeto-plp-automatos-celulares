@@ -39,8 +39,10 @@ library
       app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      array
+      aeson
+    , array
     , base >=4.7 && <5
+    , brick
     , matrix >=0.3.6.0
   default-language: Haskell2010
 
@@ -54,8 +56,10 @@ executable projeto-plp-haskell-automatos-celulares-exe
       app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      array
+      aeson
+    , array
     , base >=4.7 && <5
+    , brick
     , matrix >=0.3.6.0
     , projeto-plp-haskell-automatos-celulares
   default-language: Haskell2010
@@ -71,8 +75,10 @@ test-suite projeto-plp-haskell-automatos-celulares-test
       test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      array
+      aeson
+    , array
     , base >=4.7 && <5
+    , brick
     , matrix >=0.3.6.0
     , projeto-plp-haskell-automatos-celulares
   default-language: Haskell2010
