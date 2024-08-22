@@ -3,7 +3,7 @@ module Models.Grid where
     import Models.Cell
     import Data.Maybe
     import Models.Rule
-    
+
     --- Função que recebe a proporção de uma matriz - Linhas e Colunas - e cria uma matriz de Células Mortas
     gridGenerate :: Int -> Int -> Matrix (Maybe Cell)
     gridGenerate rows cols = matrix rows cols (const Nothing)
@@ -57,14 +57,31 @@ module Models.Grid where
     -- não ultrapassam os limites da matriz
     listOfValidCoords :: [(Int,Int)] -> Int -> Int -> [(Int,Int)]
     listOfValidCoords coords rowLimit colLimit = [(x,y) | (x,y) <- coords, validCoord (x,y) rowLimit colLimit]
+    
+    -- Função que retorna a Cell que mais se repete na vizinhança de uma Cell
+    mostFrequentlyCell :: (Int, Int) -> Matrix (Maybe Cell) -> Cell
+    mostFrequentlyCell (row, col) grid = cell
+        where
+          (freq, cell) = biggestOnList frequencias
+          frequencias = frequentyCells vizinhanca grid
+          vizinhanca = lifeCellsCoord (row, col) grid
+        
+    
+    --- Função que retorna uma tupla contendo a Cell que mais se repete e quantas vezes a mesma se repete
+    biggestOnList :: [(Int, Cell)] -> (Int, Cell)
+    biggestOnList ((n,cell):[]) = (n, cell)
+    biggestOnList ((n,cell):xs) = if n > fst (biggestOnList xs) then (n,cell)
+                                  else biggestOnList xs
 
-    --- mostFrequentyCell :: [(Int,Int)] -> Matrix (Maybe Cell) -> Rule
-    --- mostFrequentyCell neighbors grid = 
-    ---    where
-    ---        rules = [rule (getCell (row,col) grid) | (row,col) <- neighbors]
+    --- Função que retorna a frequência de cada tipo de Cell
+    frequentyCells :: [(Int,Int)] -> Matrix (Maybe Cell) -> [(Int, Cell)]
+    frequentyCells coords grid = [(freq, cell) | (x,y) <- coords, let freq = numTimesFoundCell (fromJust $ getCell (x,y) grid) coords grid, let cell = fromJust $ getCell (x,y) grid]
 
-    --- numTimesFoundRule :: Rule -> [Rule] -> Int
-    --- numTimesFoundRule rule rules = length (filter (== rule) rules) 
+    --- Função que retorna quantas vezes tal Rule/Cell aparece em determinada sequência de Rule
+    numTimesFoundCell :: Cell -> [(Int,Int)] -> Matrix (Maybe Cell) -> Int
+    numTimesFoundCell cell coords grid = length (filter (== cell) cells)
+        where
+            cells = [fromJust (getCell (x,y) grid) | (x,y) <- coords]
 
    --- gridUpdate :: Grid -> Grid
    --- gridUpdate grid = Grid rows cols (fromList rows cols newCells)
