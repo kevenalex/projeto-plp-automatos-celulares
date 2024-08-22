@@ -23,6 +23,8 @@ dependencies:
 - base >= 4.7 && < 5
 - matrix >= 0.3.6.0
 - array
+- aeson
+- brick
 
 ghc-options:
 - -Wall
