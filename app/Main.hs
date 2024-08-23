@@ -3,7 +3,9 @@ module Main where
     import Models.Grid
     import Models.Rule
 
-    main :: IO ()
+    import Controllers.Menu (menu)
+    
+  {-   main :: IO ()
     main = do
 
         putStrLn "Digite uma sequência de números representando a quantidade de vizinhos para instanciar a regra"
@@ -22,3 +24,6 @@ module Main where
 
         putStrLn ("A sua regra tem a seguinte forma " ++ show regra)
 
+ -}
+    main :: IO()
+    main = menu

@@ -29,6 +29,7 @@ library
       Models.Grid
       Models.Rule
       Models.Teste
+      Controllers.Menu
       Main
   other-modules:
       Paths_projeto_plp_haskell_automatos_celulares
@@ -49,6 +50,7 @@ library
 executable projeto-plp-haskell-automatos-celulares-exe
   main-is: Main.hs
   other-modules:
+      Controllers.Menu
       Paths_projeto_plp_haskell_automatos_celulares
   autogen-modules:
       Paths_projeto_plp_haskell_automatos_celulares
