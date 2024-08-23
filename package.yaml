@@ -25,6 +25,7 @@ dependencies:
 - array
 - aeson
 - brick
+- containers
 
 ghc-options:
 - -Wall

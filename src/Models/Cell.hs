@@ -15,8 +15,14 @@ module Models.Cell where
         rule :: Rule,
         color :: String 
         }
-    
-    isLive :: Maybe Cell -> Bool
-    isLive mCell = isJust mCell
+
+    instance Ord Cell where
+        (<) (Cell name1 rule1 color1) (Cell name2 rule2 color2) = name1 < name2
+        (<=) (Cell name1 rule1 color1) (Cell name2 rule2 color2) = name1 <= name2
+        (>) (Cell name1 rule1 color1) (Cell name2 rule2 color2) = name1 > name2
+        (>=) (Cell name1 rule1 color1) (Cell name2 rule2 color2) = name1 >= name2
+
+    isAlive :: Maybe Cell -> Bool
+    isAlive mCell = isJust mCell
      
 
