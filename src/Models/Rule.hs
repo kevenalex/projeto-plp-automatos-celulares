@@ -17,4 +17,3 @@ module Models.Rule where
     instance Eq Rule where
         (Rule birth1 stay1) == (Rule birth2 stay2) = (birth1 == birth2) && (stay1 == stay2) 
          
-    instance Generic Rule
