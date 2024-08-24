@@ -24,9 +24,9 @@ dependencies:
 - matrix >= 0.3.6.0
 - array
 - aeson
-- brick
+- bytestring
 - containers
-- gloss
+- directory
 - ansi-terminal
 
 ghc-options:

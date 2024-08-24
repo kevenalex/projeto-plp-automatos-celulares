@@ -1,2 +1,4 @@
 .stack-work/
 *~
+app/Main
+Main.exe
