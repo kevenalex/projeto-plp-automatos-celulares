@@ -29,6 +29,8 @@ library
       Models.Grid
       Models.Rule
       Models.Teste
+      Files.Cell
+      Files.Scene
       Main
   other-modules:
       Paths_projeto_plp_haskell_automatos_celulares
@@ -43,15 +45,17 @@ library
     , ansi-terminal
     , array
     , base >=4.7 && <5
-    , brick
+    , bytestring
     , containers
-    , gloss
+    , directory
     , matrix >=0.3.6.0
   default-language: Haskell2010
 
 executable projeto-plp-haskell-automatos-celulares-exe
   main-is: Main.hs
   other-modules:
+      Files.Cell
+      Files.Scene
       Paths_projeto_plp_haskell_automatos_celulares
   autogen-modules:
       Paths_projeto_plp_haskell_automatos_celulares
@@ -63,9 +67,9 @@ executable projeto-plp-haskell-automatos-celulares-exe
     , ansi-terminal
     , array
     , base >=4.7 && <5
-    , brick
+    , bytestring
     , containers
-    , gloss
+    , directory
     , matrix >=0.3.6.0
     , projeto-plp-haskell-automatos-celulares
   default-language: Haskell2010
@@ -85,9 +89,9 @@ test-suite projeto-plp-haskell-automatos-celulares-test
     , ansi-terminal
     , array
     , base >=4.7 && <5
-    , brick
+    , bytestring
     , containers
-    , gloss
+    , directory
     , matrix >=0.3.6.0
     , projeto-plp-haskell-automatos-celulares
   default-language: Haskell2010
