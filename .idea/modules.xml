@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/projeto-plp-haskell-automatos-celulares.iml" filepath="$PROJECT_DIR$/projeto-plp-haskell-automatos-celulares.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/projeto-plp-haskell-automatos-celulares.iml" filepath="$PROJECT_DIR$/.idea/projeto-plp-haskell-automatos-celulares.iml" />
     </modules>
   </component>
 </project>
