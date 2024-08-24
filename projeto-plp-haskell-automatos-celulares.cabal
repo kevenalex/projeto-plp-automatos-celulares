@@ -29,7 +29,8 @@ library
       Models.Grid
       Models.Rule
       Models.Teste
-      Files
+      Files.Cell
+      Files.Scene
       Main
   other-modules:
       Paths_projeto_plp_haskell_automatos_celulares
@@ -43,7 +44,6 @@ library
       aeson
     , array
     , base >=4.7 && <5
-    , brick
     , bytestring
     , containers
     , directory
@@ -53,7 +53,8 @@ library
 executable projeto-plp-haskell-automatos-celulares-exe
   main-is: Main.hs
   other-modules:
-      Files
+      Files.Cell
+      Files.Scene
       Paths_projeto_plp_haskell_automatos_celulares
   autogen-modules:
       Paths_projeto_plp_haskell_automatos_celulares
@@ -64,7 +65,6 @@ executable projeto-plp-haskell-automatos-celulares-exe
       aeson
     , array
     , base >=4.7 && <5
-    , brick
     , bytestring
     , containers
     , directory
@@ -86,7 +86,6 @@ test-suite projeto-plp-haskell-automatos-celulares-test
       aeson
     , array
     , base >=4.7 && <5
-    , brick
     , bytestring
     , containers
     , directory

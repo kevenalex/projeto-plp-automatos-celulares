@@ -1,0 +1,38 @@
+{
+  "hahahaha": {
+    "cols": 4,
+    "flatMatrix": [
+      {
+        "color": "vsf",
+        "name": "oi",
+        "rule": { "birth": [1, 2, 3], "stay": [4] }
+      }
+    ],
+    "rows": 4,
+    "title": "hahahaha"
+  },
+  "oi": {
+    "cols": 2,
+    "flatMatrix": [
+      {
+        "color": "azul",
+        "name": "AA",
+        "rule": { "birth": [1, 2], "stay": [3] }
+      }
+    ],
+    "rows": 3,
+    "title": "oi"
+  },
+  "rerere": {
+    "cols": 4,
+    "flatMatrix": [
+      {
+        "color": "azul",
+        "name": "AA",
+        "rule": { "birth": [1, 2], "stay": [3] }
+      }
+    ],
+    "rows": 4,
+    "title": "rerere"
+  }
+}
