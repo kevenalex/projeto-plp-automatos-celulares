@@ -24,5 +24,3 @@ module Models.Cell where
 
     isAlive :: Maybe Cell -> Bool
     isAlive mCell = isJust mCell
-     
-

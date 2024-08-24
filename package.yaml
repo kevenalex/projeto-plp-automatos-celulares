@@ -26,6 +26,8 @@ dependencies:
 - aeson
 - brick
 - containers
+- gloss
+- ansi-terminal
 
 ghc-options:
 - -Wall
