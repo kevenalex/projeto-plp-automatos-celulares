@@ -3,17 +3,45 @@ module Main where
     import Models.Grid
     import Models.Rule
     import Models.Cell
+
+    import Data.Char
     import Data.Matrix
 
     import Control.Concurrent (threadDelay)
     import System.Console.ANSI (clearScreen)
 
+    toAnimal :: Char -> Char
+    toAnimal c = chr . (+127970) $ ord c
+
+    toSmileyEmoji :: Char-> Char
+    toSmileyEmoji c = chr . (+128415) $ ord c
+
+    encode :: String -> String
+    encode xs = map (\c -> if isUpper c then toAnimal c else toSmileyEmoji c) xs
+
+    fromAnimal :: Char -> Char
+    fromAnimal c = chr $ (ord c) - 127970
+
+    fromSmileyEmoji :: Char-> Char
+    fromSmileyEmoji c = chr $ (ord c) - 128415
+
+    isAnimal :: Char -> Bool
+    isAnimal c = if ((ord c >= ord '🐣') && (ord c <= ord '🐼')) then True else False
+
+    decode :: String -> String
+    decode xs = map (\c -> if isAnimal c then fromAnimal c else fromSmileyEmoji c) xs
+
     main :: IO ()
     main = do
-      putStrLn "Oi"
+
+      contents1 <- getLine
+      contents2 <- getLine
+      putStr $ (encode contents1) ++ "\n" ++ (decode contents2)
+
+      -- putStrLn "Oi"
       
       -- let golRule = Rule [3] [1,2,3,4,5]
-      -- let golCell = Cell "Maze" golRule "Verde"
+      -- let golCell = Cell "🐱" golRule "Verde"
 
       -- let state0 = gridGenerate 9 9
       -- let state1 = insertCell state0 golCell (1,2)
@@ -22,7 +50,9 @@ module Main where
       -- let state4 = insertCell state3 golCell (3,2)
       -- let state5 = insertCell state4 golCell (3,3)
 
-      -- printAndClear state5 20
+
+
+      -- putStr $ show state5
 
       
 -- printsList :: Matrix (Maybe Cell) -> Int -> IO [String]

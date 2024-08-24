@@ -53,6 +53,7 @@ library
 executable projeto-plp-haskell-automatos-celulares-exe
   main-is: Main.hs
   other-modules:
+      Controllers.GridController
       Paths_projeto_plp_haskell_automatos_celulares
   autogen-modules:
       Paths_projeto_plp_haskell_automatos_celulares

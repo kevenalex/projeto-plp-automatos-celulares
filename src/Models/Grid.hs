@@ -4,6 +4,7 @@ module Models.Grid where
     import Data.Maybe
     import Models.Rule
     import Data.List
+
     import qualified Data.Set as Set
 
     --- Função que recebe a proporção de uma matriz - Linhas e Colunas - e cria uma matriz de Células Mortas
