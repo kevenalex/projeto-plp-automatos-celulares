@@ -3,7 +3,9 @@ module Models.Grid where
     import Models.Cell
     import Data.Maybe
     import Models.Rule
-    
+    import Data.List
+    import qualified Data.Set as Set
+
     --- Função que recebe a proporção de uma matriz - Linhas e Colunas - e cria uma matriz de Células Mortas
     gridGenerate :: Int -> Int -> Matrix (Maybe Cell)
     gridGenerate rows cols = matrix rows cols (const Nothing)
@@ -34,8 +36,10 @@ module Models.Grid where
     --- Função que retorna uma lista com as coordenadas de todas as células vizinhas a determinada célula, que sejam válidas(dentro do
     -- escopo da matriz, ou seja, existe o tratamento para casos de coordenadas de borda)
     lifeCellsCoord :: (Int, Int) -> Matrix (Maybe Cell) -> [(Int, Int)]
-    lifeCellsCoord (x,y) grid = [(row,col) | (row,col) <- list, isLive (getCell (row,col) grid)]
+    lifeCellsCoord (x,y) grid = [(row,col) | (row,col) <- list, validCoord (row,col) rowLimit colLimit && isAlive (getCell (row,col) grid)]
         where
+            rowLimit = nrows grid
+            colLimit = ncols grid
             list = listOfCoord (x,y) grid
 
     -- Função que verifica se uma determinada coordenada faz parte do escopo de coordenadas de uma matriz
@@ -57,39 +61,85 @@ module Models.Grid where
     -- não ultrapassam os limites da matriz
     listOfValidCoords :: [(Int,Int)] -> Int -> Int -> [(Int,Int)]
     listOfValidCoords coords rowLimit colLimit = [(x,y) | (x,y) <- coords, validCoord (x,y) rowLimit colLimit]
+    
+    -- Função que retorna a Cell que mais se repete na vizinhança de uma Cell
+    mostFrequentlyCell :: (Int, Int) -> Matrix (Maybe Cell) -> Cell
+    mostFrequentlyCell (row, col) grid = fromJust cell
+        where
+          (freq, cell) = biggestOnList frequencias
+          frequencias = frequentyCells vizinhanca grid
+          vizinhanca = lifeCellsCoord (row, col) grid
+        
+    
+    --- Função que retorna uma tupla contendo a Cell que mais se repete e quantas vezes a mesma se repete
+    biggestOnList :: [(Int, Cell)] -> (Int, Maybe Cell)
+    biggestOnList [] = (0, Nothing)
+    biggestOnList [(n,cell)] = (n, Just cell)
+    biggestOnList ((n,cell):xs) = if n > fst (biggestOnList xs) then (n, Just cell)
+                                  else biggestOnList xs
 
-    --- mostFrequentyCell :: [(Int,Int)] -> Matrix (Maybe Cell) -> Rule
-    --- mostFrequentyCell neighbors grid = 
-    ---    where
-    ---        rules = [rule (getCell (row,col) grid) | (row,col) <- neighbors]
+    --- Função que retorna a frequência de cada tipo de Cell
+    frequentyCells :: [(Int,Int)] -> Matrix (Maybe Cell) -> [(Int, Cell)]
+    frequentyCells coords grid = Set.toList (Set.fromList allCells)
+        where
+            allCells = [(freq, cell) | (x,y) <- coords, let freq = numTimesFoundCell (fromJust $ getCell (x,y) grid) coords grid, let cell = fromJust $ getCell (x,y) grid]
 
-    --- numTimesFoundRule :: Rule -> [Rule] -> Int
-    --- numTimesFoundRule rule rules = length (filter (== rule) rules) 
+    --- Função que retorna quantas vezes tal Rule/Cell aparece em determinada sequência de Rule
+    numTimesFoundCell :: Cell -> [(Int,Int)] -> Matrix (Maybe Cell) -> Int
+    numTimesFoundCell cell coords grid = length (filter (== cell) cells)
+        where
+            cells = [fromJust (getCell (x,y) grid) | (x,y) <- coords]
 
-   --- gridUpdate :: Grid -> Grid
-   --- gridUpdate grid = Grid rows cols (fromList rows cols newCells)
-      ---  where
-      ---      newCells = [nextCell (row,col) (getCell (row,col) (cells grid)) grid | row <- [1..rows], col <- [1..cols]]
-      ---      rows = height grid
-      ---      cols = width grid
+    gridUpdate :: Matrix (Maybe Cell) -> Matrix (Maybe Cell)
+    gridUpdate grid = fromList rows cols newCells
+        where
+            rows = nrows grid
+            cols = ncols grid
+            newCells = [nextCell (row,col) grid | row <- [1..rows], col <- [1..cols]]
+
+    nextCell :: (Int, Int) -> Matrix (Maybe Cell) -> Maybe Cell
+    nextCell coord grid =
+        if isAlive cell then nextFromLiveCell coord grid
+        else nextFromDeadCell coord grid
+        
+        where
+            cell = getCell coord grid 
+    
+    nextFromDeadCell :: (Int,Int) -> Matrix (Maybe Cell) -> Maybe Cell
+    nextFromDeadCell coord grid = if null coordsProposedRules then Nothing
+                                  else snd (biggestOnList frequenty)
+        
+        where 
+            numNeighbors = numOfLiveNeighbors coord grid
+            coordLiveNeighbors = lifeCellsCoord coord grid
+            coordsProposedRules = [(x,y) | (x,y) <- coordLiveNeighbors, numNeighbors `elem` birth (rule $ fromJust (getCell (x,y) grid))]
+            frequenty = frequentyCells coordsProposedRules grid
+
+            -- cellsNeighborhood = [c | (freq, c) <- frequentyCells coordLiveNeighbors grid]
+            -- bRules = [birth (rule cell) | cell <- cellsNeighborhood]
 
 
-   --- nextCell :: (Int,Int) -> Cell -> Grid -> Cell
-   --- nextCell (x,y) cell grid = do
-    ---    if status cell == Live then
-   ---         if numLiveNeighbors `elem` stay regra then liveCell
-      ---      else deadCell
-     ---   else
-      ---      if numOfLiveNeighbors `elem` birth regra then liveCell
-      ---      else deadCell 
+    --- Função que retorna o update de uma Cell viva a partir de sua regra e vizinhança
+    nextFromLiveCell :: (Int,Int) -> Matrix (Maybe Cell) -> Maybe Cell
+    nextFromLiveCell coord grid = 
+        if numNeighbors `elem` sRule then cell
+        else deadCell
 
-     ---   where 
-      ---      regra = rule cell
-      ---      live = stay (rule cell)
-       ---     numLiveNeighbors = numOfLiveNeighbors (x,y) grid
-        ---    liveCell = Cell Live (rule cell) (color cell)
-        ---    deadCell = Cell Dead (rule cell) (color cell)
+        where 
+            cell = getCell coord grid
+            numNeighbors = numOfLiveNeighbors coord grid 
+            sRule = stay (rule $ fromJust cell) 
+            deadCell = Nothing
 
+    --- Função que retorna se não houve mudanças entre duas gerações da simulação
+    noChangeGenerations :: Matrix (Maybe Cell) -> Matrix (Maybe Cell) -> Bool
+    noChangeGenerations gridA gridB = gridA == gridB
+
+    --- Função que retorna se uma determinada Matriz é composta absolutamente por células mortas
+    isDeadSimulation :: Matrix (Maybe Cell) -> Bool
+    isDeadSimulation grid = grid == deadGrid
+        where
+            deadGrid = gridGenerateFromList (nrows grid) (ncols grid) [Nothing | _ <- [1.. ((nrows grid) * (ncols grid)) ]]
     --- -----------------------------------------------------------------------------------------------------------------------
 
     --- Sequência de funções que calculam as coordenadas de todas as direções a partir de determinada coordenada
