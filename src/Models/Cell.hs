@@ -20,8 +20,14 @@ module Models.Cell where
     instance Show Cell where
         show cell = show (name cell)
 
+    instance Eq Cell where
+       (Cell name1 rule1 color1) == (Cell name2 rule2 color2) = (name1 == name2) && (rule1 == rule2) && (color1 == color2)
+    
+    instance Ord Cell where
+        (<) (Cell name1 rule1 color1) (Cell name2 rule2 color2) = name1 < name2
+        (<=) (Cell name1 rule1 color1) (Cell name2 rule2 color2) = name1 <= name2
+        (>) (Cell name1 rule1 color1) (Cell name2 rule2 color2) = name1 > name2
+        (>=) (Cell name1 rule1 color1) (Cell name2 rule2 color2) = name1 >= name2
 
-    isLive :: Maybe Cell -> Bool
-    isLive mCell = isJust mCell
-     
-
+    isAlive :: Maybe Cell -> Bool
+    isAlive = isJust 

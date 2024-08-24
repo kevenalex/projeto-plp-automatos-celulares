@@ -26,6 +26,8 @@ dependencies:
 - aeson
 - brick
 - bytestring
+- containers
+- directory
 
 ghc-options:
 - -Wall

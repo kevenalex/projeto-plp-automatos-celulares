@@ -34,7 +34,7 @@ module Models.Grid where
     --- Função que retorna uma lista com as coordenadas de todas as células vizinhas a determinada célula, que sejam válidas(dentro do
     -- escopo da matriz, ou seja, existe o tratamento para casos de coordenadas de borda)
     lifeCellsCoord :: (Int, Int) -> Matrix (Maybe Cell) -> [(Int, Int)]
-    lifeCellsCoord (x,y) grid = [(row,col) | (row,col) <- list, isLive (getCell (row,col) grid)]
+    lifeCellsCoord (x,y) grid = [(row,col) | (row,col) <- list, isAlive (getCell (row,col) grid)]
         where
             list = listOfCoord (x,y) grid
 
