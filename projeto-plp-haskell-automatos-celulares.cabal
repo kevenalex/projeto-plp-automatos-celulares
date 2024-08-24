@@ -29,6 +29,7 @@ library
       Models.Grid
       Models.Rule
       Models.Teste
+      Controllers.GridController
       Main
   other-modules:
       Paths_projeto_plp_haskell_automatos_celulares
