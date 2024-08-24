@@ -27,6 +27,7 @@ dependencies:
 - bytestring
 - containers
 - directory
+- ansi-terminal
 
 ghc-options:
 - -Wall
