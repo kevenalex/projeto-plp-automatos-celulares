@@ -44,6 +44,7 @@ library
     , base >=4.7 && <5
     , brick
     , containers
+    , gloss
     , matrix >=0.3.6.0
   default-language: Haskell2010
 
@@ -62,6 +63,7 @@ executable projeto-plp-haskell-automatos-celulares-exe
     , base >=4.7 && <5
     , brick
     , containers
+    , gloss
     , matrix >=0.3.6.0
     , projeto-plp-haskell-automatos-celulares
   default-language: Haskell2010
@@ -82,6 +84,7 @@ test-suite projeto-plp-haskell-automatos-celulares-test
     , base >=4.7 && <5
     , brick
     , containers
+    , gloss
     , matrix >=0.3.6.0
     , projeto-plp-haskell-automatos-celulares
   default-language: Haskell2010
