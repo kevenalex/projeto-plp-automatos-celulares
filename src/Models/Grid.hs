@@ -18,7 +18,12 @@ module Models.Grid where
     --- Função que recebe uma matriz de células, uma célula e a posição ao qual a mesma será adicionada na matriz(indexada em 1)
     insertCell :: Matrix (Maybe Cell) -> Cell -> (Int, Int) -> Matrix (Maybe Cell)
     insertCell grid cell (x,y) = setElem (Just cell) (x,y) grid
-
+    
+    -- recebe uma matriz, a célula a ser inserida e uma lista de coordenadas onde ela vai ser inserida
+    insertCells :: Matrix (Maybe Cell) -> Cell -> [(Int,Int)] -> Matrix (Maybe Cell)
+    insertCells grid cell (h:t) = insertCells (insertCell grid cell h) cell t
+    insertCells grid _ [] = grid 
+        
     --- Função que retorna a quantidade de células existentes na vizinhança de uma célula da grade. Esta função recebe a posição 
     --- da célula a ser analisada, e a matriz de celulas correspondente.
     numOfLiveNeighbors :: (Int, Int) -> Matrix (Maybe Cell) -> Int
@@ -64,11 +69,11 @@ module Models.Grid where
     listOfValidCoords coords rowLimit colLimit = [(x,y) | (x,y) <- coords, validCoord (x,y) rowLimit colLimit]
     
     -- Função que retorna a Cell que mais se repete na vizinhança de uma Cell
-    mostFrequentlyCell :: (Int, Int) -> Matrix (Maybe Cell) -> Cell
-    mostFrequentlyCell (row, col) grid = fromJust cell
+    mostFrequentCell :: (Int, Int) -> Matrix (Maybe Cell) -> Cell
+    mostFrequentCell (row, col) grid = fromJust cell
         where
           (freq, cell) = biggestOnList frequencias
-          frequencias = frequentyCells vizinhanca grid
+          frequencias = frequencyCells vizinhanca grid
           vizinhanca = lifeCellsCoord (row, col) grid
         
     
@@ -80,8 +85,8 @@ module Models.Grid where
                                   else biggestOnList xs
 
     --- Função que retorna a frequência de cada tipo de Cell
-    frequentyCells :: [(Int,Int)] -> Matrix (Maybe Cell) -> [(Int, Cell)]
-    frequentyCells coords grid = Set.toList (Set.fromList allCells)
+    frequencyCells :: [(Int,Int)] -> Matrix (Maybe Cell) -> [(Int, Cell)]
+    frequencyCells coords grid = Set.toList (Set.fromList allCells)
         where
             allCells = [(freq, cell) | (x,y) <- coords, let freq = numTimesFoundCell (fromJust $ getCell (x,y) grid) coords grid, let cell = fromJust $ getCell (x,y) grid]
 
@@ -114,9 +119,9 @@ module Models.Grid where
             numNeighbors = numOfLiveNeighbors coord grid
             coordLiveNeighbors = lifeCellsCoord coord grid
             coordsProposedRules = [(x,y) | (x,y) <- coordLiveNeighbors, numNeighbors `elem` birth (rule $ fromJust (getCell (x,y) grid))]
-            frequenty = frequentyCells coordsProposedRules grid
+            frequenty = frequencyCells coordsProposedRules grid
 
-            -- cellsNeighborhood = [c | (freq, c) <- frequentyCells coordLiveNeighbors grid]
+            -- cellsNeighborhood = [c | (freq, c) <- frequencyCells coordLiveNeighbors grid]
             -- bRules = [birth (rule cell) | cell <- cellsNeighborhood]
 
 

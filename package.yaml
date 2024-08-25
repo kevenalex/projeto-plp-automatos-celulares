@@ -29,6 +29,7 @@ dependencies:
 - directory
 - ansi-terminal
 - vector
+- HUnit
 
 ghc-options:
 - -Wall
