@@ -14,6 +14,7 @@ module Test.Simulation where
 -------------------------
 
     -- rode esses testes com stack runghc -- test/conwaysTest.hs
+    main :: IO Counts
     main = do
         runTestTT $ test [
             "Morra sozinho" ~:
