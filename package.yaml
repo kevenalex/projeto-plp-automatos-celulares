@@ -28,6 +28,7 @@ dependencies:
 - containers
 - directory
 - ansi-terminal
+- vector
 
 ghc-options:
 - -Wall

@@ -141,6 +141,9 @@ module Models.Grid where
     isDeadSimulation grid = grid == deadGrid
         where
             deadGrid = gridGenerateFromList (nrows grid) (ncols grid) [Nothing | _ <- [1.. ((nrows grid) * (ncols grid)) ]]
+
+    gridToLists :: Matrix (Maybe Cell) -> [[Maybe Cell]]
+    gridToLists grid = toLists grid
     --- -----------------------------------------------------------------------------------------------------------------------
 
     --- Sequência de funções que calculam as coordenadas de todas as direções a partir de determinada coordenada
