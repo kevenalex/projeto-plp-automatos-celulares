@@ -2,45 +2,58 @@ module Controllers.GridController where
 
     import Models.Cell
     import Models.Grid
+    import Models.Rule
     import Data.Matrix
-    import System.Process (system)
+    import qualified Data.Vector as V
+    import Data.List (intercalate)
+    import Data.Maybe
+    import Models.Grid
+    import Data.Char (intToDigit)
+    
 
-    chooseGrid :: Matrix [Maybe Cell]
-    chooseGrid = 
-        do
-            _ <- print "qual a grid que mofi quer ?"
-            __ <- print "se nao escolher nenhuma vai ser uma vazia, se liga hein maluco"
-            findGrid
-    
-    playGame :: IO()
-    playGame = do
-        grid <- chooseGrid
-        _ <- system "clear"
-        simulate grid
-    
-    simulate :: Matrix [Maybe Cell] -> IO()
-    simulate grid = do 
-        _ <- system "clear"
-        printGrid grid
-        print "digite n para carregar o proximo passo"
-        print "digite i para inserir alguma celula"
-        nextStep <- getLine
-        simulationDecision nextStep grid
-    
-    simulationDecision :: String -> Matrix [Maybe Cell] -> IO()
-    simulationDecision decision grid
-        | decision == "n" = simulate (gridUpdate grid)
-        | decision == "i" = simulate insertion grid
-        | otherwise = print "gay"
+    -- Funções que gerem a impressão da Matrix (Maybe Cell)
+    -- ------------------------------------------------------------------------------------------------
 
-    insertion :: Matrix [Maybe Cell] -> Matrix [Maybe Cell]
-    insertion grid = 
-        do 
-            print "qual a coordenada x ?"
-            x <- read getLine
-            print "qual a coordenada y ?"
-            y <- read getLine
-            print "qual celula desejas adicionar ?"
-            cell <- getCellFromLeo
-            insertGrid (x,y) cell
-            
+    -- Função que imprime uma Matrix (Maybe Cell) com os números correspondentes a cada linha e coluna, a mesma recebe uma lista de Maybe Cell, que pode ser facilmente obtida através do
+    -- método gridToLists aplicado a uma Matrix (Maybe Cell). Sempre inicie o método com o n igual a 0, e procure não utilizar uma matriz
+    -- com mais de 2 casas decimais para não quebrar a formatação
+
+    printGridWithNumbers :: [[Maybe Cell]] -> Int ->  IO ()
+    printGridWithNumbers [] n =  return ()
+    printGridWithNumbers (x:xs) n = 
+        if n == 0 then do
+            putStrLn $ "  " ++ buildLineWithNumber (length x)
+            printGridWithNumbers (x:xs) (n + 1)
+
+        else do
+            putStrLn $ nStr ++ buildLine x
+            printGridWithNumbers xs (n + 1)
+
+        where
+            nStr = if n < 10 then " " ++ show n else show n
+               
+    -- Função que imprime uma Matrix (Maybe Cell) sem os números correspondentes a cada linha e coluna, a mesma recebe uma lista de Maybe Cell, que pode ser facilmente obtida através do
+    -- método gridToLists aplicado a uma Matrix (Maybe Cell). Sempre inicie o método com o n igual a 0, e procure não utilizar uma matriz
+    -- com mais de 2 casas decimais para não quebrar a formatação
+
+    printGrid :: [[Maybe Cell]] -> Int -> IO ()
+    printGrid [] _ = return ()
+    printGrid (x:xs) n = do 
+        if n == 0 then do
+            putStrLn ""
+            printGrid (x:xs) (n + 1)
+        else do
+            putStrLn $ "  " ++ buildLine x
+            printGrid xs n
+
+    -- Função que retorna a String formatada de cada linha de uma Matrix (Maybe Cell)
+    buildLine :: [Maybe Cell] -> String
+    buildLine cellRow = "|" ++ intercalate "|" cells ++ "|"
+        where 
+            cells = [if isAlive cell then color (fromJust cell) else "⬛" | cell <- cellRow]
+
+    -- Função que retorna a String formatada dos números correspondentes a cada coluna de uma Matrix (Maybe Cell)
+    buildLineWithNumber :: Int -> String
+    buildLineWithNumber n = "|" ++ intercalate "|" list ++ "|"
+        where list = [if c > 9 then show c else " " ++ show c | c <-[1..n]]
+    -- ------------------------------------------------------------------------------------------------

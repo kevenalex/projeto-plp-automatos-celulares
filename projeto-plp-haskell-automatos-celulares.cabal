@@ -30,7 +30,6 @@ library
       Models.Rule
       Models.Teste
       Controllers.GridController
-      Controllers.Mainzinho
       Files.Cell
       Files.Scene
       Main
@@ -51,14 +50,21 @@ library
     , containers
     , directory
     , matrix >=0.3.6.0
+<<<<<<< HEAD
     , process
+=======
+    , vector
+>>>>>>> ac918e9a71485a7377205d33ddd02ab9e01c48c0
   default-language: Haskell2010
 
 executable projeto-plp-haskell-automatos-celulares-exe
   main-is: Main.hs
   other-modules:
       Controllers.GridController
+<<<<<<< HEAD
       Controllers.Mainzinho
+=======
+>>>>>>> ac918e9a71485a7377205d33ddd02ab9e01c48c0
       Files.Cell
       Files.Scene
       Paths_projeto_plp_haskell_automatos_celulares
@@ -78,6 +84,7 @@ executable projeto-plp-haskell-automatos-celulares-exe
     , matrix >=0.3.6.0
     , process
     , projeto-plp-haskell-automatos-celulares
+    , vector
   default-language: Haskell2010
 
 test-suite projeto-plp-haskell-automatos-celulares-test
@@ -101,4 +108,5 @@ test-suite projeto-plp-haskell-automatos-celulares-test
     , matrix >=0.3.6.0
     , process
     , projeto-plp-haskell-automatos-celulares
+    , vector
   default-language: Haskell2010
