@@ -9,9 +9,9 @@ module Main where
 
     import Control.Concurrent (threadDelay)
     import System.Console.ANSI (clearScreen)
-
-<<<<<<< HEAD
-    import Controllers.Menu (menu)
+    
+    main :: IO () 
+    main = print "gay"
     
   {-   main :: IO ()
 =======
@@ -67,11 +67,6 @@ module Main where
 --     updates <- print grid
 --     printsList updates : (gridUpdate grid) (n - 1)
 
-<<<<<<< HEAD
  -}
-    main :: IO()
-    main = menu
-=======
     -- threadDelay 1000000  -- Espera 1 segundo (1 segundo = 1.000.000 microssegundos)
     -- clearScreen
->>>>>>> 55f5473cdae25833b80b33002fbd07de9f8da202

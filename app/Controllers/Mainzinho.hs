@@ -1,3 +1,22 @@
+module Mainzinho where
+
+    main :: IO()
+    main = do 
+        x <- getLine
+        chooseOption x
+
+    chooseOption :: String -> IO()
+    chooseOption choose
+        | choose == "1" = print "playGame"
+        | choose == "2" = print "CreateRule"
+        | choose == "3" = print "CreateGrid"
+        | choose == "q" = print "xau"
+        | otherwise = 
+            do 
+                _ <- system "clear"
+                print "tente de novo"
+                main
+
 module Controllers.GridController where
 
     import Models.Cell

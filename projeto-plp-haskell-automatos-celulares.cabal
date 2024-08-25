@@ -29,16 +29,10 @@ library
       Models.Grid
       Models.Rule
       Models.Teste
-<<<<<<< HEAD
-      Controllers.Menu
-=======
-<<<<<<< HEAD
       Controllers.GridController
-=======
+      Controllers.Mainzinho
       Files.Cell
       Files.Scene
->>>>>>> 96103b2b9ccafc2806eb30d0746509c52b595a60
->>>>>>> ef2106f62f7b0c3c17594de33a9fa2e597fd5677
       Main
   other-modules:
       Paths_projeto_plp_haskell_automatos_celulares
@@ -57,21 +51,16 @@ library
     , containers
     , directory
     , matrix >=0.3.6.0
+    , process
   default-language: Haskell2010
 
 executable projeto-plp-haskell-automatos-celulares-exe
   main-is: Main.hs
   other-modules:
-<<<<<<< HEAD
-      Controllers.Menu
-=======
-<<<<<<< HEAD
       Controllers.GridController
-=======
+      Controllers.Mainzinho
       Files.Cell
       Files.Scene
->>>>>>> 96103b2b9ccafc2806eb30d0746509c52b595a60
->>>>>>> ef2106f62f7b0c3c17594de33a9fa2e597fd5677
       Paths_projeto_plp_haskell_automatos_celulares
   autogen-modules:
       Paths_projeto_plp_haskell_automatos_celulares
@@ -87,6 +76,7 @@ executable projeto-plp-haskell-automatos-celulares-exe
     , containers
     , directory
     , matrix >=0.3.6.0
+    , process
     , projeto-plp-haskell-automatos-celulares
   default-language: Haskell2010
 
@@ -109,5 +99,6 @@ test-suite projeto-plp-haskell-automatos-celulares-test
     , containers
     , directory
     , matrix >=0.3.6.0
+    , process
     , projeto-plp-haskell-automatos-celulares
   default-language: Haskell2010
