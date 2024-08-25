@@ -44,3 +44,9 @@ module Files.Cell (readCells, addCell) where
     -- na real devia ser um erro ne
 
 
+    deleteCell :: FilePath -> String -> IO()
+    deleteCell path nameToDelete = do
+        cellsJSON <- readCells path
+        case decode cellsJSON :: Maybe [Cell] of
+            Nothing -> error "No cells to delete"
+            Just cells -> saveCells path [c | c <- cells, name c /= nameToDelete]

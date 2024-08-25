@@ -56,4 +56,10 @@ module Files.Scene (readScenes, addScene, Scene(Scene)) where
                     then saveScenes path sceneDict -- aqui podia ser um erro
                 else saveScenes path $ M.insert (title scene) scene sceneDict
 
-
+    -- recebe o caminho do arquivo onde as cenas são guardadas, e o título da cena a ser removida
+    deleteScene :: FilePath -> String -> IO()
+    deleteScene path title = do
+        sceneJSON <- readScenes path
+        case decode sceneJSON :: Maybe (M.Map String Scene) of
+            Nothing -> error "No scenes exist to delete"
+            Just sceneDict -> saveScenes path $ M.delete title sceneDict
