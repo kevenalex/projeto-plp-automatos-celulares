@@ -28,8 +28,6 @@ library
       Models.Cell
       Models.Grid
       Models.Rule
-      Models.Teste
-      Controllers.AutomataController
       Controllers.GridController
       Files.Cell
       Files.Scene
@@ -43,7 +41,8 @@ library
       app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      aeson
+      HUnit
+    , aeson
     , ansi-terminal
     , array
     , base >=4.7 && <5
@@ -68,7 +67,8 @@ executable projeto-plp-haskell-automatos-celulares-exe
       app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      aeson
+      HUnit
+    , aeson
     , ansi-terminal
     , array
     , base >=4.7 && <5
@@ -91,7 +91,8 @@ test-suite projeto-plp-haskell-automatos-celulares-test
       test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      aeson
+      HUnit
+    , aeson
     , ansi-terminal
     , array
     , base >=4.7 && <5

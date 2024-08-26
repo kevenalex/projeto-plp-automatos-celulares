@@ -19,7 +19,7 @@ module Controllers.GridController where
     -- com mais de 2 casas decimais para não quebrar a formatação
 
     printGridWithNumbers :: [[Maybe Cell]] -> Int ->  IO ()
-    printGridWithNumbers [] n =  return ()
+    printGridWithNumbers [] _ =  return ()
     printGridWithNumbers (x:xs) n = 
         if n == 0 then do
             putStrLn $ "  " ++ buildLineWithNumber (length x)
@@ -32,7 +32,8 @@ module Controllers.GridController where
         where
             nStr = if n < 10 then " " ++ show n else show n
                
-    -- Função que imprime uma Matrix (Maybe Cell) sem os números correspondentes a cada linha e coluna, a mesma recebe uma lista de Maybe Cell, que pode ser facilmente obtida através do
+    -- Função que imprime uma Matrix (Maybe Cell) sem os números correspondentes a cada linha e coluna, 
+    -- a mesma recebe uma lista de Maybe Cell, que pode ser facilmente obtida através do
     -- método gridToLists aplicado a uma Matrix (Maybe Cell). Sempre inicie o método com o n igual a 0, e procure não utilizar uma matriz
     -- com mais de 2 casas decimais para não quebrar a formatação
 

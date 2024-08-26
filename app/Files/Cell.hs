@@ -1,16 +1,10 @@
-{-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
-
 module Files.Cell (readCells, addCell) where
     import Data.Aeson
-    import GHC.Generics
 
-    import qualified Data.Map as M
     import qualified Data.ByteString.Lazy as B
     import System.Directory
 
     import Models.Cell
-    import Models.Rule
-    import Models.Grid
     
 
     -- path = "./app/storage/cells.json"
