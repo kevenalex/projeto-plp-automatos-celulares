@@ -56,7 +56,6 @@ module Controllers.GridController where
     buildLineWithNumber n = intercalate " " list ++ " "
         where list = [if c > 9 then show c else " " ++ show c | c <-[1..n]]
     -- ------------------------------------------------------------------------------------------------
-
     simulate :: Matrix (Maybe Cell) -> IO()
     simulate matrix = do
         -- _ <- system "clear"

@@ -1,4 +1,4 @@
-module Files.Cell (readCells, addCell) where
+module Files.Cell (readCells, addCell, deleteCell) where
     import Data.Aeson
 
     import qualified Data.ByteString.Lazy as B
@@ -42,5 +42,9 @@ module Files.Cell (readCells, addCell) where
     deleteCell path nameToDelete = do
         cellsJSON <- readCells path
         case decode cellsJSON :: Maybe [Cell] of
-            Nothing -> error "No cells to delete"
-            Just cells -> saveCells path [c | c <- cells, name c /= nameToDelete]
+            Nothing -> putStrLn "No cells to delete"
+            Just cells -> if nameToDelete `elem` map name cells
+                then do 
+                    saveCells path [c | c <- cells, name c /= nameToDelete]
+                    putStrLn $  nameToDelete ++ " removido"
+                else putStrLn "Não tem um autômato com esse nome"
