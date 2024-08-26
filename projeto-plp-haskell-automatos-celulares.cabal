@@ -29,6 +29,7 @@ library
       Models.Grid
       Models.Rule
       Models.Teste
+      Controllers.AutomataController
       Controllers.GridController
       Files.Cell
       Files.Scene
@@ -56,6 +57,7 @@ library
 executable projeto-plp-haskell-automatos-celulares-exe
   main-is: Main.hs
   other-modules:
+      Controllers.AutomataController
       Controllers.GridController
       Files.Cell
       Files.Scene

@@ -54,6 +54,6 @@ module Controllers.GridController where
 
     -- Função que retorna a String formatada dos números correspondentes a cada coluna de uma Matrix (Maybe Cell)
     buildLineWithNumber :: Int -> String
-    buildLineWithNumber n = "|" ++ intercalate "|" list ++ "|"
+    buildLineWithNumber n = " " ++ intercalate " " list ++ " "
         where list = [if c > 9 then show c else " " ++ show c | c <-[1..n]]
     -- ------------------------------------------------------------------------------------------------
