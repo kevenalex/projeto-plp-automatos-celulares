@@ -30,6 +30,7 @@ dependencies:
 - ansi-terminal
 - vector
 - HUnit
+- process
 
 ghc-options:
 - -Wall

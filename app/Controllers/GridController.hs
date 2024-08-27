@@ -3,11 +3,12 @@ module Controllers.GridController where
     import Models.Cell
     import Models.Grid
     import Models.Rule
-    import Data.Matrix
+    import Data.Matrix hiding (matrix)
     import qualified Data.Vector as V
     import Data.List (intercalate)
     import Data.Maybe
     import Data.Char (intToDigit)
+    import System.Process (system)
     
 
     -- Funções que gerem a impressão da Matrix (Maybe Cell)
@@ -49,7 +50,7 @@ module Controllers.GridController where
     buildLine :: [Maybe Cell] -> String
     buildLine cellRow = intercalate "" cells
         where 
-            cells = [if isAlive cell then color (fromJust cell) else "⬛ " | cell <- cellRow]
+            cells = [if isAlive cell then color (fromJust cell) else "⬛" | cell <- cellRow]
 
     -- Função que retorna a String formatada dos números correspondentes a cada coluna de uma Matrix (Maybe Cell)
     buildLineWithNumber :: Int -> String
@@ -58,7 +59,7 @@ module Controllers.GridController where
     -- ------------------------------------------------------------------------------------------------
     simulate :: Matrix (Maybe Cell) -> IO()
     simulate matrix = do
-        -- _ <- system "clear"
+        _ <- system "clear"
         printGrid (gridToLists matrix) 0
         putStrLn "digite G para iniciar a geração"
         putStrLn "digite N para simular só o próximo estágio"
@@ -75,9 +76,10 @@ module Controllers.GridController where
 
     startGeneration :: Matrix (Maybe Cell) -> IO()
     startGeneration grid = putStrLn "foda-se"
-
+    
     nextStep :: Matrix (Maybe Cell) -> IO()
-    nextStep grid = putStrLn "foda-se"
+    nextStep grid = simulate $ gridUpdate grid
 
     insertion :: Matrix (Maybe Cell) -> IO()
     insertion grid = putStrLn "gay"
+
