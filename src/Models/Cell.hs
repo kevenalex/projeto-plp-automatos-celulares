@@ -7,15 +7,15 @@ module Models.Cell where
     import Data.Maybe (isJust)
     import Data.Aeson
     import GHC.Generics
-
+    import System.Console.ANSI (Color)
+    
 
     data Cell =   
         Cell {
         name :: String,
         rule :: Rule,
-        color :: String 
+        color :: String
         } deriving (Generic,ToJSON, FromJSON)
-    
 
     instance Show Cell where
         show cell = name cell ++ " " ++ (show $ rule cell) ++ " Cor: " ++ color cell

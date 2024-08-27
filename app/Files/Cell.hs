@@ -5,6 +5,7 @@ module Files.Cell (readCells, addCell, deleteCell) where
     import System.Directory
 
     import Models.Cell
+    import Models.Rule
     
 
     -- path = "./app/storage/cells.json"
