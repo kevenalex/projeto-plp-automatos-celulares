@@ -1,65 +1,53 @@
 module Main where
 
-    import Models.Grid
-    import Models.Rule
-    import Models.Cell
+  import Utils.Logo
+  import System.Console.ANSI
+  import Controllers.MenuEditarCellsController(menuCells)
+  import Data.Char
+  import System.Exit (exitSuccess)
+  
+  main :: IO()
+  main = do
 
-    import Data.Char
-    import Data.Matrix
+      clearScreen
 
-    import Control.Concurrent (threadDelay)
-    import System.Console.ANSI (clearScreen)
+      printLogoMoreDelay
 
-    toAnimal :: Char -> Char
-    toAnimal c = chr . (+127970) $ ord c
+      selectFirstOption
 
-    toSmileyEmoji :: Char-> Char
-    toSmileyEmoji c = chr . (+128415) $ ord c
+      selectOption False
 
-    encode :: String -> String
-    encode xs = map (\c -> if isUpper c then toAnimal c else toSmileyEmoji c) xs
+  selectOption :: Bool -> IO ()
+  selectOption error = do
+    
+    clearScreen
+    
+    if error then printMainMenuInvalidOption
+    else printLogoLessDelay
 
-    fromAnimal :: Char -> Char
-    fromAnimal c = chr $ (ord c) - 127970
+    opcao <- getLine
 
-    fromSmileyEmoji :: Char-> Char
-    fromSmileyEmoji c = chr $ (ord c) - 128415
+    case toUpper $ head opcao of
+      '1' -> do menuAutomatasSandBox "app/storage/cells.json"; selectOption False;
+      '2' -> do menuAutomatasCarregarCena "app/storage/cells.json"; selectOption False;
+      '3' -> do menuCells "app/storage/cells.json"; selectOption False;
+      '4' -> do menuTutorial; selectOption False;
+      '5' -> exitSuccess
+      _ -> do
+        selectOption True
 
-    isAnimal :: Char -> Bool
-    isAnimal c = if ((ord c >= ord '🐣') && (ord c <= ord '🐼')) then True else False
+  selectFirstOption :: IO ()
+  selectFirstOption = do
+    
+    opcao <- getLine
 
-    decode :: String -> String
-    decode xs = map (\c -> if isAnimal c then fromAnimal c else fromSmileyEmoji c) xs
-
-    main :: IO ()
-    main = do
-
-      contents1 <- getLine
-      contents2 <- getLine
-      putStr $ (encode contents1) ++ "\n" ++ (decode contents2)
-
-      -- putStrLn "Oi"
-      
-      -- let golRule = Rule [3] [1,2,3,4,5]
-      -- let golCell = Cell "🐱" golRule "Verde"
-
-      -- let state0 = gridGenerate 9 9
-      -- let state1 = insertCell state0 golCell (1,2)
-      -- let state2 = insertCell state1 golCell (2,3)
-      -- let state3 = insertCell state2 golCell (3,1)
-      -- let state4 = insertCell state3 golCell (3,2)
-      -- let state5 = insertCell state4 golCell (3,3)
-
-
-
-      -- putStr $ show state5
-
-      
--- printsList :: Matrix (Maybe Cell) -> Int -> IO [String]
--- printsList _ 0 = return [] -- Caso base: quando n for 0, para a recursão
--- printsList grid n = do
---     updates <- print grid
---     printsList updates : (gridUpdate grid) (n - 1)
-
-    -- threadDelay 1000000  -- Espera 1 segundo (1 segundo = 1.000.000 microssegundos)
-    -- clearScreen
+    case toUpper $ head opcao of
+      '1' -> menuAutomatasSandBox "app/storage/cells.json"
+      '2' -> menuAutomatasCarregarCena "app/storage/cells.json"
+      '3' -> menuCells "app/storage/cells.json"
+      '4' -> menuTutorial
+      '5' -> exitSuccess
+      _ -> do
+        clearScreen
+        printMainMenuInvalidOption
+        selectFirstOption

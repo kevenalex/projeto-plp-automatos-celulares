@@ -1,4 +1,4 @@
-module Controllers.AutomataController where
+module Controllers.MenuEditarCellsController where
     import Files.Cell
     import Data.Aeson
     import Models.Cell
@@ -9,8 +9,8 @@ module Controllers.AutomataController where
     import System.Process(system)
     
     
-    menuAutomatas :: FilePath -> IO()
-    menuAutomatas path = do
+    menuCells :: FilePath -> IO()
+    menuCells path = do
         cellsJSON <- readCells path
         
         case decode cellsJSON :: Maybe [Cell] of 
@@ -32,10 +32,10 @@ module Controllers.AutomataController where
         option <- getLine
 
         case toUpper (head option) of
-            'A' -> do addAutomata path; menuAutomatas path;
-            'D' -> do removeAutomata path; menuAutomatas path
+            'A' -> do addAutomata path; menuCells path;
+            'D' -> do removeAutomata path; menuCells path
             'R' -> putStr ""
-            _ -> menuAutomatas path 
+            _ -> menuCells path 
 
     addAutomata ::FilePath ->  IO()
     addAutomata path = do
@@ -63,7 +63,7 @@ module Controllers.AutomataController where
         addCell path cell
 
         putStrLn $ "Célula " ++  name cell ++ "adicionada"
-        menuAutomatas path
+        menuCells path
 
     colorMenu :: IO String
     colorMenu = do

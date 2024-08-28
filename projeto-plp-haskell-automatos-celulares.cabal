@@ -28,13 +28,14 @@ library
       Models.Cell
       Models.Grid
       Models.Rule
-      Controllers.AutomataController
       Controllers.GridController
+      Controllers.MenuEditarCellsController
       Controllers.SceneController
       Controllers.Teste
       Files.Cell
       Files.Scene
       Main
+      Utils.Logo
   other-modules:
       Paths_projeto_plp_haskell_automatos_celulares
   autogen-modules:
@@ -60,12 +61,13 @@ library
 executable projeto-plp-haskell-automatos-celulares-exe
   main-is: Main.hs
   other-modules:
-      Controllers.AutomataController
       Controllers.GridController
+      Controllers.MenuEditarCellsController
       Controllers.SceneController
       Controllers.Teste
       Files.Cell
       Files.Scene
+      Utils.Logo
       Paths_projeto_plp_haskell_automatos_celulares
   autogen-modules:
       Paths_projeto_plp_haskell_automatos_celulares
