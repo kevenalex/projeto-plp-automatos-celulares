@@ -1,20 +1,40 @@
 module Controllers.Teste where
 
-import System.IO (hFlush, stdout)
 import System.Console.ANSI
 
+type Grid = [[Char]]
+
+-- Função para imprimir uma linha da grid
+printRow :: [Char] -> IO ()
+printRow row = do
+    mapM_ printCell row
+    putStrLn ""  -- Move para a próxima linha
+
+-- Função para imprimir uma célula com um quadrado branco ou espaço
+printCell :: Char -> IO ()
+printCell cell
+    | cell == 'O' = do
+        setSGR [SetColor Foreground Vivid White]  -- Define a cor do texto como branco
+        putStr "██"  -- Imprime um bloco sólido
+        setSGR [Reset]  -- Reseta as cores para o padrão
+    | otherwise = putStr " "  -- Espaço para célula morta
+
+-- Função para imprimir a grid inteira
+printGrid :: Grid -> IO ()
+printGrid grid = do
+    clearScreen  -- Limpa a tela antes de imprimir
+    mapM_ printRow grid
+
+-- Exemplo de uso
 main :: IO ()
 main = do
-  stdoutSupportsANSI <- hNowSupportsANSI stdout
-  if stdoutSupportsANSI
-    then do
-      setSGR [SetColor Foreground Dull Blue]
-      putStr "Enter your name: "
-      setSGR [SetColor Foreground Dull Yellow]
-      hFlush stdout  -- flush the output buffer before getLine
-      name <- getLine
-      setSGR [SetColor Foreground Dull Blue]
-      putStrLn $ "Hello, " ++ name ++ "!"
-      setSGR [Reset]  -- reset to default colour scheme
-    else
-      putStrLn "Standard output does not support 'ANSI' escape codes."
+    let grid = ["  O    O  ",
+                "O  O  O  O",
+                "  O    O  ",
+                " O      O ",
+                "          ",
+                " O      O ",
+                "  O    O  ",
+                "O  O  O  O",
+                "  O    O  "]
+    printGrid grid

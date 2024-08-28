@@ -86,7 +86,6 @@ module Controllers.AutomataController where
         "8" -> Just "Branco"
         _ -> Nothing
        
-
     printColorMenu :: IO ()
     printColorMenu = do
         putStrLn ""
