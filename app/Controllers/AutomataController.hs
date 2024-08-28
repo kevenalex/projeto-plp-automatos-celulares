@@ -8,7 +8,7 @@ module Controllers.AutomataController where
     import Data.Maybe
     import System.Process(system)
     
-
+    
     menuAutomatas :: FilePath -> IO()
     menuAutomatas path = do
         cellsJSON <- readCells path
@@ -58,9 +58,8 @@ module Controllers.AutomataController where
         let regra = Rule nascList stayList
         
         colorI <- colorMenu
-        let colorP = read colorI :: String 
 
-        let cell = Cell nameCell regra colorP
+        let cell = Cell nameCell regra colorI
         addCell path cell
 
         putStrLn $ "Célula " ++  name cell ++ "adicionada"
