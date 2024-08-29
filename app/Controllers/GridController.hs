@@ -61,14 +61,14 @@ module Controllers.GridController where
 
     toColor :: String -> Maybe Color
     toColor color = case color of
-        "Preto" -> Just Black
-        "Vermelho" -> Just Red
-        "Verde" -> Just Green
-        "Amarelo" -> Just Yellow
-        "Azul" -> Just Blue
-        "Magenta" -> Just Magenta
-        "Ciano" -> Just Cyan
-        "Branco" -> Just White
+        "PRETO" -> Just Black
+        "VERMELHO" -> Just Red
+        "VERDE" -> Just Green
+        "AMARELO" -> Just Yellow
+        "AZUL" -> Just Blue
+        "MAGENTA" -> Just Magenta
+        "CIANO" -> Just Cyan
+        "BRANCO" -> Just White
         _ -> Nothing
 
     -- Função que retorna a String formatada de cada linha de uma Matrix (Maybe Cell)

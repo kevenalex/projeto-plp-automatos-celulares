@@ -9,36 +9,31 @@ module Controllers.MenuEditarCellsController where
     import System.Process(system)
     import Utils.Logo
     import Data.Vector.Generic.Mutable (clear)
-    
+    import Control.Concurrent(threadDelay)
+
     
     menuCells :: FilePath -> IO()
     menuCells path = do
-        
-        clearScreen
-
-        printEmptyLines 21
 
         cellsJSON <- readCells path
         
         case decode cellsJSON :: Maybe [Cell] of 
 
-            Nothing -> do
+            Nothing -> error "ARQUIVO app/storage/cells.json MODIFICADO OU CORROMPIDO\nAPAGUE O CONTEUDO DO MESMO E INSIRA [] NO SEU CONTEUDO\nTENTE EXECUTAR O PROGRAMA NOVAMENTE"
 
-                screen <- readFile "app/storage/screenNoCells.txt"
-
-                let linhas = lines screen
-        
-                mapM_ printLessDelay linhas 
-                
             Just cells -> do 
+                
+                if null cells then printTextFileWithClear "app/storage/ruleController/screenNoCells.txt"
+                else do 
+                    printTextFileWithClear "app/storage/ruleController/listOfCells.txt"
 
-                printCells cells 1
+                    printEmptyLines 2
 
-                printEmptyLines 2
+                    printCells cells 1
 
-                putStrLn "                                                       1) ADICIONAR CELULA   2) DELETAR CELULA   3) VOLTAR"
+                    printEmptyLines 1
 
-        printEmptyLines 21
+                    printTextFileNoClear "app/storage/ruleController/ruleMenuOptions.txt"
 
         option <- getLine
 
@@ -46,46 +41,45 @@ module Controllers.MenuEditarCellsController where
             "1" -> do addAutomata path; menuCells path;
             "2" -> do removeAutomata path; menuCells path
             "3" -> return ()
-            _ -> menuCells path 
+            _ -> menuCells path
 
     addAutomata ::FilePath ->  IO()
     addAutomata path = do
 
-        printBuildCellQuestion "QUAL O NOME DA CELULA?" 
+        printTextFileWithClear "app/storage/ruleController/nameCellQuestion.txt"
 
-        nameCell <- getLine
+        nameCellNT <- getLine
+        let nameCellT = map toUpper nameCellNT
 
-        printBuildCellQuestion "QUAL A SUA REGRA DE NASCIMENTO?"
+        printTextFileWithClear "app/storage/ruleController/birthRule.txt"
 
         nascStr <- getLine
         let nascList = map (\x -> read [x] :: Int) nascStr
         
-        printBuildCellQuestion "QUAL A SUA REGRA DE PERMANENCIA?"
+        printTextFileWithClear "app/storage/ruleController/stayRule.txt"
         
         stayStr <- getLine
         let stayList = map (\x -> read [x] :: Int) stayStr -- Todo verificar que esses números tão entre 1 e 8, e se são numerinhos
 
         let regra = Rule nascList stayList
 
-        printBuildCellQuestion "QUAL A COR DA SUA CELULA?\n\n                                                           1) VERMELHO  2) VERDE  3) AMARELO  4) AZUL\n                                                           5) MAGENTA   6) CIANO  7) BRANCO"
+        printTextFileWithClear "app/storage/ruleController/colorMenu.txt"
 
         colorI <- getLine
 
-        if isNothing $ selectColor colorI then do printRuleMenuColorError; return ();
+        if isNothing $ selectColor colorI then do printTextFileWithClear "app/storage/ruleController/ruleMenuColorError.txt"; threadDelay 200000;
         else do 
-            let cell = Cell nameCell regra $ fromJust $ selectColor colorI
+            let cell = Cell nameCellT regra $ fromJust $ selectColor colorI
             addCell path cell
-            return ()
 
-    printBuildCellQuestion :: String ->  IO ()
-    printBuildCellQuestion qst = do
-        clearScreen
-        printEmptyLines 21
-        putStrLn "                                                                   CRIANDO UMA CELULA"
-        printEmptyLines 4
-        putStrLn $ "                                                                   " ++ qst
-        printEmptyLines 21
-
+    -- printBuildCellQuestion :: String ->  IO ()
+    -- printBuildCellQuestion qst = do
+    --     clearScreen
+    --     printEmptyLines 21
+    --     putStrLn "                                                                   CRIANDO UMA CELULA"
+    --     printEmptyLines 4
+    --     putStrLn $ "                                                                   " ++ qst
+    --     printEmptyLines 21
 
     -- printBuildCellWithName :: String -> IO ()
     -- printBuildCellWithName name = do
@@ -120,13 +114,13 @@ module Controllers.MenuEditarCellsController where
 
     selectColor :: String -> Maybe String
     selectColor color = case color of
-        "1" -> Just "Vermelho"
-        "2" -> Just "Verde"
-        "3" -> Just "Amarelo"
-        "4" -> Just "Azul"
-        "5" -> Just "Magenta"
-        "6" -> Just "Ciano"
-        "7" -> Just "Branco"
+        "1" -> Just "VERMELHO"
+        "2" -> Just "VERDE"
+        "3" -> Just "AMARELO"
+        "4" -> Just "AZUL"
+        "5" -> Just "MAGENTA"
+        "6" -> Just "CIANO"
+        "7" -> Just "BRANCO"
         _ -> Nothing
        
     -- printColorMenu :: IO ()
@@ -140,44 +134,35 @@ module Controllers.MenuEditarCellsController where
     removeAutomata :: FilePath -> IO()
     removeAutomata path = do 
 
-        clearScreen
-
         cellsJSON <- readCells path
         
         case decode cellsJSON :: Maybe [Cell] of 
 
-            Nothing -> do
+            Nothing -> error "ARQUIVO app/storage/cells.json MODIFICADO OU CORROMPIDO\nAPAGUE O CONTEUDO DO MESMO E INSIRA [] NO SEU CONTEUDO\nTENTE EXECUTAR O PROGRAMA NOVAMENTE"
 
-                screen <- readFile "app/storage/screenNoCells.txt"
-
-                let linhas = lines screen
-        
-                mapM_ printLessDelay linhas 
-                
             Just cells -> do 
+                
+                if null cells then return ()
+                else do
+                    printTextFileWithClear "app/storage/ruleController/listOfCells.txt"
 
-                printEmptyLines 21
+                    printEmptyLines 2
 
-                putStrLn ""
+                    printCells cells 1
 
-                printCells cells 1
+                    printEmptyLines 1
 
-                putStrLn ""
+                    printTextFileNoClear "app/storage/ruleController/removeCellMenu.txt"
 
-        putStrLn ""
-        
-        putStrLn "                                                                     QUAL CELULA VOCE QUER REMOVER?"
-
-        printEmptyLines 21
-
-        nameCell <- getLine
-        deleteCell path nameCell
+                    nameCellI <- getLine
+                    let nameCellT = map toUpper nameCellI 
+                    deleteCell path nameCellT
 
 
     printCells :: [Cell] -> Int -> IO()
     printCells [] n = return ()
     printCells (x:xs) n = do
-        putStrLn $ "                                                                     " ++ show n ++ "- " ++ show x
+        putStrLn $ "                                                                     " ++ show n ++ " - " ++ show x
         printCells xs (n + 1)
 
     

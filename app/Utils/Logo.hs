@@ -1,12 +1,13 @@
 module Utils.Logo where
 
     import Control.Concurrent(threadDelay)
+    import System.Console.ANSI
 
     -- Imprime a logo
     printLogoMoreDelay :: IO ()
     printLogoMoreDelay = do 
 
-        logo <- readFile "app/storage/mainMenu.txt"
+        logo <- readFile "app/storage/mainMenuController/mainMenu.txt"
         
         let linhas = lines logo
         
@@ -15,7 +16,7 @@ module Utils.Logo where
     printLogoLessDelay :: IO ()
     printLogoLessDelay = do
 
-        logo <- readFile "app/storage/mainMenu.txt"
+        logo <- readFile "app/storage/mainMenuController/mainMenu.txt"
 
         let linhas = lines logo
         
@@ -33,7 +34,7 @@ module Utils.Logo where
     printMainMenuInvalidOption :: IO ()
     printMainMenuInvalidOption = do
 
-        logo <- readFile "app/storage/mainMenuInvalidOption.txt"
+        logo <- readFile "app/storage/mainMenuController/mainMenuInvalidOption.txt"
 
         let linhas = lines logo
         
@@ -52,3 +53,22 @@ module Utils.Logo where
     printEmptyLines :: Int -> IO ()
     printEmptyLines 0 = return ()
     printEmptyLines n = do putStrLn ""; printEmptyLines (n-1) 
+
+    printTextWithDelayNoClear :: FilePath -> IO ()
+    printTextWithDelayNoClear file = do
+        screen <- readFile file
+        let linhas = lines screen
+        mapM_ printMoreDelay linhas 
+
+    printTextFileWithClear :: FilePath -> IO()
+    printTextFileWithClear file = do
+        clearScreen
+        screen <- readFile file
+        let linhas = lines screen
+        mapM_ printLessDelay linhas 
+
+    printTextFileNoClear :: FilePath -> IO()
+    printTextFileNoClear file = do
+        screen <- readFile file
+        let linhas = lines screen
+        mapM_ printLessDelay linhas 

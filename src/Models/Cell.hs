@@ -8,6 +8,7 @@ module Models.Cell where
     import Data.Aeson
     import GHC.Generics
     import System.Console.ANSI (Color)
+    import Data.Char (toUpper)
     
 
     data Cell =   
@@ -18,7 +19,7 @@ module Models.Cell where
         } deriving (Generic,ToJSON, FromJSON)
 
     instance Show Cell where
-        show cell = name cell ++ " " ++ show  (rule cell) ++ " Cor: " ++ color cell
+        show cell = map toUpper $ name cell ++ " " ++ show  (rule cell) ++ " COR: " ++ color cell
 
     instance Eq Cell where
        (Cell name1 rule1 color1) == (Cell name2 rule2 color2) = (name1 == name2) && (rule1 == rule2) && (color1 == color2)

@@ -11,6 +11,10 @@ module Main where
 
       clearScreen
 
+      Just (_, screenHeight) <- getTerminalSize
+
+      setCursorPosition (screenHeight - 1) 0
+
       printLogoMoreDelay
 
       selectFirstOption
@@ -32,7 +36,10 @@ module Main where
       -- '2' -> do menuAutomatasCarregarCena "app/storage/cells.json"; selectOption False;
       '3' -> do menuCells "app/storage/cells.json"; selectOption False;
       -- '4' -> do menuTutorial; selectOption False;
-      '5' -> do setSGR [Reset]; exitSuccess;
+      '5' -> do
+        setCursorPosition 0 0
+        printTextWithDelayNoClear "app/storage/mainMenuController/emptyMenu.txt"
+        exitSuccess
       _ -> do
         selectOption True
 
@@ -46,7 +53,10 @@ module Main where
       -- '2' -> menuAutomatasCarregarCena "app/storage/cells.json"
       '3' -> menuCells "app/storage/cells.json"
       -- '4' -> menuTutorial
-      '5' -> do setSGR [Reset]; exitSuccess;
+      '5' -> do 
+        setCursorPosition 0 0
+        printTextWithDelayNoClear "app/storage/mainMenuController/emptyMenu.txt"
+        exitSuccess
       _ -> do
         clearScreen
         printMainMenuInvalidOption
