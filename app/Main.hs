@@ -28,11 +28,11 @@ module Main where
     opcao <- getLine
 
     case toUpper $ head opcao of
-      '1' -> do menuAutomatasSandBox "app/storage/cells.json"; selectOption False;
-      '2' -> do menuAutomatasCarregarCena "app/storage/cells.json"; selectOption False;
+      -- '1' -> do menuAutomatasSandBox "app/storage/cells.json"; selectOption False;
+      -- '2' -> do menuAutomatasCarregarCena "app/storage/cells.json"; selectOption False;
       '3' -> do menuCells "app/storage/cells.json"; selectOption False;
-      '4' -> do menuTutorial; selectOption False;
-      '5' -> exitSuccess
+      -- '4' -> do menuTutorial; selectOption False;
+      '5' -> do setSGR [Reset]; exitSuccess;
       _ -> do
         selectOption True
 
@@ -42,11 +42,11 @@ module Main where
     opcao <- getLine
 
     case toUpper $ head opcao of
-      '1' -> menuAutomatasSandBox "app/storage/cells.json"
-      '2' -> menuAutomatasCarregarCena "app/storage/cells.json"
+      -- '1' -> menuAutomatasSandBox "app/storage/cells.json"
+      -- '2' -> menuAutomatasCarregarCena "app/storage/cells.json"
       '3' -> menuCells "app/storage/cells.json"
-      '4' -> menuTutorial
-      '5' -> exitSuccess
+      -- '4' -> menuTutorial
+      '5' -> do setSGR [Reset]; exitSuccess;
       _ -> do
         clearScreen
         printMainMenuInvalidOption

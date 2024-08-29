@@ -6,7 +6,7 @@ module Utils.Logo where
     printLogoMoreDelay :: IO ()
     printLogoMoreDelay = do 
 
-        logo <- readFile "app/storage/logo.txt"
+        logo <- readFile "app/storage/mainMenu.txt"
         
         let linhas = lines logo
         
@@ -15,9 +15,18 @@ module Utils.Logo where
     printLogoLessDelay :: IO ()
     printLogoLessDelay = do
 
-        logo <- readFile "app/storage/logo.txt"
+        logo <- readFile "app/storage/mainMenu.txt"
 
         let linhas = lines logo
+        
+        mapM_ printLessDelay linhas
+
+    printRuleMenuColorError :: IO()
+    printRuleMenuColorError = do
+
+        menuColor <- readFile "app/storage/ruleMenuColorError.txt"
+
+        let linhas = lines menuColor
         
         mapM_ printLessDelay linhas
 
@@ -39,3 +48,7 @@ module Utils.Logo where
     printLessDelay str = do
         putStrLn str
         threadDelay 10000
+
+    printEmptyLines :: Int -> IO ()
+    printEmptyLines 0 = return ()
+    printEmptyLines n = do putStrLn ""; printEmptyLines (n-1) 

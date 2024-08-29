@@ -7,102 +7,177 @@ module Controllers.MenuEditarCellsController where
     import System.Console.ANSI
     import Data.Maybe
     import System.Process(system)
+    import Utils.Logo
+    import Data.Vector.Generic.Mutable (clear)
     
     
     menuCells :: FilePath -> IO()
     menuCells path = do
+        
+        clearScreen
+
+        printEmptyLines 21
+
         cellsJSON <- readCells path
         
         case decode cellsJSON :: Maybe [Cell] of 
-            Nothing -> do 
-                putStrLn "Nenhum automato adicionado"
-                putStrLn ""
+
+            Nothing -> do
+
+                screen <- readFile "app/storage/screenNoCells.txt"
+
+                let linhas = lines screen
+        
+                mapM_ printLessDelay linhas 
                 
             Just cells -> do 
-                putStrLn "Lista de células existentes:"
-                putStrLn ""
-                printCells cells
-                putStrLn ""
 
-        putStrLn " Opções:"
-        putStrLn ""
-        putStrLn " - (A)dicionar célula\n - (D)eletar célula\n - (R)etornar ao menu principal"
-        putStrLn ""
-        putStr "Escolha: "
+                printCells cells 1
+
+                printEmptyLines 2
+
+                putStrLn "                                                       1) ADICIONAR CELULA   2) DELETAR CELULA   3) VOLTAR"
+
+        printEmptyLines 21
+
         option <- getLine
 
-        case toUpper (head option) of
-            'A' -> do addAutomata path; menuCells path;
-            'D' -> do removeAutomata path; menuCells path
-            'R' -> putStr ""
+        case option of
+            "1" -> do addAutomata path; menuCells path;
+            "2" -> do removeAutomata path; menuCells path
+            "3" -> return ()
             _ -> menuCells path 
 
     addAutomata ::FilePath ->  IO()
     addAutomata path = do
-        putStrLn ""
-        putStr "Digite o nome da sua célula: "
+
+        printBuildCellQuestion "QUAL O NOME DA CELULA?" 
+
         nameCell <- getLine
 
-        putStrLn ""
-        putStrLn "Digite uma sequência de números representando a quantidade de vizinhos para instanciar a regra"
-        putStrLn ""
+        printBuildCellQuestion "QUAL A SUA REGRA DE NASCIMENTO?"
 
-        putStr "Regra de nascimento: "
         nascStr <- getLine
         let nascList = map (\x -> read [x] :: Int) nascStr
-
-        putStr "Regra de permanência: "
+        
+        printBuildCellQuestion "QUAL A SUA REGRA DE PERMANENCIA?"
+        
         stayStr <- getLine
         let stayList = map (\x -> read [x] :: Int) stayStr -- Todo verificar que esses números tão entre 1 e 8, e se são numerinhos
 
         let regra = Rule nascList stayList
-        
-        colorI <- colorMenu
 
-        let cell = Cell nameCell regra colorI
-        addCell path cell
+        printBuildCellQuestion "QUAL A COR DA SUA CELULA?\n\n                                                           1) VERMELHO  2) VERDE  3) AMARELO  4) AZUL\n                                                           5) MAGENTA   6) CIANO  7) BRANCO"
 
-        putStrLn $ "Célula " ++  name cell ++ "adicionada"
-        menuCells path
-
-    colorMenu :: IO String
-    colorMenu = do
-        printColorMenu
         colorI <- getLine
-        putStr ""
-        if isNothing $ selectColor colorI then colorMenu
-        else return $ fromJust (selectColor colorI)
+
+        if isNothing $ selectColor colorI then do printRuleMenuColorError; return ();
+        else do 
+            let cell = Cell nameCell regra $ fromJust $ selectColor colorI
+            addCell path cell
+            return ()
+
+    printBuildCellQuestion :: String ->  IO ()
+    printBuildCellQuestion qst = do
+        clearScreen
+        printEmptyLines 21
+        putStrLn "                                                                   CRIANDO UMA CELULA"
+        printEmptyLines 4
+        putStrLn $ "                                                                   " ++ qst
+        printEmptyLines 21
+
+
+    -- printBuildCellWithName :: String -> IO ()
+    -- printBuildCellWithName name = do
+    --     printTopBuildCell
+    --     putStrLn ""
+    --     putStrLn $ "NOME: " ++ name
+
+
+    -- printBuildCellWithBirthRule :: String -> [Int] -> IO ()
+    -- printBuildCellWithBirthRule name bRule = do
+    --     printBuildCellWithName name
+    --     putStrLn ""
+    --     putStrLn $ "NASCIMENTO: " ++ bRule
+
+    -- printBuildCellWithStayRule :: String -> [Int] -> [Int] -> IO ()
+    -- printBuildCellWithStayRule name bRule sRule = do
+    --     printBuildCellWithBirthRule name bRule
+    --     putStrLn ""
+    --     putStrLn $ "PERMANENCIA: " ++ sRule
+
+    -- printBuildCellWithColor :: String -> [Int] -> [Int] -> Color -> IO ()
+    -- printBuildCellWithColor name bRule sRule color = do
+    --     printBuildCellWithStayRule name bRule sRule
+    --     putStrLn ""
+    --     do putStr "COR: "; setSGR [SetColor Foreground Vivid color]; putStrLn "██"; setSGR [Reset]
+
+    -- colorMenu :: IO String
+    -- colorMenu = do
+    --     colorI <- getLine
+    --     if isNothing $ selectColor colorI then colorMenu
+    --     else return $ fromJust (selectColor colorI)
 
     selectColor :: String -> Maybe String
     selectColor color = case color of
-        "1" -> Just "Preto"
-        "2" -> Just "Vermelho"
-        "3" -> Just "Verde"
-        "4" -> Just "Amarelo"
-        "5" -> Just "Azul"
-        "6" -> Just "Magenta"
-        "7" -> Just "Ciano"
-        "8" -> Just "Branco"
+        "1" -> Just "Vermelho"
+        "2" -> Just "Verde"
+        "3" -> Just "Amarelo"
+        "4" -> Just "Azul"
+        "5" -> Just "Magenta"
+        "6" -> Just "Ciano"
+        "7" -> Just "Branco"
         _ -> Nothing
        
-    printColorMenu :: IO ()
-    printColorMenu = do
-        putStrLn ""
-        putStrLn "Escolha uma cor para a sua célula: "
-        putStrLn "\n1) Preto\n2) Vermelho\n3) Verde\n4) Amarelo\n5) Azul\n6) Magenta\n7) Ciano\n8) Branco\n"
-        putStr "Escolha: "
+    -- printColorMenu :: IO ()
+    -- printColorMenu = do
+    --     putStrLn ""
+    --     putStrLn "Escolha uma cor para a sua célula: "
+    --     putStrLn "\n1) Preto\n2) Vermelho\n3) Verde\n4) Amarelo\n5) Azul\n6) Magenta\n7) Ciano\n8) Branco\n"
+    --     putStr "Escolha: "
 
 
     removeAutomata :: FilePath -> IO()
     removeAutomata path = do 
+
+        clearScreen
+
+        cellsJSON <- readCells path
+        
+        case decode cellsJSON :: Maybe [Cell] of 
+
+            Nothing -> do
+
+                screen <- readFile "app/storage/screenNoCells.txt"
+
+                let linhas = lines screen
+        
+                mapM_ printLessDelay linhas 
+                
+            Just cells -> do 
+
+                printEmptyLines 21
+
+                putStrLn ""
+
+                printCells cells 1
+
+                putStrLn ""
+
         putStrLn ""
-        putStr "Qual célula você quer remover: "
+        
+        putStrLn "                                                                     QUAL CELULA VOCE QUER REMOVER?"
+
+        printEmptyLines 21
+
         nameCell <- getLine
         deleteCell path nameCell
 
 
-    printCells :: [Cell] -> IO()
-    printCells [] = return ()
-    printCells (x:xs) = do
-        putStrLn $ "- " ++ show x
-        printCells xs
+    printCells :: [Cell] -> Int -> IO()
+    printCells [] n = return ()
+    printCells (x:xs) n = do
+        putStrLn $ "                                                                     " ++ show n ++ "- " ++ show x
+        printCells xs (n + 1)
+
+    
