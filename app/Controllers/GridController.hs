@@ -57,7 +57,7 @@ module Controllers.GridController where
             putStr "██"
             setSGR [Reset]
         | otherwise = do
-            setSGR [SetColor Foreground Vivid Black]
+            setSGR [SetColor Foreground Dull Black]
             putStr "██"
             setSGR [Reset]
 
