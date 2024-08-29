@@ -9,8 +9,10 @@ module Controllers.GridController where
     import Data.Maybe
     import Data.Char (intToDigit, toUpper)
     import System.Process (system)
-    import System.Console.ANSI
     import System.Console.ANSI (Color(Black))
+    import Control.Concurrent (forkIO, ThreadId)
+    import Data.IORef
+    import System.IO
     
 
     -- Funções que gerem a impressão da Matrix (Maybe Cell)
@@ -97,7 +99,7 @@ module Controllers.GridController where
 
     actionChooser :: Matrix (Maybe Cell) -> String -> IO()
     actionChooser grid opt
-        | option == 'G' = startGeneration grid
+        | option == 'G' = runLoop grid
         | option == 'N' = nextStep grid
         | option == 'I' = insertion grid
         | otherwise = simulate grid
@@ -105,8 +107,24 @@ module Controllers.GridController where
         where
             option = toUpper $ head opt
 
-    startGeneration :: Matrix (Maybe Cell) -> IO()
-    startGeneration grid = putStrLn "foda-se"
+    runLoop :: Matrix (Maybe Cell) -> IO ()
+    runLoop grid = do
+        hSetBuffering stdin NoBuffering -- Desabilita o buffer do input
+        hSetEcho stdin False            -- Desabilita a ecoação do input no terminal
+        let checkInput = do
+                inputAvaliable <- hReady stdin
+                if inputAvaliable then do 
+                  return() 
+                else do
+                  loopFunction grid
+                  runLoop (gridUpdate grid)
+
+        checkInput
+    
+    loopFunction ::Matrix (Maybe Cell) -> IO()
+    loopFunction grid = do
+      putStrLn
+
     
     nextStep :: Matrix (Maybe Cell) -> IO()
     nextStep grid = simulate $ gridUpdate grid
