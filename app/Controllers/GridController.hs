@@ -4,13 +4,13 @@ module Controllers.GridController where
     import Models.Grid
     import Models.Rule
     import Data.Matrix hiding (matrix)
-    import qualified Data.Vector as V
     import Data.List (intercalate)
     import Data.Maybe
-    import Data.Char (intToDigit, toUpper)
+    import Data.Char (toUpper)
     import System.Process (system)
     import System.Console.ANSI
-    import System.Console.ANSI (Color(Black))
+    import System.IO
+    import GHC.Conc
     
 
     -- Funções que gerem a impressão da Matrix (Maybe Cell)
@@ -55,7 +55,7 @@ module Controllers.GridController where
             putStr "██"
             setSGR [Reset]
         | otherwise = do
-            setSGR [SetColor Foreground Dull Black]
+            setSGR [SetColor Foreground Vivid Black]
             putStr "██"
             setSGR [Reset]
 
@@ -97,7 +97,7 @@ module Controllers.GridController where
 
     actionChooser :: Matrix (Maybe Cell) -> String -> IO()
     actionChooser grid opt
-        | option == 'G' = startGeneration grid
+        | option == 'G' = runLoop grid
         | option == 'N' = nextStep grid
         | option == 'I' = insertion grid
         | otherwise = simulate grid
@@ -105,8 +105,25 @@ module Controllers.GridController where
         where
             option = toUpper $ head opt
 
-    startGeneration :: Matrix (Maybe Cell) -> IO()
-    startGeneration grid = putStrLn "foda-se"
+    runLoop :: Matrix (Maybe Cell) -> IO ()
+    runLoop grid = do
+        hSetBuffering stdin NoBuffering -- Desabilita o buffer do input
+        hSetEcho stdin False            -- Desabilita a ecoação do input no terminal
+        let checkInput = do
+                inputAvaliable <- hReady stdin
+                if inputAvaliable then do 
+                  return() 
+                else do
+                  loopFunction grid
+                  runLoop (gridUpdate grid)
+
+        checkInput
+    
+    loopFunction ::Matrix (Maybe Cell) -> IO()
+    loopFunction grid = do
+        printGrid (gridToLists grid)
+        threadDelay 500000
+
     
     nextStep :: Matrix (Maybe Cell) -> IO()
     nextStep grid = simulate $ gridUpdate grid
