@@ -36,7 +36,7 @@ library
       Files.Cell
       Files.Scene
       Main
-      Utils.Logo
+      Utils.Render
   other-modules:
       Paths_projeto_plp_haskell_automatos_celulares
   autogen-modules:
@@ -69,7 +69,7 @@ executable projeto-plp-haskell-automatos-celulares-exe
       Controllers.Teste
       Files.Cell
       Files.Scene
-      Utils.Logo
+      Utils.Render
       Paths_projeto_plp_haskell_automatos_celulares
   autogen-modules:
       Paths_projeto_plp_haskell_automatos_celulares

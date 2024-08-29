@@ -1,4 +1,4 @@
-module Utils.Logo where
+module Utils.Render where
 
     import Control.Concurrent(threadDelay)
     import System.Console.ANSI

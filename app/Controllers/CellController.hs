@@ -7,7 +7,7 @@ module Controllers.CellController where
     import System.Console.ANSI
     import Data.Maybe
     import System.Process(system)
-    import Utils.Logo
+    import Utils.Render
     import Data.Vector.Generic.Mutable (clear)
     import Control.Concurrent(threadDelay)
 

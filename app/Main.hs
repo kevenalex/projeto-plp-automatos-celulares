@@ -1,6 +1,6 @@
 module Main where
 
-  import Utils.Logo
+  import Utils.Render
   import System.Console.ANSI
   import Controllers.CellController(menuCells)
   import Data.Char
