@@ -34,14 +34,12 @@ module Controllers.GridController where
     --     where
     --         nStr = if n < 10 then " " ++ show n else show n
                
-    -- Função que imprime uma Matrix (Maybe Cell) sem os números correspondentes a cada linha e coluna, a mesma recebe uma lista de Maybe Cell, que pode ser facilmente obtida através do
-    -- método gridToLists aplicado a uma Matrix (Maybe Cell). Sempre inicie o método com o n igual a 0, e procure não utilizar uma matriz
-    -- com mais de 2 casas decimais para não quebrar a formatação
+    -- Função que imprime uma Matrix (Maybe Cell) sem os números correspondentes a cada linha e coluna.
 
-    printGrid :: [[Maybe Cell]] -> IO ()
+    printGrid :: Matrix (Maybe Cell) -> IO ()
     printGrid grid = do
         clearScreen
-        mapM_ printRow grid
+        mapM_ printRow (gridToLists grid)
 
     printRow :: [Maybe Cell] -> IO ()
     printRow row = do
@@ -88,7 +86,7 @@ module Controllers.GridController where
     simulate :: Matrix (Maybe Cell) -> IO()
     simulate matrix = do
         _ <- system "clear"
-        printGrid (gridToLists matrix)
+        printGrid  matrix
         putStrLn "digite G para iniciar a geração"
         putStrLn "digite N para simular só o próximo estágio"
         putStrLn "digite I para inserir células"
@@ -121,7 +119,7 @@ module Controllers.GridController where
     
     loopFunction ::Matrix (Maybe Cell) -> IO()
     loopFunction grid = do
-        printGrid (gridToLists grid)
+        printGrid  grid
         threadDelay 500000
 
     

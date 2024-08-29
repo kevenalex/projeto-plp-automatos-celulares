@@ -1,4 +1,4 @@
-module Controllers.MenuEditarCellsController where
+module Controllers.CellController where
     import Files.Cell
     import Data.Aeson
     import Models.Cell

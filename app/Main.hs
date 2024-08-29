@@ -2,7 +2,7 @@ module Main where
 
   import Utils.Logo
   import System.Console.ANSI
-  import Controllers.MenuEditarCellsController(menuCells)
+  import Controllers.CellController(menuCells)
   import Data.Char
   import System.Exit (exitSuccess)
   
