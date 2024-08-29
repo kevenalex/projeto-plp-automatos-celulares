@@ -4,15 +4,13 @@ module Controllers.GridController where
     import Models.Grid
     import Models.Rule
     import Data.Matrix hiding (matrix)
-    import qualified Data.Vector as V
     import Data.List (intercalate)
     import Data.Maybe
-    import Data.Char (intToDigit, toUpper)
+    import Data.Char (toUpper)
     import System.Process (system)
-    import System.Console.ANSI (Color(Black))
-    import Control.Concurrent (forkIO, ThreadId)
-    import Data.IORef
+    import System.Console.ANSI
     import System.IO
+    import GHC.Conc
     
 
     -- Funções que gerem a impressão da Matrix (Maybe Cell)
@@ -57,7 +55,7 @@ module Controllers.GridController where
             putStr "██"
             setSGR [Reset]
         | otherwise = do
-            setSGR [SetColor Foreground Dull Black]
+            setSGR [SetColor Foreground Vivid Black]
             putStr "██"
             setSGR [Reset]
 
@@ -123,7 +121,8 @@ module Controllers.GridController where
     
     loopFunction ::Matrix (Maybe Cell) -> IO()
     loopFunction grid = do
-      putStrLn
+        printGrid (gridToLists grid)
+        threadDelay 500000
 
     
     nextStep :: Matrix (Maybe Cell) -> IO()
