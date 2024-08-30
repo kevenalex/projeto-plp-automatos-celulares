@@ -26,7 +26,22 @@ module Test.Simulation where
     square :: Int -> Matrix (Maybe Cell)
     square n = gridGenerate n n
 
-------------------------------------------- [TESTES DO MÓDULO GRID] -----------------------------------------------
+------------------------------------------------ [VARIÁVEIS] ------------------------------------------------------
+
+    test3Setup :: Matrix (Maybe Cell)
+    test3Setup = insertCells (insertCells (square 5) highLife [(2,2), (3,2), (4,2)]) conways [(2,4), (3,4), (4,4)] 
+
+    test3Result :: Matrix (Maybe Cell)
+    test3Result = insertCells (insertCells (square 5) highLife [(3,1), (3,2), (3,3)]) conways [(3,4), (3,5)]
+
+    listaDeTestes :: Test
+    listaDeTestes =
+        TestList [
+            testNumOfDeadNeighbors0, testNumOfDeadNeighbors1, testNumOfDeadNeighbors2, testNumOfDeadNeighbors3, 
+            testGridGenerateFromList0, testGridGenerateFromList1, testGridGenerateFromList2, testGridGenerateFromList3
+        ]
+
+----------------------------------------- [MAIN: TESTES DO MÓDULO GRID] ------------------------------------------
 
     main :: IO Counts
     main = do
@@ -41,25 +56,13 @@ module Test.Simulation where
             "Conways e o amigo alto" ~: gridUpdate test3Setup ~?= test3Result
                     ]
 
---- Variáveis para o teste do Grid.hs
-    test3Setup :: Matrix (Maybe Cell)
-    test3Setup = insertCells (insertCells (square 5) highLife [(2,2), (3,2), (4,2)]) conways [(2,4), (3,4), (4,4)] 
-    test3Result :: Matrix (Maybe Cell)
-    test3Result = insertCells (insertCells (square 5) highLife [(3,1), (3,2), (3,3)]) conways [(3,4), (3,5)]
-
 -------------------------------------- [CONTINUÇÃO: TESTES MODULARIZADOS] ---------------------------------------
 
---- Função que lista outras a serem testadas:
-    listaDeTestes :: Test
-    listaDeTestes =
-        TestList [
-            testNumOfDeadNeighbors0, testNumOfDeadNeighbors1, testNumOfDeadNeighbors2, testNumOfDeadNeighbors3, 
-            testGridGenerateFromList0, testGridGenerateFromList1, testGridGenerateFromList2, testGridGenerateFromList3
-        ]
+{-- 
+    The Grid from List: verifica se um grid gerado a partir de uma lista
+    é equivalente a outro já definido
+--}
 
------------------------------------------------------------------------------------------------------------------
-
---- The Grid from List: verifica se um grid gerado a partir de uma lista é equivalente a outro já definido
     testGridGenerateFromList0 :: Test
     testGridGenerateFromList0 = TestCase $ do
         let resultGrid = gridGenerateFromList rows cols cellList
@@ -120,7 +123,11 @@ module Test.Simulation where
 
 -----------------------------------------------------------------------------------------------------------------
 
---- A Vizinhaça Zumbi: cria um grid 3x3 de células mortas e verifica se há 8 vizinhos para uma célula GOL localizada no meio da matriz
+{--
+    A Vizinhaça Zumbi: cria um grid 3x3 de células mortas e verifica se há 8 vizinhos
+    para uma célula localizada no meio da matriz, no primeiro caso...
+--}
+
     testNumOfDeadNeighbors0 :: Test
     testNumOfDeadNeighbors0 = TestCase $ do
         let grid = square 3
