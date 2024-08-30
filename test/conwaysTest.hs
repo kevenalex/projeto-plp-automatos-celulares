@@ -41,7 +41,7 @@ module Test.Simulation where
             "Conways e o amigo alto" ~: gridUpdate test3Setup ~?= test3Result
                     ]
 
---- ╰> Variáveis para o teste do Grid.hs:
+--- Definição de variáveis para o teste do Grid.hs
     test3Setup :: Matrix (Maybe Cell)
     test3Setup = insertCells (insertCells (square 5) highLife [(2,2), (3,2), (4,2)])conways [(2,4), (3,4), (4,4)] 
     test3Result :: Matrix (Maybe Cell)
@@ -49,11 +49,11 @@ module Test.Simulation where
 
 -------------------------------------- [CONTINUÇÃO: TESTES MODULARIZADOS] ---------------------------------------
 
---- Função que agrega outras a serem testadas:
+--- Função que lista outras a serem testadas:
     listaDeTestes :: Test
     listaDeTestes = TestList [testNumOfDeadNeighbors, testGridGenerateFromList]
 
---- Grid a Partir da Lista:
+--- The Grid from List: verifica se um grid gerado a partir de uma lista é equivalente a outro já definido
     testGridGenerateFromList :: Test
     testGridGenerateFromList = TestCase $ do
         let resultGrid = gridGenerateFromList rows cols cellList
@@ -64,7 +64,7 @@ module Test.Simulation where
             cellList = [Just conways, Just conways, Just conways, Nothing, Nothing, Nothing]
             expectedGrid = fromLists [[Just conways, Just conways, Just conways], [Nothing, Nothing, Nothing]]
 
---- A Vizinhaça Zumbi:
+--- A Vizinhaça Zumbi: cria um grid 3x3 de células mortas e verifica se há 8 vizinhos para uma célula GOL localizada no meio da matriz
     testNumOfDeadNeighbors :: Test
     testNumOfDeadNeighbors = TestCase $ do
         let grid = gridGenerate 3 3
