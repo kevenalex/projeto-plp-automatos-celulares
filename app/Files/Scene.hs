@@ -6,7 +6,10 @@ module Files.Scene (readScenes, addScene, Scene(Scene)) where
 
     import qualified Data.Map as M
     import qualified Data.ByteString.Lazy as B
+
     import System.Directory
+
+    import Data.Matrix
 
     import Models.Cell
     import Models.Rule
@@ -63,3 +66,7 @@ module Files.Scene (readScenes, addScene, Scene(Scene)) where
         case decode sceneJSON :: Maybe (M.Map String Scene) of
             Nothing -> error "No scenes exist to delete"
             Just sceneDict -> saveScenes path $ M.delete title sceneDict
+
+    -- Pega a matriz que essa cena guarda, necessário porque não tem implementação default pra encodar uma matrix em JSON
+    sceneToGrid :: Scene -> Matrix (Maybe Cell)
+    sceneToGrid (Scene t r c matrix) = fromList r c matrix
