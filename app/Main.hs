@@ -18,8 +18,7 @@ main = do
 
 selectOption :: Bool -> IO ()
 selectOption delay = do
-    clearScreen
-    printLogoLessDelay
+    printScreen "app/storage/mainMenuController/mainMenu.txt" True delay
 
     opcao <- getLine
     case toUpper $ head opcao of
@@ -29,9 +28,8 @@ selectOption delay = do
         -- '4' -> do menuTutorial; selectOption False;
         '5' -> do
             setCursorPosition 0 0
-            printTextWithDelayNoClear "app/storage/mainMenuController/emptyMenu.txt"
+            printScreen "app/storage/mainMenuController/emptyMenu.txt" False True 
             exitSuccess
         _ -> do
-            clearScreen
-            printMainMenuInvalidOption
+            printScreen "app/storage/mainMenuInvalidOption.txt" True False
             selectOption False

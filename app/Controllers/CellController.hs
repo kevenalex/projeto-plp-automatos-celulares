@@ -43,9 +43,9 @@ module Controllers.CellController where
 
     listCells :: [Cell] -> IO()
     listCells cells = 
-        if null cells then printTextFileWithClear "app/storage/ruleController/screenNoCells.txt"
+        if null cells then printScreen "app/storage/ruleController/screenNoCells.txt" True False;
                     else do 
-                        printTextFileWithClear "app/storage/ruleController/listOfCells.txt"
+                        printScreen "app/storage/ruleController/listOfCells.txt" True False
 
                         printEmptyLines 2
 
@@ -53,34 +53,33 @@ module Controllers.CellController where
 
                         printEmptyLines 1
 
-                        printTextFileNoClear "app/storage/ruleController/ruleMenuOptions.txt"
+                        printScreen "app/storage/ruleController/ruleMenuOptions.txt" False False
 
 
     addAutomata ::FilePath ->  IO()
     addAutomata path = do
-
-        printTextFileWithClear "app/storage/ruleController/nameCellQuestion.txt"
+        printScreen "app/storage/ruleController/nameCellQuestion.txt" True False
 
         nameCellNT <- getLine
         let nameCellT = map toUpper nameCellNT
 
-        printTextFileWithClear "app/storage/ruleController/birthRule.txt"
+        printScreen "app/storage/ruleController/birthRule.txt" True False
 
         nascStr <- getLine
         let nascList = map (\x -> read [x] :: Int) nascStr
         
-        printTextFileWithClear "app/storage/ruleController/stayRule.txt"
+        printScreen "app/storage/ruleController/stayRule.txt" True False
         
         stayStr <- getLine
         let stayList = map (\x -> read [x] :: Int) $ trim stayStr -- Todo verificar que esses números tão entre 1 e 8, e se são numerinhos
 
         let regra = Rule nascList stayList
 
-        printTextFileWithClear "app/storage/ruleController/colorMenu.txt"
+        printScreen "app/storage/ruleController/colorMenu.txt" True False
 
         colorI <- getLine
 
-        if isNothing $ selectColor colorI then do printTextFileWithClear "app/storage/ruleController/ruleMenuColorError.txt"; threadDelay 200000;
+        if isNothing $ selectColor colorI then do printScreen "app/storage/ruleController/ruleMenuColorError.txt" True False; threadDelay 200000;
         else do 
             let cell = Cell nameCellT regra $ fromJust $ selectColor colorI
             addCell path cell
@@ -93,7 +92,8 @@ module Controllers.CellController where
             then
                 return ()
             else do
-            printTextFileWithClear "app/storage/ruleController/listOfCells.txt"
+            
+            printScreen "app/storage/ruleController/listOfCells.txt" True False
 
             printEmptyLines 2
 
@@ -101,7 +101,7 @@ module Controllers.CellController where
 
             printEmptyLines 1
 
-            printTextFileNoClear "app/storage/ruleController/removeCellMenu.txt"
+            printScreen "app/storage/ruleController/removeCellMenu.txt" False False
 
             nameCellI <- getLine
             let nameCellT = map toUpper nameCellI 

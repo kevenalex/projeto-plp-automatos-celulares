@@ -3,76 +3,39 @@ module Utils.Render where
     import Control.Concurrent(threadDelay)
     import System.Console.ANSI
 
-    -- Imprime a logo
-    printLogoMoreDelay :: IO ()
-    printLogoMoreDelay = do 
+    --- Imprime um arquivo de texto na tela. Tendo como parâmetros a String do caminho do arquivo, e dois booleanos, clear e delay
+    --- o qual decidem se a tela será limpada antes da impressão e se o texto será impresso com rapidamente ou não.
+    printScreen :: FilePath -> Bool -> Bool -> IO ()
+    printScreen file clear delay = do
 
-        logo <- readFile "app/storage/mainMenuController/mainMenu.txt"
-        
-        let linhas = lines logo
-        
-        mapM_ printMoreDelay linhas
+        lines <- textFileToLines file
 
-    printLogoLessDelay :: IO ()
-    printLogoLessDelay = do
+        if clear then do clearScreen; printScreenWithDelay lines delay;
+        else printScreenWithDelay lines delay
 
-        logo <- readFile "app/storage/mainMenuController/mainMenu.txt"
+    -- Converte um arquivo de texto em uma lista de Strings do tipo IO       
+    textFileToLines :: FilePath -> IO [String]
+    textFileToLines file = do
+        screen <- readFile file
+        return $ lines screen
 
-        let linhas = lines logo
-        
-        mapM_ printLessDelay linhas
+    -- Imprime na tela uma sequência de strings, com o parâmetro delay do tipo boolean decidindo se esta impressão ocorrerá rapidamente ou não.
+    printScreenWithDelay :: [String] -> Bool -> IO()
+    printScreenWithDelay lines delay = do
+        if delay then mapM_ (printTextSpeed 130000) lines
+        else mapM_ (printTextSpeed 10000) lines
 
-    printRuleMenuColorError :: IO()
-    printRuleMenuColorError = do
-
-        menuColor <- readFile "app/storage/ruleMenuColorError.txt"
-
-        let linhas = lines menuColor
-        
-        mapM_ printLessDelay linhas
-
-    printMainMenuInvalidOption :: IO ()
-    printMainMenuInvalidOption = do
-
-        logo <- readFile "app/storage/mainMenuController/mainMenuInvalidOption.txt"
-
-        let linhas = lines logo
-        
-        mapM_ printLessDelay linhas
-
-    printMoreDelay :: String -> IO ()
-    printMoreDelay str = do
+    -- Imprime uma string e determina um delay após a sua impressão.
+    printTextSpeed :: Int -> String -> IO ()
+    printTextSpeed speed str = do
         putStrLn str
-        threadDelay 130000
+        threadDelay speed
 
-    printLessDelay :: String -> IO ()
-    printLessDelay str = do
-        putStrLn str
-        threadDelay 10000
-
+    -- Imprime N linhas vazias na tela.
     printEmptyLines :: Int -> IO ()
     printEmptyLines 0 = return ()
     printEmptyLines n = do putStrLn ""; printEmptyLines (n-1) 
 
-    printTextWithDelayNoClear :: FilePath -> IO ()
-    printTextWithDelayNoClear file = do
-        screen <- readFile file
-        let linhas = lines screen
-        mapM_ printMoreDelay linhas 
-
-    printTextFileWithClear :: FilePath -> IO()
-    printTextFileWithClear file = do
-        clearScreen
-        screen <- readFile file
-        let linhas = lines screen
-        mapM_ printLessDelay linhas 
-
-    printTextFileNoClear :: FilePath -> IO()
-    printTextFileNoClear file = do
-        screen <- readFile file
-        let linhas = lines screen
-        mapM_ printLessDelay linhas 
-    -- tira esoaços do começo e final de uma string
     trim :: String -> String
     trim = unwords . words
 
