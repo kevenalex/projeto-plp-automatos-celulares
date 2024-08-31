@@ -8,19 +8,21 @@
 
 
 
-                                                                     CRIANDO UMA CELULA
+                                                                                  CRIANDO CELULA
+
+                                                                    POR FAVOR, INSIRA DE 0 A 8 NUMEROS ENTRE 1 E 8
+
+                                                            QUANTOS VIZINHOS UMA CÉLULA VIVA PRECISA PRA SE MANTER VIVA?
 
 
 
 
-                                                QUANTOS VIZINHOS UMA CÉLULA VIVA PRECISA PRA SE MANTER VIVA?
+
+
+
 
 
                                                         
-
-
-
-
 
 
 

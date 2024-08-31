@@ -2,6 +2,7 @@ module Controllers.CellController where
     import Files.Cell
     import Data.Aeson
     import Data.Char (toUpper)
+    import Data.Char
     import Data.Maybe
 
     import Models.Cell ( Cell(Cell) )
@@ -13,7 +14,6 @@ module Controllers.CellController where
     import Control.Concurrent(threadDelay)
     import qualified Data.ByteString.Lazy as B
 
-    
     menuCells :: FilePath -> IO()
     menuCells path = do
 
@@ -55,9 +55,9 @@ module Controllers.CellController where
 
                         printScreen "app/storage/ruleController/ruleMenuOptions.txt" False False
 
-
-    addAutomata ::FilePath ->  IO()
+    addAutomata :: FilePath ->  IO()
     addAutomata path = do
+
         printScreen "app/storage/ruleController/nameCellQuestion.txt" True False
 
         nameCellNT <- getLine
@@ -65,25 +65,45 @@ module Controllers.CellController where
 
         printScreen "app/storage/ruleController/birthRule.txt" True False
 
+        addBirthRule path nameCellT
+    
+    -- Criação da Regra de Nascimento da Celula, o usuario pode inserir de 0 a 8 digitos entre 1 e 8.
+    addBirthRule :: FilePath -> String -> IO()
+    addBirthRule path nameCellT = do
         nascStr <- getLine
-        let nascList = map (\x -> read [x] :: Int) nascStr
+        if handleBornAndStayRule nascStr then do
+            let nascList = map (\x -> read [x] :: Int) nascStr
+            printScreen "app/storage/ruleController/stayRule.txt" True False
+            addStayRule path nameCellT nascList
         
-        printScreen "app/storage/ruleController/stayRule.txt" True False
-        
+        else do
+            printScreen "app/storage/ruleController/birthRuleError.txt" True False
+            addBirthRule path nameCellT
+    
+    -- Criação da Regra de Permanencia da Celula, o usuario pode inserir de 0 a 8 digitos entre 1 e 8.
+    addStayRule :: FilePath -> String -> [Int] -> IO()
+    addStayRule path nameCellT nascList = do
         stayStr <- getLine
-        let stayList = map (\x -> read [x] :: Int) $ trim stayStr -- Todo verificar que esses números tão entre 1 e 8, e se são numerinhos
-
-        let regra = Rule nascList stayList
-
-        printScreen "app/storage/ruleController/colorMenu.txt" True False
-
-        colorI <- getLine
-
-        if isNothing $ selectColor colorI then do printScreen "app/storage/ruleController/ruleMenuColorError.txt" True False; threadDelay 200000;
-        else do 
+        if handleBornAndStayRule stayStr then do
+            let stayList = map (\x -> read [x] :: Int) stayStr
+            let regra = Rule nascList stayList
+            printScreen "app/storage/ruleController/colorMenu.txt" True False
+            addColor path nameCellT regra
+        
+        else do
+            printScreen "app/storage/ruleController/stayRuleError.txt" True False
+            addStayRule path nameCellT nascList
+    
+    -- Criação da Cor da Celula, o usuario pode inserir uma das 7 opções de cor que o terminal disponibiliza.
+    addColor :: FilePath -> String -> Rule -> IO()
+    addColor path nameCellT regra = do
+        colorI <- getChar
+        if handleColorChoice colorI then do
             let cell = Cell nameCellT regra $ fromJust $ selectColor colorI
             addCell path cell
-
+        else do
+            printScreen "app/storage/ruleController/colorMenuError.txt" True False
+            addColor path nameCellT regra
 
     removeAutomata :: FilePath -> [Cell] -> IO()
     removeAutomata path cells = do 
@@ -107,7 +127,6 @@ module Controllers.CellController where
             let nameCellT = map toUpper nameCellI 
             deleteCell path nameCellT
 
-
     printCells :: [Cell] -> Int -> IO()
     printCells [] _ = return ()
     printCells (x:xs) n = do
@@ -125,4 +144,11 @@ module Controllers.CellController where
         "6" -> Just "CIANO"
         "7" -> Just "BRANCO"
         _ -> Nothing
-       
+
+    -- Faz o tratemento das entradas das regras de Nascimento e Permanência
+    handleBornAndStayRule :: String -> Bool
+    handleBornAndStayRule regra = length regra <= 8 && all (`elem` "12345678") regra
+
+    -- Faz o tratamento da entrada de cor, verifica se ela não é um 'Enter' e se é um char entre '1' e '7'
+    handleColorChoice :: Char -> Bool
+    handleColorChoice cor = cor /= '\n' && isPrint cor && cor `elem` ['1'..'7']
