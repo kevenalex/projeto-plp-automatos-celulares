@@ -1,9 +1,9 @@
 module Controllers.CellController where
     import Files.Cell
     import Data.Aeson
-    import Data.Char (toUpper)
     import Data.Char
     import Data.Maybe
+    import qualified Data.Set as Set
 
     import Models.Cell ( Cell(Cell) )
     import Models.Rule (Rule (Rule))
@@ -74,7 +74,7 @@ module Controllers.CellController where
         if handleBornAndStayRule nascStr then do
             let nascList = map (\x -> read [x] :: Int) nascStr
             printScreen "app/storage/ruleController/stayRule.txt" True False
-            addStayRule path nameCellT nascList
+            addStayRule path nameCellT $ Set.toList (Set.fromList nascList)
         
         else do
             printScreen "app/storage/ruleController/birthRuleError.txt" True False
@@ -86,7 +86,7 @@ module Controllers.CellController where
         stayStr <- getLine
         if handleBornAndStayRule stayStr then do
             let stayList = map (\x -> read [x] :: Int) stayStr
-            let regra = Rule nascList stayList
+            let regra = Rule nascList $ Set.toList (Set.fromList stayList)
             printScreen "app/storage/ruleController/colorMenu.txt" True False
             addColor path nameCellT regra
         
@@ -130,7 +130,7 @@ module Controllers.CellController where
     printCells :: [Cell] -> Int -> IO()
     printCells [] _ = return ()
     printCells (x:xs) n = do
-        putStrLn $ "                                                                     " ++ show n ++ " - " ++ show x
+        putStrLn $ "                                                                 " ++ show n ++ " - " ++ show x
         printCells xs (n + 1)
 
     
