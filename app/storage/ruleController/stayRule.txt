@@ -13,9 +13,7 @@
 
 
 
-                                                                     QUAL A SUA REGRA DE PERMANENCIA?
-
-
+                                                QUANTOS VIZINHOS UMA CÉLULA VIVA PRECISA PRA SE MANTER VIVA?
 
 
                                                         

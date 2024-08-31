@@ -72,3 +72,7 @@ module Utils.Render where
         screen <- readFile file
         let linhas = lines screen
         mapM_ printLessDelay linhas 
+    -- tira esoaços do começo e final de uma string
+    trim :: String -> String
+    trim = unwords . words
+
