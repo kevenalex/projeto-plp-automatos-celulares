@@ -7,10 +7,12 @@ module Controllers.GridController where
     import Data.List (intercalate)
     import Data.Maybe
     import Data.Char (toUpper)
+    import Data.Aeson
     import System.Process (system)
     import System.Console.ANSI
     import System.IO
     import GHC.Conc
+    import Files.Cell
     
 
     -- Funções que gerem a impressão da Matrix (Maybe Cell)
@@ -96,7 +98,7 @@ module Controllers.GridController where
     simulate cells matrix count = do
         _ <- system "clear"
         printGrid  matrix
-        putStrLn "Numero de passos dados ate agora: " ++ count
+        putStrLn $ "Numero de passos dados ate agora: " ++ show count
         putStrLn "digite G para iniciar a geração"
         putStrLn "digite N para simular só o próximo estágio"
         putStrLn "digite I para inserir células"
@@ -105,10 +107,10 @@ module Controllers.GridController where
 
     actionChooser :: [Cell] -> Matrix (Maybe Cell) -> Int -> String -> IO()
     actionChooser cells grid count opt
-        | option == 'G' = runLoop grid count
-        | option == 'N' = nextStep grid count
+        | option == 'G' = runLoop cells grid count
+        | option == 'N' = nextStep cells grid count
         | option == 'I' = insertion cells grid count
-        | otherwise = simulate grid count
+        | otherwise = simulate cells grid count
 
         where
             option = toUpper $ head opt
@@ -135,20 +137,18 @@ module Controllers.GridController where
     nextStep :: [Cell] -> Matrix (Maybe Cell) -> Int-> IO()
     nextStep cells grid count = simulate cells (gridUpdate grid) (count + 1)
 
-    insertion :: [Cell] -> Matrix (Maybe Cell) -> IO()
-    insertion cells grid = do
+    insertion :: [Cell] -> Matrix (Maybe Cell) -> Int -> IO()
+    insertion cells grid count = do
         _ <- system "clear"
         putStrLn "Qual celula deseja inserir ?"
-        printCels cells
-        option <- getLine
-        selectCell option
+        printCels cells 1
+        option <- readLn :: IO Int
+        print $ cells !! (option - 1)
+        -- insere 
 
 
     printCels :: [Cell] -> Int -> IO()
     printCels [] _ = return ()
     printCels (x:xs) n = do
-        putStrLn $ "    "show n ++ " - " ++ show x
+        putStrLn $ "    " ++ show n ++ " - " ++ show x
         printCels xs (n + 1)
-
-    selectCell :: [Cell] -> Int -> Cell
-    selectCell cells n = cells[n]

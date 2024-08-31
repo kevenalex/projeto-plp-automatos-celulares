@@ -31,8 +31,6 @@ library
       Controllers.CellController
       Controllers.GridController
       Controllers.SceneController
-      Controllers.Temp
-      Controllers.Teste
       Files.Cell
       Files.Scene
       Main
@@ -65,8 +63,6 @@ executable projeto-plp-haskell-automatos-celulares-exe
       Controllers.CellController
       Controllers.GridController
       Controllers.SceneController
-      Controllers.Temp
-      Controllers.Teste
       Files.Cell
       Files.Scene
       Utils.Render
