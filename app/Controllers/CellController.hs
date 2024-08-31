@@ -136,13 +136,13 @@ module Controllers.CellController where
     
     selectColor :: String -> Maybe String
     selectColor color = case color of
-        "1" -> Just "VERMELHO"
-        "2" -> Just "VERDE"
-        "3" -> Just "AMARELO"
-        "4" -> Just "AZUL"
-        "5" -> Just "MAGENTA"
-        "6" -> Just "CIANO"
-        "7" -> Just "BRANCO"
+        '1' -> Just "VERMELHO"
+        '2' -> Just "VERDE"
+        '3' -> Just "AMARELO"
+        '4' -> Just "AZUL"
+        '5' -> Just "MAGENTA"
+        '6' -> Just "CIANO"
+        '7' -> Just "BRANCO"
         _ -> Nothing
 
     -- Faz o tratemento das entradas das regras de Nascimento e Permanência
