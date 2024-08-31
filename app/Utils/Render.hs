@@ -2,6 +2,10 @@ module Utils.Render where
 
     import Control.Concurrent(threadDelay)
     import System.Console.ANSI
+    import System.IO
+    import qualified Data.Text as T
+    import qualified Data.Text.IO as TIO
+
 
     --- Imprime um arquivo de texto na tela. Tendo como parâmetros a String do caminho do arquivo, e dois booleanos, clear e delay
     --- o qual decidem se a tela será limpada antes da impressão e se o texto será impresso com rapidamente ou não.
@@ -14,21 +18,29 @@ module Utils.Render where
         else printScreenWithDelay lines delay
 
     -- Converte um arquivo de texto em uma lista de Strings do tipo IO       
-    textFileToLines :: FilePath -> IO [String]
+    textFileToLines :: FilePath -> IO [T.Text]
     textFileToLines file = do
-        screen <- readFile file
-        return $ lines screen
+        screen <- readFileUtf8 file
+        return $ T.lines screen
+
+    readFileUtf8 :: FilePath -> IO T.Text
+    readFileUtf8 filePath = do
+        handle <- openFile filePath ReadMode  -- Open the file in read mode
+        hSetEncoding handle utf8              -- Set the encoding to UTF-8
+        content <- TIO.hGetContents handle    -- Read the contents as Text
+        hClose handle                         -- Close the file handle
+        return content
 
     -- Imprime na tela uma sequência de strings, com o parâmetro delay do tipo boolean decidindo se esta impressão ocorrerá rapidamente ou não.
-    printScreenWithDelay :: [String] -> Bool -> IO()
+    printScreenWithDelay :: [T.Text] -> Bool -> IO()
     printScreenWithDelay lines delay = do
         if delay then mapM_ (printTextSpeed 130000) lines
         else mapM_ (printTextSpeed 10000) lines
 
     -- Imprime uma string e determina um delay após a sua impressão.
-    printTextSpeed :: Int -> String -> IO ()
+    printTextSpeed :: Int -> T.Text -> IO ()
     printTextSpeed speed str = do
-        putStrLn str
+        TIO.hPutStrLn stdout str
         threadDelay speed
 
     -- Imprime N linhas vazias na tela.
