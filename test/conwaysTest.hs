@@ -17,6 +17,10 @@ module Test.Simulation where
 
 ------------------------------------------------ [CONSTANTES] ----------------------------------------------------}
 
+{--
+    Constantes: utilizadas para trazer flexibilidade ao código
+--}
+
     conways :: Cell
     conways = Cell "C" (Rule [3] [2,3]) "Verde"
 
@@ -26,7 +30,14 @@ module Test.Simulation where
     square :: Int -> Matrix (Maybe Cell)
     square n = gridGenerate n n
 
+    fullGOL3Grid :: Matrix (Maybe Cell)
+    fullGOL3Grid = insertCells (square 3) conways [(1,1), (1,2), (1,3), (2,1), (2,2), (2,3), (3,1), (3,2), (3,3)]
+ 
 ------------------------------------------------ [VARIÁVEIS] ------------------------------------------------------
+
+{--
+    Variáveis: de uso exclusivo do main
+--}
 
     test3Setup :: Matrix (Maybe Cell)
     test3Setup = insertCells (insertCells (square 5) highLife [(2,2), (3,2), (4,2)]) conways [(2,4), (3,4), (4,4)] 
@@ -40,7 +51,9 @@ module Test.Simulation where
             testNumOfDeadNeighbors0, testNumOfDeadNeighbors1, testNumOfDeadNeighbors2, testNumOfDeadNeighbors3, 
             testGridGenerateFromList0, testGridGenerateFromList1, testGridGenerateFromList2, testGridGenerateFromList3,
             testNumOfLiveNeighbors0, testNumOfLiveNeighbors1, testNumOfLiveNeighbors2, testNumOfLiveNeighbors3,
-            testNumOfLiveNeighbors4, testGetCellTrue, testGetCellFalse
+            testNumOfLiveNeighbors4, testGetCellTrue, testGetCellFalse, testLifeCellsCoord0, testLifeCellsCoord1,
+            testLifeCellsCoord3, testValidCoord0, testValidCoord1, testValidCoord2, testValidCoord3, testValidCoord4,
+            testValidCoord5, testValidCoord6, testValidCoord7, testValidCoord8, testValidCoord9, testValidCoord10
         ]
 
 ----------------------------------------- [MAIN: TESTES DO MÓDULO GRID] ------------------------------------------
@@ -61,13 +74,13 @@ module Test.Simulation where
 -------------------------------------- [CONTINUÇÃO: TESTES MODULARIZADOS] ---------------------------------------
 
 {-- 
-    The Grid from List: verifica se um grid gerado a partir de uma lista
+    gridGenerateFromList: verifica se um grid gerado a partir de uma lista
     é equivalente a outro já definido
 --}
 
     testGridGenerateFromList0 :: Test
     testGridGenerateFromList0 = TestCase $ do
-        assertEqual "Grid from List 0" expectedGrid resultGrid
+        assertEqual "gridGenerateFromList 0" expectedGrid resultGrid
         where
             resultGrid = gridGenerateFromList 2 3 cellList
             cellList = [Just conways, Just conways, Just conways, Nothing, Nothing, Nothing]
@@ -79,7 +92,7 @@ module Test.Simulation where
 
     testGridGenerateFromList1 :: Test
     testGridGenerateFromList1 = TestCase $ do
-        assertEqual "Grid from List 1" expectedGrid resultGrid
+        assertEqual "gridGenerateFromList 1" expectedGrid resultGrid
         where
             resultGrid = gridGenerateFromList 2 3 cellList
             cellList = [Nothing, Nothing, Nothing, Nothing, Nothing, Nothing]
@@ -91,7 +104,7 @@ module Test.Simulation where
 
     testGridGenerateFromList2 :: Test
     testGridGenerateFromList2 = TestCase $ do
-        assertEqual "Grid from List 2" expectedGrid resultGrid
+        assertEqual "gridGenerateFromList 2" expectedGrid resultGrid
         where
             resultGrid = gridGenerateFromList 2 3 cellList
             cellList = [Just conways, Just conways, Just conways, Just conways, Just conways, Just conways]
@@ -103,7 +116,7 @@ module Test.Simulation where
 
     testGridGenerateFromList3 :: Test
     testGridGenerateFromList3 = TestCase $ do
-        assertEqual "Grid from List 3" expectedGrid resultGrid
+        assertEqual "gridGenerateFromList 3" expectedGrid resultGrid
         where
             resultGrid = gridGenerateFromList 3 2 cellList
             cellList = [Just conways, Nothing, Just conways, Nothing, Just conways, Nothing]
@@ -117,27 +130,27 @@ module Test.Simulation where
 -----------------------------------------------------------------------------------------------------------------
 
 {--
-    A Vizinhaça Zumbi: cria um grid 3x3 de células mortas e verifica se há 8 vizinhos
+    numOfDeadNeighbors: cria um grid 3x3 de células mortas e verifica se há 8 vizinhos
     para uma célula localizada no meio da matriz, no primeiro caso...
 --}
 
     testNumOfDeadNeighbors0 :: Test
     testNumOfDeadNeighbors0 = TestCase $ do
-        assertEqual "Vizinhaça Zumbi 0" expectedNum resultNum
+        assertEqual "numOfDeadNeighbors 0" expectedNum resultNum
         where
             expectedNum = 8
             resultNum = numOfDeadNeighbors (2,2) (square 3)
 
     testNumOfDeadNeighbors1 :: Test
     testNumOfDeadNeighbors1 = TestCase $ do
-        assertEqual "Vizinhaça Zumbi 1" expectedNum resultNum
+        assertEqual "numOfDeadNeighbors 1" expectedNum resultNum
         where
             expectedNum = 8
             resultNum = numOfDeadNeighbors (1,1) (square 1)
 
     testNumOfDeadNeighbors2 :: Test
     testNumOfDeadNeighbors2 = TestCase $ do
-        assertEqual "Vizinhaça Zumbi 2" expectedNum resultNum
+        assertEqual "numOfDeadNeighbors 2" expectedNum resultNum
         where
             expectedNum = 4
             grid = insertCells (square 3) conways [(1,2), (2,1), (2,3), (3,2)]
@@ -145,7 +158,7 @@ module Test.Simulation where
 
     testNumOfDeadNeighbors3 :: Test
     testNumOfDeadNeighbors3 = TestCase $ do
-        assertEqual "Vizinhaça Zumbi 3" expectedNum resultNum
+        assertEqual "numOfDeadNeighbors 3" expectedNum resultNum
         where
             expectedNum = 0
             preGrid = insertCells (square 3) highLife [(1,1), (1,3), (3,1), (3,3)]
@@ -155,28 +168,27 @@ module Test.Simulation where
 -----------------------------------------------------------------------------------------------------------------
 
 {--
-    Conta Vizinhos: verificamos se a função retorna a quantidade de células 
+    numOfLiveNeighbors: verificamos se a função retorna a quantidade de células 
     existentes na vizinhança de uma certa célula da grade
 --}
 
     testNumOfLiveNeighbors0 :: Test
     testNumOfLiveNeighbors0 = TestCase $ do
-        assertEqual "Conta Vizinhos 0" expectedNum resultNum
+        assertEqual "numOfLiveNeighbors 0" expectedNum resultNum
         where
             expectedNum = 8
-            grid = insertCells (square 3) conways [(1,1), (1,2),(1,3), (2,1), (2,3), (3,1), (3,2), (3,3)]
-            resultNum = numOfLiveNeighbors (2,2) grid
+            resultNum = numOfLiveNeighbors (2,2) fullGOL3Grid
 
     testNumOfLiveNeighbors1 :: Test
     testNumOfLiveNeighbors1 = TestCase $ do
-        assertEqual "Conta Vizinhos 1" expectedNum resultNum
+        assertEqual "numOfLiveNeighbors 1" expectedNum resultNum
         where
             expectedNum = 0
             resultNum = numOfLiveNeighbors (2,2) (square 3)
 
     testNumOfLiveNeighbors2 :: Test
     testNumOfLiveNeighbors2 = TestCase $ do
-        assertEqual "Conta Vizinhos 2" expectedNum resultNum
+        assertEqual "numOfLiveNeighbors 2" expectedNum resultNum
         where
             expectedNum = 4
             grid = insertCells (square 3) conways [(1,1), (1,3), (3,1), (3,3)]
@@ -184,7 +196,7 @@ module Test.Simulation where
 
     testNumOfLiveNeighbors3 :: Test
     testNumOfLiveNeighbors3 = TestCase $ do
-        assertEqual "Conta Vizinhos 3" expectedNum resultNum
+        assertEqual "numOfLiveNeighbors 3" expectedNum resultNum
         where
             expectedNum = 4
             grid = insertCells (square 3) conways [(1,2), (2,1), (2,3), (3,2)]
@@ -192,7 +204,7 @@ module Test.Simulation where
 
     testNumOfLiveNeighbors4 :: Test
     testNumOfLiveNeighbors4 = TestCase $ do
-        assertEqual "Conta Vizinhos 4" expectedNum resultNum
+        assertEqual "numOfLiveNeighbors 4" expectedNum resultNum
         where
             expectedNum = 0
             resultNum = numOfLiveNeighbors (1,1) (square 1)
@@ -200,7 +212,7 @@ module Test.Simulation where
 -----------------------------------------------------------------------------------------------------------------
 
 {--
-    Simplismente Get Cell: aqui, verificamos os seus dois casos
+    getCell: aqui, verificamos os seus dois casos
 --}
 
     testGetCellTrue :: Test
@@ -219,3 +231,124 @@ module Test.Simulation where
                 result = getCell (1,1) (square 1)
 
 -----------------------------------------------------------------------------------------------------------------
+
+{--
+    lifeCellsCoord: verifica se a função retorna uma lista com as coordenadas 
+    de todas as células vizinhas a determinada célula
+--}
+
+    testLifeCellsCoord0 :: Test
+    testLifeCellsCoord0 = TestCase $ do
+        assertEqual "lifeCellsCoord 0" result expected
+            where
+                result = lifeCellsCoord (2,2) fullGOL3Grid
+                expected = [(1,1), (1,2),(1,3), (2,1), (2,3), (3,1), (3,2), (3,3)]
+
+
+    testLifeCellsCoord1 :: Test
+    testLifeCellsCoord1 = TestCase $ do
+        assertEqual "lifeCellsCoord 1" result expected
+            where
+                result = lifeCellsCoord (2,2) (square 3)
+                expected = []
+    
+    testLifeCellsCoord2 :: Test
+    testLifeCellsCoord2 = TestCase $ do
+        assertEqual "lifeCellsCoord 2" result expected
+            where
+                result = lifeCellsCoord (1,2) fullGOL3Grid
+                expected = [(1,1), (1,3), (2,1), (2,2), (2,3)]
+
+    testLifeCellsCoord3 :: Test
+    testLifeCellsCoord3 = TestCase $ do
+        assertEqual "lifeCellsCoord 3" result expected
+            where
+                result = lifeCellsCoord (1,3) fullGOL3Grid
+                expected = [(1,2), (2,2), (2,3)]
+
+-----------------------------------------------------------------------------------------------------------------
+
+{--
+    validCoord: verifica se o retorno da função é uma determinada coordenada 
+    que faz parte do escopo de uma dada matriz
+--}
+
+    testValidCoord0 :: Test
+    testValidCoord0 = TestCase $ do
+        assertEqual "validCoord 0" result expected
+            where
+                expected = True
+                result = validCoord (1,1) 3 3
+
+    testValidCoord1 :: Test
+    testValidCoord1 = TestCase $ do
+        assertEqual "validCoord 1" result expected
+            where
+                expected = True
+                result = validCoord (1,2) 3 3
+
+    testValidCoord2 :: Test
+    testValidCoord2 = TestCase $ do
+        assertEqual "validCoord 2" result expected
+            where
+                expected = True
+                result = validCoord (1,3) 3 3
+
+    testValidCoord3 :: Test
+    testValidCoord3 = TestCase $ do
+        assertEqual "validCoord 3" result expected
+            where
+                expected = True
+                result = validCoord (2,1) 3 3
+
+    testValidCoord4 :: Test
+    testValidCoord4 = TestCase $ do
+        assertEqual "validCoord 4" result expected
+            where
+                expected = True
+                result = validCoord (2,2) 3 3
+    
+    testValidCoord5 :: Test
+    testValidCoord5 = TestCase $ do
+        assertEqual "validCoord 5" result expected
+            where
+                expected = True
+                result = validCoord (2,3) 3 3
+
+    testValidCoord6 :: Test
+    testValidCoord6 = TestCase $ do
+        assertEqual "validCoord 6" result expected
+            where
+                expected = True
+                result = validCoord (3,1) 3 3
+
+    testValidCoord7 :: Test
+    testValidCoord7 = TestCase $ do
+        assertEqual "validCoord 7" result expected
+            where
+                expected = True
+                result = validCoord (3,2) 3 3
+
+    testValidCoord8 :: Test
+    testValidCoord8 = TestCase $ do
+        assertEqual "validCoord 8" result expected
+            where
+                expected = True
+                result = validCoord (3,3) 3 3
+
+    testValidCoord9 :: Test
+    testValidCoord9 = TestCase $ do
+        assertEqual "validCoord 9" result expected
+            where
+                expected = False
+                result = validCoord (1,2) 1 1
+
+    testValidCoord10 :: Test
+    testValidCoord10 = TestCase $ do
+        assertEqual "validCoord 9" result expected
+            where
+                expected = False
+                result = validCoord (2,1) 1 1
+    
+-----------------------------------------------------------------------------------------------------------------
+
