@@ -22,19 +22,19 @@ module Controllers.GridController where
     -- método gridToLists aplicado a uma Matrix (Maybe Cell). Sempre inicie o método com o n igual a 0, e procure não utilizar uma matriz
     -- com mais de 2 casas decimais para não quebrar a formatação
 
-    -- printGridWithNumbers :: [[Maybe Cell]] -> Int ->  IO ()
-    -- printGridWithNumbers [] n =  return ()
-    -- printGridWithNumbers (x:xs) n = 
-    --     if n == 0 then do
-    --         putStrLn $ "  " ++ buildLineWithNumber (length x)
-    --         printGridWithNumbers (x:xs) (n + 1)
+    printGridWithNumbers :: [[Maybe Cell]] -> Int ->  IO ()
+    printGridWithNumbers [] n =  return ()
+    printGridWithNumbers (x:xs) n = 
+        if n == 0 then do
+            putStrLn $ "  " ++ buildLineWithNumber (length x)
+            printGridWithNumbers (x:xs) (n + 1)
 
-    --     else do
-    --         putStrLn $ nStr ++ buildLine x
-    --         printGridWithNumbers xs (n + 1)
+        else do
+            putStrLn $ nStr ++ buildLine x
+            printGridWithNumbers xs (n + 1)
 
-    --     where
-    --         nStr = if n < 10 then " " ++ show n else show n
+        where
+            nStr = if n < 10 then " " ++ show n else show n
                
     -- Função que imprime uma Matrix (Maybe Cell) sem os números correspondentes a cada linha e coluna.
 
@@ -50,15 +50,35 @@ module Controllers.GridController where
         putStrLn ""
 
     printCell :: Maybe Cell -> IO ()
-    printCell cell
-        |isAlive cell = do
-            setSGR [SetColor Foreground Vivid (fromJust $ toColor $ color (fromJust cell))]
-            putStr "██"
-            setSGR [Reset]
-        | otherwise = do
-            setSGR [SetColor Foreground Vivid Black]
-            putStr "██"
-            setSGR [Reset]
+    printCell cell =
+        case cell of 
+            Nothing -> do
+                setSGR [SetColor Foreground Vivid Black]
+                putStr "██"
+                setSGR [Reset]
+            Just cell -> do
+                setColor (color cell)
+                putStr "██"
+                setSGR [Reset]
+
+    setColor :: String -> IO()
+    setColor str =
+        case str of 
+            "VERMELHO" -> setSGR [SetColor Foreground Dull Red]
+            "VERMELHO  BRILHANTE" -> setSGR [SetColor Foreground Vivid Red]
+            "VERDE" -> setSGR [SetColor Foreground Dull Green]
+            "VERDE BRILHANTE" -> setSGR [SetColor Foreground Vivid Green]
+            "AMARELO" -> setSGR [SetColor Foreground Dull Yellow]
+            "AMARELO BRILHANTE" -> setSGR [SetColor Foreground Vivid Yellow]
+            "AZUL" -> setSGR [SetColor Foreground Dull Blue]
+            "AZUL BRILHANTE" -> setSGR [SetColor Foreground Vivid Blue]
+            "MAGENTA" -> setSGR [SetColor Foreground Dull Magenta]
+            "MAGENTA BRILHANTE" -> setSGR [SetColor Foreground Vivid Magenta]
+            "CIANO" -> setSGR [SetColor Foreground Dull Cyan]
+            "CIANO BRILHANTE" -> setSGR [SetColor Foreground Vivid Cyan]
+            "BRANCO" -> setSGR [SetColor Foreground Dull White]
+            "BRANCO BRILHANTE" -> setSGR [SetColor Foreground Vivid White]
+            _ -> return ()
 
     toColor :: String -> Maybe Color
     toColor color = case color of
@@ -74,11 +94,11 @@ module Controllers.GridController where
 
 
 
-    -- Função que retorna a String formatada dos números correspondentes a cada coluna de uma Matrix (Maybe Cell)
+    -- Retorna a String formatada dos números correspondentes a cada coluna de uma Matrix (Maybe Cell)
     buildLineWithNumber :: Int -> String
     buildLineWithNumber n = intercalate " " list ++ " "
         where list = [if c > 9 then show c else " " ++ show c | c <-[1..n]]
-    -- ------------------------------------------------------------------------------------------------
+    ------------------------------------------------------------------------------------------------
 
     prepareSimulate :: Matrix (Maybe Cell) -> FilePath -> IO()
     prepareSimulate matrix arq = do 
