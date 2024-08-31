@@ -77,28 +77,38 @@ module Controllers.GridController where
     buildLineWithNumber n = intercalate " " list ++ " "
         where list = [if c > 9 then show c else " " ++ show c | c <-[1..n]]
     -- ------------------------------------------------------------------------------------------------
-    simulate :: Matrix (Maybe Cell) -> IO()
-    simulate matrix = do
+
+    prepareSimulate :: Matrix (Maybe Cell) -> FilePath -> IO()
+    prepareSimulate matrix arq = do 
+        cellsJayzon <- readCells arq
+        case decode cellsJayzon :: Maybe [Cell] of 
+            Nothing -> putStrLn "vaitomacu"
+            Just cells -> simulate cells matrix 0
+
+
+    simulate :: [Cell] -> Matrix (Maybe Cell) -> Int -> IO()
+    simulate cells matrix count = do
         _ <- system "clear"
         printGrid  matrix
+        putStrLn "Numero de passos dados ate agora: " ++ count
         putStrLn "digite G para iniciar a geração"
         putStrLn "digite N para simular só o próximo estágio"
         putStrLn "digite I para inserir células"
         option <- getLine
-        actionChooser matrix option
+        actionChooser cells matrix count option
 
-    actionChooser :: Matrix (Maybe Cell) -> String -> IO()
-    actionChooser grid opt
-        | option == 'G' = runLoop grid
-        | option == 'N' = nextStep grid
-        | option == 'I' = insertion grid
-        | otherwise = simulate grid
+    actionChooser :: [Cell] -> Matrix (Maybe Cell) -> Int -> String -> IO()
+    actionChooser cells grid count opt
+        | option == 'G' = runLoop grid count
+        | option == 'N' = nextStep grid count
+        | option == 'I' = insertion cells grid count
+        | otherwise = simulate grid count
 
         where
             option = toUpper $ head opt
 
-    runLoop :: Matrix (Maybe Cell) -> IO ()
-    runLoop grid = do
+    runLoop :: [Cell] -> Matrix (Maybe Cell) -> Int -> IO ()
+    runLoop cells grid count = do
         hSetBuffering stdin NoBuffering -- Desabilita o buffer do input
         hSetEcho stdin False            -- Desabilita a ecoação do input no terminal
         let checkInput = do
@@ -107,8 +117,7 @@ module Controllers.GridController where
                   return() 
                 else do
                   loopFunction grid
-                  runLoop (gridUpdate grid)
-
+                  runLoop cells (gridUpdate grid) (count + 1)
         checkInput
     
     loopFunction ::Matrix (Maybe Cell) -> IO()
@@ -117,9 +126,23 @@ module Controllers.GridController where
         threadDelay 500000
 
     
-    nextStep :: Matrix (Maybe Cell) -> IO()
-    nextStep grid = simulate $ gridUpdate grid
+    nextStep :: [Cell] -> Matrix (Maybe Cell) -> Int-> IO()
+    nextStep cells grid count = simulate cells (gridUpdate grid) (count + 1)
 
-    insertion :: Matrix (Maybe Cell) -> IO()
-    insertion grid = putStrLn "gay"
+    insertion :: [Cell] -> Matrix (Maybe Cell) -> IO()
+    insertion cells grid = do
+        _ <- system "clear"
+        putStrLn "Qual celula deseja inserir ?"
+        printCels cells
+        option <- getLine
+        selectCell option
 
+
+    printCels :: [Cell] -> Int -> IO()
+    printCels [] _ = return ()
+    printCels (x:xs) n = do
+        putStrLn $ "    "show n ++ " - " ++ show x
+        printCels xs (n + 1)
+
+    selectCell :: [Cell] -> Int -> Cell
+    selectCell cells n = cells[n]
