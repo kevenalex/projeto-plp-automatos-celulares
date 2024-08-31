@@ -134,7 +134,7 @@ module Controllers.CellController where
         printCells xs (n + 1)
 
     
-    selectColor :: String -> Maybe String
+    selectColor :: Char -> Maybe String
     selectColor color = case color of
         '1' -> Just "VERMELHO"
         '2' -> Just "VERDE"
