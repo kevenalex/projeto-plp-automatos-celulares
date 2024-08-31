@@ -63,17 +63,16 @@ module Controllers.CellController where
         nameCellNT <- getLine
         let nameCellT = map toUpper nameCellNT
 
-        printScreen "app/storage/ruleController/birthRule.txt" True False
 
         addBirthRule path nameCellT
     
     -- Criação da Regra de Nascimento da Celula, o usuario pode inserir de 0 a 8 digitos entre 1 e 8.
     addBirthRule :: FilePath -> String -> IO()
     addBirthRule path nameCellT = do
+        printScreen "app/storage/ruleController/birthRule.txt" True False
         nascStr <- getLine
         if handleBornAndStayRule nascStr then do
             let nascList = map (\x -> read [x] :: Int) nascStr
-            printScreen "app/storage/ruleController/stayRule.txt" True False
             addStayRule path nameCellT $ Set.toList (Set.fromList nascList)
         
         else do
@@ -83,11 +82,12 @@ module Controllers.CellController where
     -- Criação da Regra de Permanencia da Celula, o usuario pode inserir de 0 a 8 digitos entre 1 e 8.
     addStayRule :: FilePath -> String -> [Int] -> IO()
     addStayRule path nameCellT nascList = do
+        printScreen "app/storage/ruleController/stayRule.txt" True False
+
         stayStr <- getLine
         if handleBornAndStayRule stayStr then do
             let stayList = map (\x -> read [x] :: Int) stayStr
             let regra = Rule nascList $ Set.toList (Set.fromList stayList)
-            printScreen "app/storage/ruleController/colorMenu.txt" True False
             addColor path nameCellT regra
         
         else do
@@ -97,13 +97,49 @@ module Controllers.CellController where
     -- Criação da Cor da Celula, o usuario pode inserir uma das 7 opções de cor que o terminal disponibiliza.
     addColor :: FilePath -> String -> Rule -> IO()
     addColor path nameCellT regra = do
-        colorI <- getChar
+        printColors
+        colorI <- readLn :: IO Int
         if handleColorChoice colorI then do
             let cell = Cell nameCellT regra $ fromJust $ selectColor colorI
             addCell path cell
         else do
             printScreen "app/storage/ruleController/colorMenuError.txt" True False
             addColor path nameCellT regra
+
+    printColors :: IO()
+    printColors = do
+        putStrLn "Cores dependem do tema do seu terminal\n"
+        setSGR [SetColor Foreground Dull Red]
+        putStr "1) VERMELHO     "
+        setSGR [SetColor Foreground Vivid Red]
+        putStrLn "2) VERMELHO BRILHANTE"
+        setSGR [SetColor Foreground Dull Green]
+        putStr "3) VERDE        "
+        setSGR [SetColor Foreground Vivid Green]
+        putStrLn "4) VERDE BRILHANTE"
+        setSGR [SetColor Foreground Dull Yellow]
+        putStr "5) AMARELO      "
+        setSGR [SetColor Foreground Vivid Yellow]
+        putStrLn "6) AMARELO BRILHANTE"
+        setSGR [SetColor Foreground Dull Blue]
+        putStr "7) AZUL         "
+        setSGR [SetColor Foreground Vivid Blue]
+        putStrLn "8) AZUL BRILHANTE"
+        setSGR [SetColor Foreground Dull Magenta]
+        putStr "9) MAGENTA      "
+        setSGR [SetColor Foreground Vivid Magenta]
+        putStrLn "10) MAGENTA BRILHANTE"
+        setSGR [SetColor Foreground Dull Cyan]
+        putStr "11) CIANO       "
+        setSGR [SetColor Foreground Vivid Cyan]
+        putStrLn "12) CIANO BRILHANTE"
+        setSGR [SetColor Foreground Dull White]
+        putStr "13) BRANCO      "
+        setSGR [SetColor Foreground Vivid White]
+        putStrLn "14) BRANCO BRILHANTE"
+        
+
+
 
     removeAutomata :: FilePath -> [Cell] -> IO()
     removeAutomata path cells = do 
@@ -134,15 +170,22 @@ module Controllers.CellController where
         printCells xs (n + 1)
 
     
-    selectColor :: Char -> Maybe String
+    selectColor :: Int -> Maybe String
     selectColor color = case color of
-        '1' -> Just "VERMELHO"
-        '2' -> Just "VERDE"
-        '3' -> Just "AMARELO"
-        '4' -> Just "AZUL"
-        '5' -> Just "MAGENTA"
-        '6' -> Just "CIANO"
-        '7' -> Just "BRANCO"
+        1 -> Just "VERMELHO"
+        2 -> Just "VERMELHO  BRILHANTE"
+        3 -> Just "VERDE"
+        4 -> Just "VERDE BRILHANTE"
+        5 -> Just "AMARELO"
+        6 -> Just "AMARELO BRILHANTE"
+        7 -> Just "AZUL"
+        8 -> Just "AZUL BRILHANTE"
+        9 -> Just "MAGENTA"
+        10 -> Just "MAGENTA BRILHANTE"
+        11 -> Just "CIANO"
+        12 -> Just "CIANO BRILHANTE"
+        13 -> Just "BRANCO"
+        14 -> Just "BRANCO BRILHANTE"
         _ -> Nothing
 
     -- Faz o tratemento das entradas das regras de Nascimento e Permanência
@@ -151,5 +194,5 @@ module Controllers.CellController where
 
     -- Faz o tratamento da entrada de cor, verifica se ela não é um 'Enter' e se é um char entre '1' e '7'
     -- Editar função pra tratar o buffer do teclado
-    handleColorChoice :: Char -> Bool
-    handleColorChoice cor = cor /= '\n' && isPrint cor && cor `elem` ['1'..'7']
+    handleColorChoice :: Int -> Bool
+    handleColorChoice cor = cor > 0 && cor < 15
