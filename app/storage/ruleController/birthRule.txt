@@ -8,13 +8,12 @@
 
 
 
-                                                                    CRIANDO UMA CELULA
+                                                                                   CRIANDO UMA CELULA
 
-                                                                    POR FAVOR, INSIRA DE 0 A 8 NUMEROS ENTRE 1 E 8
-
-
-
-                                                        COM QUANTOS VIZINHOS UMA CÉLULA MORTA NASCE?
+                                                                      COM QUANTOS VIZINHOS UMA CELULA MORTA NASCE?
+                                                                     
+                                                                     POR FAVOR, INSIRA DE 0 A 8 NUMEROS ENTRE 1 E 8
+                                                                    
 
 
 
