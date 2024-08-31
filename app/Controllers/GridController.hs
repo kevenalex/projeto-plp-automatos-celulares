@@ -40,6 +40,7 @@ module Controllers.GridController where
     printGrid grid = do
         clearScreen
         mapM_ printRow (gridToLists grid)
+        hFlush stdout
 
     printRow :: [Maybe Cell] -> IO ()
     printRow row = do
@@ -69,14 +70,7 @@ module Controllers.GridController where
         "BRANCO" -> Just White
         _ -> Nothing
 
-    -- Função que retorna a String formatada de cada linha de uma Matrix (Maybe Cell)
-    -- buildLine :: [Maybe Cell] -> IO()
-    -- buildLine cellRow = [printCell cell | cell <- cellRow]
-        
-        
-        -- intercalate "" cells
-        -- where 
-        --     cells = [if isAlive cell then color (fromJust cell) else "⬛" | cell <- cellRow]
+
 
     -- Função que retorna a String formatada dos números correspondentes a cada coluna de uma Matrix (Maybe Cell)
     buildLineWithNumber :: Int -> String
