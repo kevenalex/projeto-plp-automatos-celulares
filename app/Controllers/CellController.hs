@@ -150,5 +150,6 @@ module Controllers.CellController where
     handleBornAndStayRule regra = length regra <= 8 && all (`elem` "12345678") regra
 
     -- Faz o tratamento da entrada de cor, verifica se ela não é um 'Enter' e se é um char entre '1' e '7'
+    -- Editar função pra tratar o buffer do teclado
     handleColorChoice :: Char -> Bool
     handleColorChoice cor = cor /= '\n' && isPrint cor && cor `elem` ['1'..'7']
