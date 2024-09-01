@@ -7,10 +7,12 @@ module Controllers.GridController where
     import Data.List (intercalate)
     import Data.Maybe
     import Data.Char (toUpper)
+    import Data.Aeson
     import System.Process (system)
     import System.Console.ANSI
     import System.IO
     import GHC.Conc
+    import Files.Cell
     
 
     -- Funções que gerem a impressão da Matrix (Maybe Cell)
@@ -20,19 +22,19 @@ module Controllers.GridController where
     -- método gridToLists aplicado a uma Matrix (Maybe Cell). Sempre inicie o método com o n igual a 0, e procure não utilizar uma matriz
     -- com mais de 2 casas decimais para não quebrar a formatação
 
-    printGridWithNumbers :: [[Maybe Cell]] -> Int ->  IO ()
-    printGridWithNumbers [] n =  return ()
-    printGridWithNumbers (x:xs) n = 
-        if n == 0 then do
-            putStrLn $ "  " ++ buildLineWithNumber (length x)
-            printGridWithNumbers (x:xs) (n + 1)
+    -- printGridWithNumbers :: [[Maybe Cell]] -> Int ->  IO ()
+    -- printGridWithNumbers [] n =  return ()
+    -- printGridWithNumbers (x:xs) n = 
+    --     if n == 0 then do
+    --         putStrLn $ "  " ++ buildLineWithNumber (length x)
+    --         printGridWithNumbers (x:xs) (n + 1)
 
-        else do
-            putStrLn $ nStr ++ buildLine x
-            printGridWithNumbers xs (n + 1)
+    --     else do
+    --         putStrLn $ nStr ++ buildLine x
+    --         printGridWithNumbers xs (n + 1)
 
-        where
-            nStr = if n < 10 then " " ++ show n else show n
+    --     where
+    --         nStr = if n < 10 then " " ++ show n else show n
                
     -- Função que imprime uma Matrix (Maybe Cell) sem os números correspondentes a cada linha e coluna.
 
@@ -96,6 +98,9 @@ module Controllers.GridController where
     buildLineWithNumber :: Int -> String
     buildLineWithNumber n = intercalate " " list ++ " "
         where list = [if c > 9 then show c else " " ++ show c | c <-[1..n]]
+
+    -- buildLine :: [Maybe Cell] -> IO()
+    -- buildLine cellRow = [printCell cell | cell <- cellRow]
     ------------------------------------------------------------------------------------------------
 
     prepareSimulate :: Matrix (Maybe Cell) -> FilePath -> IO()
@@ -119,10 +124,10 @@ module Controllers.GridController where
 
     actionChooser :: [Cell] -> Matrix (Maybe Cell) -> Int -> String -> IO()
     actionChooser cells grid count opt
-        | option == 'G' = runLoop grid count
-        | option == 'N' = nextStep grid count
+        | option == 'G' = runLoop cells grid count
+        | option == 'N' = nextStep cells grid count
         | option == 'I' = insertion cells grid count
-        | otherwise = simulate grid count
+        | otherwise = simulate cells grid count
 
         where
             option = toUpper $ head opt
@@ -134,7 +139,7 @@ module Controllers.GridController where
         let checkInput = do
                 inputAvaliable <- hReady stdin
                 if inputAvaliable then do 
-                  return() 
+                    simulate cells grid count
                 else do
                   loopFunction grid
                   runLoop cells (gridUpdate grid) (count + 1)
@@ -149,20 +154,27 @@ module Controllers.GridController where
     nextStep :: [Cell] -> Matrix (Maybe Cell) -> Int-> IO()
     nextStep cells grid count = simulate cells (gridUpdate grid) (count + 1)
 
-    insertion :: [Cell] -> Matrix (Maybe Cell) -> IO()
-    insertion cells grid = do
+    insertion :: [Cell] -> Matrix (Maybe Cell) -> Int -> IO()
+    insertion cells grid count = do
+        position <- getPositionInsertion
         _ <- system "clear"
         putStrLn "Qual celula deseja inserir ?"
-        printCels cells
-        option <- getLine
-        selectCell option
+        printCelsJson cells 1
+        option <- readLn :: IO Int
+        let celula = cells !! (option - 1)
+        let newGrid = insertCell grid celula position
+        simulate cells newGrid 0
 
+    printCelsJson :: [Cell] -> Int -> IO()
+    printCelsJson [] _ = return ()
+    printCelsJson (x:xs) n = do
+        putStrLn $ "    " ++ show n ++ " - " ++ show x
+        printCelsJson xs (n + 1)
 
-    printCels :: [Cell] -> Int -> IO()
-    printCels [] _ = return ()
-    printCels (x:xs) n = do
-        putStrLn $ "    "show n ++ " - " ++ show x
-        printCels xs (n + 1)
-
-    selectCell :: [Cell] -> Int -> Cell
-    selectCell cells n = cells[n]
+    getPositionInsertion :: IO (Int, Int)
+    getPositionInsertion = do
+        putStrLn "Digite a linha que deseja inserir a celula:"
+        linha <- readLn :: IO Int
+        putStrLn "Digite a coluna que deseja inserir a celula:"
+        coluna <- readLn :: IO Int
+        return (linha, coluna)
