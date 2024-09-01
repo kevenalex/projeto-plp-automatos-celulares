@@ -8,9 +8,6 @@
 
 
 
-                                                                               CRIANDO UMA CELULA
-
-                                                                             QUAL O NOME DA CELULA?
 
 
 
@@ -18,7 +15,24 @@
 
 
 
-                                                        
+                                                                                                    CRIANDO UMA CELULA
+                     
+                                                                                                  QUAL O NOME DA CELULA?
+
+
+
+
+
+
+
+          
+
+
+
+
+
+
+                                              
 
 
 

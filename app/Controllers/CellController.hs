@@ -61,20 +61,20 @@ module Controllers.CellController where
         printScreen "app/storage/ruleController/nameCellQuestion.txt" True False
 
         nameCellNT <- getLine
-        let nameCellT = map toUpper nameCellNT
+        let nameCellT = map toUpper $ trim nameCellNT
 
-
+        printScreen "app/storage/ruleController/birthRule.txt" True False
         addBirthRule path nameCellT
     
     -- Criação da Regra de Nascimento da Celula, o usuario pode inserir de 0 a 8 digitos entre 1 e 8.
     addBirthRule :: FilePath -> String -> IO()
     addBirthRule path nameCellT = do
-        printScreen "app/storage/ruleController/birthRule.txt" True False
         nascStr <- getLine
         if handleBornAndStayRule nascStr then do
-            let nascList = map (\x -> read [x] :: Int) nascStr
+            let nascList = map (\x -> read [x] :: Int) (filter isDigit nascStr)
+            printScreen "app/storage/ruleController/stayRule.txt" True False
             addStayRule path nameCellT $ Set.toList (Set.fromList nascList)
-        
+
         else do
             printScreen "app/storage/ruleController/birthRuleError.txt" True False
             addBirthRule path nameCellT
@@ -82,11 +82,9 @@ module Controllers.CellController where
     -- Criação da Regra de Permanencia da Celula, o usuario pode inserir de 0 a 8 digitos entre 1 e 8.
     addStayRule :: FilePath -> String -> [Int] -> IO()
     addStayRule path nameCellT nascList = do
-        printScreen "app/storage/ruleController/stayRule.txt" True False
-
         stayStr <- getLine
         if handleBornAndStayRule stayStr then do
-            let stayList = map (\x -> read [x] :: Int) stayStr
+            let stayList = map (\x -> read [x] :: Int) (filter isDigit stayStr)
             let regra = Rule nascList $ Set.toList (Set.fromList stayList)
             addColor path nameCellT regra
         
@@ -184,9 +182,11 @@ module Controllers.CellController where
         14 -> Just "BRANCO BRILHANTE"
         _ -> Nothing
 
-    -- Faz o tratemento das entradas das regras de Nascimento e Permanência
+    -- Faz o tratemento das entradas das regras de Nascimento e Permanência: verifica se o length da string <= 8 sem contar
+    -- espacos em branco e buffer do teclado e se o que foi digitado são caracteres entre 1 e 8
     handleBornAndStayRule :: String -> Bool
-    handleBornAndStayRule regra = length regra <= 8 && all (`elem` "12345678") regra
+    handleBornAndStayRule regra = let regraFormatada = filter (not . isSpace) regra
+                                  in length regraFormatada <= 8 && all (`elem` "12345678") regraFormatada
 
     -- Faz o tratamento da entrada de cor, verifica se ela não é um 'Enter' e se é um char entre '1' e '7'
     -- Editar função pra tratar o buffer do teclado
