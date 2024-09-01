@@ -53,7 +53,9 @@ module Test.Simulation where
             testNumOfLiveNeighbors0, testNumOfLiveNeighbors1, testNumOfLiveNeighbors2, testNumOfLiveNeighbors3,
             testNumOfLiveNeighbors4, testGetCellTrue, testGetCellFalse, testLifeCellsCoord0, testLifeCellsCoord1,
             testLifeCellsCoord3, testValidCoord0, testValidCoord1, testValidCoord2, testValidCoord3, testValidCoord4,
-            testValidCoord5, testValidCoord6, testValidCoord7, testValidCoord8, testValidCoord9, testValidCoord10
+            testValidCoord5, testValidCoord6, testValidCoord7, testValidCoord8, testValidCoord9, testValidCoord10, 
+            testListOfValidCoords0, testListOfValidCoords1, testListOfValidCoords2, testListOfValidCoords3, 
+            testListOfValidCoords4, testListOfValidCoords5
         ]
 
 ----------------------------------------- [MAIN: TESTES DO MÓDULO GRID] ------------------------------------------
@@ -352,3 +354,73 @@ module Test.Simulation where
     
 -----------------------------------------------------------------------------------------------------------------
 
+{--
+    listOfCoord: verifica se a lista contempla todas coordenadas 
+    que estão na vizinhança de determinada coordenada
+--}
+
+    testListOfCoord0 :: Test
+    testListOfCoord0 = TestCase $ do
+        assertEqual "listOfCoord 0" expected result
+            where
+                result = listOfCoord (2,2) (square 3)
+                expected = [(1,1), (1,2), (1,3), (2,1), (2,3), (3,1), (3,2), (3,3)]
+
+    testListOfCoord1 :: Test
+    testListOfCoord1 = TestCase $ do
+        assertEqual "listOfCoord 1" expected result
+            where
+                result = listOfCoord (4,4) (square 3)
+                expected = [(3,3), (3,4), (3,5), (4,3), (4,5), (5,3), (5,4), (5,5)]
+
+-----------------------------------------------------------------------------------------------------------------
+
+{--
+    listOfValidCoords: verifica se a função retorna apenas coordenadas válidas,
+    ou seja, aquelas que não ultrapassam o escopo da matriz
+--}
+
+    testListOfValidCoords0 :: Test
+    testListOfValidCoords0 = TestCase $ do
+        assertEqual "listOfValidCoords 0" expected result
+            where
+                result = listOfValidCoords [(1,1), (1,2), (1,3), (2,1), (2,2), (2,3), (3,1), (3,2), (3,3)] 1 1
+                expected = [(1,1)]
+
+    testListOfValidCoords1 :: Test
+    testListOfValidCoords1 = TestCase $ do
+        assertEqual "listOfValidCoords 1" expected result
+            where
+                result = listOfValidCoords [(1,1), (1,2), (1,3), (2,1), (2,2), (2,3), (3,1), (3,2), (3,3)] 2 2
+                expected = [(1,1), (1,2), (2,1), (2,2)]
+
+    testListOfValidCoords2 :: Test
+    testListOfValidCoords2 = TestCase $ do
+        assertEqual "listOfValidCoords 2" expected result
+            where
+                result = listOfValidCoords [(1,1), (1,2), (1,3), (2,1), (2,2), (2,3), (3,1), (3,2), (3,3)] 3 3
+                expected = [(1,1), (1,2), (1,3), (2,1), (2,2), (2,3), (3,1), (3,2), (3,3)]
+                
+    testListOfValidCoords3 :: Test
+    testListOfValidCoords3 = TestCase $ do
+        assertEqual "listOfValidCoords 3" expected result
+            where
+                result = listOfValidCoords [(1,1), (1,2), (1,3), (2,1), (2,2), (2,3), (3,1), (3,2), (3,3)] 4 4
+                expected = [(1,1), (1,2), (1,3), (2,1), (2,2), (2,3), (3,1), (3,2), (3,3)]
+
+        
+    testListOfValidCoords4 :: Test
+    testListOfValidCoords4 = TestCase $ do
+        assertEqual "listOfValidCoords 4" expected result
+            where
+                result = listOfValidCoords [(1,1), (1,2), (1,3), (2,1), (2,2), (2,3), (3,1), (3,2), (3,3)] 0 0
+                expected = []
+
+    testListOfValidCoords5 :: Test
+    testListOfValidCoords5 = TestCase $ do
+        assertEqual "listOfValidCoords 5" expected result
+            where
+                result = listOfValidCoords [] 1 1
+                expected = []
+
+-----------------------------------------------------------------------------------------------------------------
