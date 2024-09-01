@@ -1,6 +1,7 @@
 module Main where
 
 import Controllers.CellController (menuCells)
+import Controllers.SimulationController
 import Data.Char
 import System.Console.ANSI
 import System.Exit (exitSuccess)
@@ -22,7 +23,7 @@ selectOption delay = do
 
     opcao <- getLine
     case toUpper $ head opcao of
-        -- '1' -> do menuAutomatasSandBox "app/storage/cells.json"; selectOption False;
+        '1' -> do emptyScene "app/storage/cells.json"; selectOption False;
         -- '2' -> do menuAutomatasCarregarCena "app/storage/cells.json"; selectOption False;
         '3' -> do menuCells "app/storage/cells.json"; selectOption False
         -- '4' -> do menuTutorial; selectOption False;

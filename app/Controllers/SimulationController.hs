@@ -13,7 +13,9 @@ module Controllers.SimulationController where
     import System.IO
     import GHC.Conc
     import Files.Cell
+    import Files.Scene
     import Text.Read (readMaybe)
+    import Utils.Render
     
 
     -- Funções que gerem a impressão da Matrix (Maybe Cell)
@@ -106,40 +108,51 @@ module Controllers.SimulationController where
     -- buildLine cellRow = [printCell cell | cell <- cellRow]
     ------------------------------------------------------------------------------------------------
 
+    emptyScene :: FilePath -> IO ()
+    emptyScene path = do
+        putStrLn "Vamos criar a sua matrix"
+        putStrLn "Qual tamanho voce deseja ?"
+        putStr "Digite o tamanho da altura:"
+        altura <- readLn :: IO Int
+        putStr "Digite o tamanho da largura:"
+        largura <- readLn :: IO Int
+        clearScreen
+        prepareSimulate (gridGenerate altura largura) path
+
     prepareSimulate :: Matrix (Maybe Cell) -> FilePath -> IO()
     prepareSimulate matrix arq = do 
         cellsJayzon <- readCells arq
         case decode cellsJayzon :: Maybe [Cell] of 
             Nothing -> putStrLn "faltou o array de celulas"
             Just cells -> do 
-                hSetBuffering stdout( BlockBuffering Nothing) -- Ligando o buffer
+                hSetBuffering stdout (BlockBuffering Nothing) -- Ligando o buffer
                 hSetBuffering stdin NoBuffering
                 simulate cells matrix 0
                 hSetBuffering stdin LineBuffering
                 hSetBuffering stdout NoBuffering
 
-
     simulate :: [Cell] -> Matrix (Maybe Cell) -> Int -> IO()
     simulate cells matrix count = do
         clearScreen
         printGrid  matrix
-        putStrLn $ "Numero de passos dados ate agora: " ++ show count
-        putStrLn "digite G para iniciar a geração"
-        putStrLn "digite N para simular só o próximo estágio"
-        putStrLn "digite I para inserir células"
+        printSimulationMenu count
         hFlush stdout
         option <- getLine
         actionChooser cells matrix count option
 
     actionChooser :: [Cell] -> Matrix (Maybe Cell) -> Int -> String -> IO()
     actionChooser cells grid count opt
-        | option == 'G' = runLoop cells grid count
-        | option == 'N' = nextStep cells grid count
-        | option == 'I' = insertion cells grid count
+        | option == '1' = runLoop cells grid count
+        | option == '2' = nextStep cells grid count
+        | option == '3' = insertion cells grid count
+        | option == '4' = saveScene cells grid count
+        | option == '5' = return ()
         | otherwise = simulate cells grid count
 
         where
             option = toUpper $ head opt
+
+-----------------------------------------------------------------------------------------------------------
 
     runLoop :: [Cell] -> Matrix (Maybe Cell) -> Int -> IO ()
     runLoop cells grid count = do
@@ -148,6 +161,7 @@ module Controllers.SimulationController where
         let checkInput = do
                 inputAvaliable <- hReady stdin
                 if inputAvaliable then do 
+                    hSetEcho stdin True
                     simulate cells grid count
                 else do
                   loopFunction grid
@@ -160,9 +174,15 @@ module Controllers.SimulationController where
         putStrLn "Aperte qualquer tecla para para a simulacao"
         threadDelay 500000
 
+---------------------------------------------------------------------------------------------------------
+
     
     nextStep :: [Cell] -> Matrix (Maybe Cell) -> Int-> IO()
     nextStep cells grid count = simulate cells (gridUpdate grid) (count + 1)
+
+
+-----------------------------------------------------------------------------------------------------------
+
 
     insertion :: [Cell] -> Matrix (Maybe Cell) -> Int -> IO()
     insertion cells grid count = do
@@ -176,7 +196,7 @@ module Controllers.SimulationController where
         putStrLn "Por exemplo: '1 3,3 1' adicionara celulas na posicao linha 1 coluna 3 e na posicao linha 3 coluna 1"
         coordernates <- getLine        
         let coordinates = parsePairs coordernates
-        let newGrid = insertCells grid (cells !! cell) coordinates
+        let newGrid = insertCells grid (cells !! (cell-1)) coordinates
 
         simulate cells newGrid 0
 
@@ -203,3 +223,24 @@ module Controllers.SimulationController where
             n1 <- readMaybe x
             n2 <- readMaybe y
             return (n1, n2)
+
+
+---------------------------------------------------------------------------------------------------
+
+
+    saveScene :: [Cell] -> Matrix (Maybe Cell) -> Int -> IO()
+    saveScene cells grid count = do
+        putStrLn "Digite um nome para essa cena"
+        nome <- getLine 
+        let scene = Scene nome (nrows grid) (ncols grid) (toList grid)
+        addScene "./app/storage/scenes.json" scene
+        simulate cells grid count
+
+
+-----------------------------------------------------------------------------------------------------
+
+    printSimulationMenu :: Int -> IO()
+    printSimulationMenu count = do
+        printEmptyLines 1
+        putStrLn $ "Numero de passos dados ate agora: " ++ show count
+        putStrLn $ "                                     1) Iniciar simulacao   2) Simular 1 passo   3) Inserir celulas   4) Salvar a cena   5) Voltar"
