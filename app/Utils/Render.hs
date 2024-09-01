@@ -51,7 +51,7 @@ module Utils.Render where
     trim :: String -> String
     trim = unwords . words
 
-    setCursorForPrintGrid :: Int -> Int -> IO ()
+    setCursorForPrintGrid :: Matrix (Maybe Cell) -> IO ()
     setCursorForPrintGrid halfGridHeight halfGridWidth = do
         Just (screenWidth, screenHeight) <- getTerminalSize
         let halfWidght = screenWidth `div` 2
