@@ -1,1 +1,1 @@
-[{"color":"AZUL BRILHANTE","name":"LEO","rule":{"birth":[1,2,3],"stay":[5,6]}},{"color":"BRANCO","name":"123","rule":{"birth":[1],"stay":[1,2,3]}}]
+[{"color":"BRANCO","name":"123","rule":{"birth":[1],"stay":[1]}},{"color":"VERDE","name":"123","rule":{"birth":[1],"stay":[1]}},{"color":"AZUL BRILHANTE","name":"LEO","rule":{"birth":[1,2,3],"stay":[5,6]}},{"color":"BRANCO","name":"123","rule":{"birth":[1],"stay":[1,2,3]}}]

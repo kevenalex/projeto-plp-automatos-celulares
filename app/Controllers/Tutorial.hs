@@ -17,4 +17,5 @@ module Controllers.Tutorial where
     tutorial = do
         printScreen "app/storage/tutorial/intro.txt" True False
         printScreen "app/storage/tutorial/apresentaRegras.txt" True False
+        setCursorColumn 79
         print conways
