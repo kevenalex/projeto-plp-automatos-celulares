@@ -352,3 +352,50 @@ module Test.Simulation where
     
 -----------------------------------------------------------------------------------------------------------------
 
+{--
+    listOfCoord: verifica se a lista contempla todas coordenadas 
+    que estão na vizinhança de determinada coordenada
+--}
+
+    testListOfCoord0 :: Test
+    testListOfCoord0 = TestCase $ do
+        assertEqual "listOfCoord 0" expected result
+            where
+                result = listOfCoord (2,2) (square 3)
+                expected = [(1,1), (1,2), (1,3), (2,1), (2,3), (3,1), (3,2), (3,3)]
+
+    testListOfCoord1 :: Test
+    testListOfCoord1 = TestCase $ do
+        assertEqual "listOfCoord 1" expected result
+            where
+                result = listOfCoord (4,4) (square 3)
+                expected = [(3,3), (3,4), (3,5), (4,3), (4,5), (5,3), (5,4), (5,5)]
+
+-----------------------------------------------------------------------------------------------------------------
+
+{--
+    listOfValidCoords: verifica se a função retorna apenas coordenadas válidas,
+    ou seja, aquelas que não ultrapassam o escopo da matriz
+
+    testListOfValidCoords0 :: Test
+    testListOfValidCoords0 = TestCase $ do
+        assertEqual "listOfValidCoords 0" expected result
+            where
+                result = listOfValidCoords [(2,2)] 3 3
+                expected = [(1,1), (1,2), (1,3), (2,1), (2,3), (3,1), (3,2), (3,3)]
+
+    testListOfValidCoords1 :: Test
+    testListOfValidCoords1 = TestCase $ do
+        assertEqual "listOfValidCoords 1" expected result
+            where
+                result = listOfValidCoords [(1,1), (1,3), (2,1), (2,2), (2,3)] 3 3
+                expected = [(1,2)]
+
+    testListOfValidCoords2 :: Test
+    testListOfValidCoords2 = TestCase $ do
+        assertEqual "listOfValidCoords 2" expected result
+            where
+                result = listOfValidCoords [(1,2)] 3 3
+                expected = []
+
+--}
