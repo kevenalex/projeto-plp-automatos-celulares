@@ -13,6 +13,7 @@ module Controllers.SimulationController where
     import System.IO
     import GHC.Conc
     import Files.Cell
+    import Text.Read (readMaybe)
     
 
     -- Funções que gerem a impressão da Matrix (Maybe Cell)
@@ -108,16 +109,18 @@ module Controllers.SimulationController where
     prepareSimulate matrix arq = do 
         cellsJayzon <- readCells arq
         case decode cellsJayzon :: Maybe [Cell] of 
-            Nothing -> putStrLn "vaitomacu"
+            Nothing -> putStrLn "faltou o array de celulas"
             Just cells -> do 
                 hSetBuffering stdout( BlockBuffering Nothing) -- Ligando o buffer
+                hSetBuffering stdin NoBuffering
                 simulate cells matrix 0
+                hSetBuffering stdin LineBuffering
                 hSetBuffering stdout NoBuffering
 
 
     simulate :: [Cell] -> Matrix (Maybe Cell) -> Int -> IO()
     simulate cells matrix count = do
-        _ <- system "clear"
+        clearScreen
         printGrid  matrix
         putStrLn $ "Numero de passos dados ate agora: " ++ show count
         putStrLn "digite G para iniciar a geração"
@@ -153,6 +156,7 @@ module Controllers.SimulationController where
     loopFunction ::Matrix (Maybe Cell) -> IO()
     loopFunction grid = do
         printGrid  grid
+        putStrLn "Aperte qualquer tecla para para a simulacao"
         threadDelay 500000
 
     
@@ -161,13 +165,18 @@ module Controllers.SimulationController where
 
     insertion :: [Cell] -> Matrix (Maybe Cell) -> Int -> IO()
     insertion cells grid count = do
-        position <- getPositionInsertion
-        _ <- system "clear"
-        putStrLn "Qual celula deseja inserir ?"
-        printCelsJson cells 1
-        option <- readLn :: IO Int
-        let celula = cells !! (option - 1)
-        let newGrid = insertCell grid celula position
+        hSetBuffering stdin LineBuffering
+
+        putStrLn "Qual celula voce deseja adicionar ?"
+        _ <- printCelsJson cells 1
+        cell <- readLn :: IO Int
+        
+        putStrLn "Em pares de numeros separados por espacos e virgulas, digite onde deseja adicionar essa celula"
+        putStrLn "Por exemplo: '1 3,3 1' adicionara celulas na posicao linha 1 coluna 3 e na posicao linha 3 coluna 1"
+        coordernates <- getLine        
+        let coordinates = parsePairs coordernates
+        let newGrid = insertCells grid (cells !! cell) coordinates
+
         simulate cells newGrid 0
 
     printCelsJson :: [Cell] -> Int -> IO()
@@ -176,10 +185,20 @@ module Controllers.SimulationController where
         putStrLn $ "    " ++ show n ++ " - " ++ show x
         printCelsJson xs (n + 1)
 
-    getPositionInsertion :: IO (Int, Int)
-    getPositionInsertion = do
-        putStrLn "Digite a linha que deseja inserir a celula:"
-        linha <- readLn :: IO Int
-        putStrLn "Digite a coluna que deseja inserir a celula:"
-        coluna <- readLn :: IO Int
-        return (linha, coluna)
+    parsePairs :: String -> [(Int, Int)]
+    parsePairs "" = []
+    parsePairs s = 
+        let (pairStr, rest) = break (== ',') s  -- Quebra a string ao encontrar uma vírgula
+            pair = parsePair pairStr
+        in case pair of
+            Just p  -> p : parsePairs (dropWhile (== ' ') (drop 1 rest))
+            Nothing -> error $ "Entrada inválida: " ++ pairStr
+
+    parsePair :: String -> Maybe (Int, Int)
+    parsePair s = 
+        let (x, rest) = break (== ' ') s  -- Quebra a string ao encontrar um espaço
+            y = dropWhile (== ' ') rest   -- Remove espaços adicionais
+        in do
+            n1 <- readMaybe x
+            n2 <- readMaybe y
+            return (n1, n2)
