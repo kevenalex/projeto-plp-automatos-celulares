@@ -8,17 +8,31 @@
 
 
 
-                                                                           COR DE CELULA INVALIDA
 
-                                                                  1) VERMELHO  2) VERDE  3) AMARELO  4) AZUL
-                                                                  5) MAGENTA   6) CIANO  7) BRANCO
 
-                                                                          QUAL A COR DA SUA CELULA?
+
+
+
+
+
+                                                                                                COR DE CELULA INVALIDA
+                     
+                                                                                       1) VERMELHO  2) VERDE  3) AMARELO  4) AZUL
+                                                                                       5) MAGENTA   6) CIANO  7) BRANCO
+                     
+                                                                                               QUAL A COR DA SUA CELULA?
 
 
 
 
                                                         
+
+
+
+
+
+
+
 
 
 

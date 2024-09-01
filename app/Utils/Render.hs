@@ -51,3 +51,10 @@ module Utils.Render where
     trim :: String -> String
     trim = unwords . words
 
+    setCursorForPrintGrid :: Int -> Int -> IO ()
+    setCursorForPrintGrid halfGridHeight halfGridWidth = do
+        Just (screenWidth, screenHeight) <- getTerminalSize
+        let halfWidght = screenWidth `div` 2
+        let halfHeight = screenHeight `div` 2
+
+        setCursorPosition (halfHeight - halfGridHeight) (halfWidght - halfGridWidth)
