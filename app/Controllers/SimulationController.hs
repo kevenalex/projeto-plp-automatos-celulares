@@ -1,4 +1,4 @@
-module Controllers.GridController where
+module Controllers.SimulationController where
 
     import Models.Cell
     import Models.Grid

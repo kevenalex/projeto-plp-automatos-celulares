@@ -137,9 +137,6 @@ module Controllers.CellController where
         putStr "13) BRANCO      "
         setSGR [SetColor Foreground Vivid White]
         putStrLn "14) BRANCO BRILHANTE"
-        
-
-
 
     removeAutomata :: FilePath -> [Cell] -> IO()
     removeAutomata path cells = do 
@@ -168,7 +165,6 @@ module Controllers.CellController where
     printCells (x:xs) n = do
         putStrLn $ "                                                                 " ++ show n ++ " - " ++ show x
         printCells xs (n + 1)
-
     
     selectColor :: Int -> Maybe String
     selectColor color = case color of
