@@ -48,6 +48,7 @@ module Controllers.SimulationController where
 
     printRow :: [Maybe Cell] -> IO ()
     printRow row = do
+        setCursorForPrintGrid 
         mapM_ printCell row
         putStrLn ""
 
