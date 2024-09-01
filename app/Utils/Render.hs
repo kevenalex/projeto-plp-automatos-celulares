@@ -6,7 +6,7 @@ module Utils.Render where
     import qualified Data.Text as T
     import qualified Data.Text.IO as TIO
 
-
+    
     --- Imprime um arquivo de texto na tela. Tendo como parâmetros a String do caminho do arquivo, e dois booleanos, clear e delay
     --- o qual decidem se a tela será limpada antes da impressão e se o texto será impresso com rapidamente ou não.
     printScreen :: FilePath -> Bool -> Bool -> IO ()
@@ -25,10 +25,10 @@ module Utils.Render where
 
     readFileUtf8 :: FilePath -> IO T.Text
     readFileUtf8 filePath = do
-        handle <- openFile filePath ReadMode  -- Open the file in read mode
-        hSetEncoding handle utf8              -- Set the encoding to UTF-8
-        content <- TIO.hGetContents handle    -- Read the contents as Text
-        hClose handle                         -- Close the file handle
+        handle <- openFile filePath ReadMode  
+        hSetEncoding handle utf8              
+        content <- TIO.hGetContents handle    
+        hClose handle                         
         return content
 
     -- Imprime na tela uma sequência de strings, com o parâmetro delay do tipo boolean decidindo se esta impressão ocorrerá rapidamente ou não.
@@ -50,4 +50,3 @@ module Utils.Render where
 
     trim :: String -> String
     trim = unwords . words
-

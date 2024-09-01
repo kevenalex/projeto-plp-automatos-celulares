@@ -22,10 +22,10 @@ module Test.Simulation where
 --}
 
     conways :: Cell
-    conways = Cell "C" (Rule [3] [2,3]) "Verde"
+    conways = Cell "C" (Rule [3] [2,3]) "VERDE"
 
     highLife :: Cell
-    highLife = Cell "H" (Rule [3, 6] [2,3]) "Vermelho"
+    highLife = Cell "H" (Rule [3, 6] [2,3]) "VERMELHO"
     
     square :: Int -> Matrix (Maybe Cell)
     square n = gridGenerate n n

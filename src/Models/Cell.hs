@@ -9,7 +9,7 @@ module Models.Cell where
     import GHC.Generics
     import System.Console.ANSI (Color)
     import Data.Char (toUpper)
-    
+    import System.Console.ANSI.Codes
 
     data Cell =   
         Cell {
@@ -18,8 +18,9 @@ module Models.Cell where
         color :: String
         } deriving (Generic,ToJSON, FromJSON)
 
+
     instance Show Cell where
-        show cell = map toUpper $ name cell ++ " " ++ show  (rule cell) ++ " COR: " ++ color cell
+        show cell =  setSGRCode (setColor (color cell)) ++ name cell ++ " " ++ show (rule cell) ++ setSGRCode [Reset]
 
     instance Eq Cell where
        (Cell name1 rule1 color1) == (Cell name2 rule2 color2) = (name1 == name2) && (rule1 == rule2) && (color1 == color2)
@@ -32,3 +33,23 @@ module Models.Cell where
 
     isAlive :: Maybe Cell -> Bool
     isAlive = isJust 
+
+    setColor :: String -> [SGR]
+    setColor str =
+        case str of 
+            "VERMELHO" -> [SetColor Foreground Dull Red]
+            "VERMELHO  BRILHANTE" -> [SetColor Foreground Vivid Red]
+            "VERDE" -> [SetColor Foreground Dull Green]
+            "VERDE BRILHANTE" -> [SetColor Foreground Vivid Green]
+            "AMARELO" -> [SetColor Foreground Dull Yellow]
+            "AMARELO BRILHANTE" -> [SetColor Foreground Vivid Yellow]
+            "AZUL" -> [SetColor Foreground Dull Blue]
+            "AZUL BRILHANTE" -> [SetColor Foreground Vivid Blue]
+            "MAGENTA" -> [SetColor Foreground Dull Magenta]
+            "MAGENTA BRILHANTE" -> [SetColor Foreground Vivid Magenta]
+            "CIANO" -> [SetColor Foreground Dull Cyan]
+            "CIANO BRILHANTE" -> [SetColor Foreground Vivid Cyan]
+            "BRANCO" -> [SetColor Foreground Dull White]
+            "BRANCO BRILHANTE" -> [SetColor Foreground Vivid White]
+            _ -> [Reset]
+

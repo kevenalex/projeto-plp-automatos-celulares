@@ -1,0 +1,53 @@
+
+
+
+
+
+
+
+
+
+
+                                                                              Células podem estar vivas (coloridas ou brancas)
+                                                                                          ou mortas (pretas)
+
+                                                                              Todas as células são de um tipo específico, que
+                                                                                    define que regras essa célula segue.
+
+                                                                              O tipo mais popular é o Conway's Game of Life,
+                                                                                          definido assim:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
