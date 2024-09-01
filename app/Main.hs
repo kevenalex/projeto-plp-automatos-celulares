@@ -5,6 +5,7 @@ import Data.Char
 import System.Console.ANSI
 import System.Exit (exitSuccess)
 import Utils.Render
+import Controllers.Tutorial (tutorial)
 
 main :: IO ()
 main = do
@@ -25,7 +26,7 @@ selectOption delay = do
         -- '1' -> do menuAutomatasSandBox "app/storage/cells.json"; selectOption False;
         -- '2' -> do menuAutomatasCarregarCena "app/storage/cells.json"; selectOption False;
         '3' -> do menuCells "app/storage/cells.json"; selectOption False
-        -- '4' -> do menuTutorial; selectOption False;
+        '4' -> do tutorial; selectOption False;
         '5' -> do
             setCursorPosition 0 0
             printScreen "app/storage/mainMenuController/emptyMenu.txt" False True 
