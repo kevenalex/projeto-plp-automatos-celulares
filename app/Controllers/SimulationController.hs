@@ -44,6 +44,7 @@ module Controllers.SimulationController where
         mapM_ printRow (gridToLists grid)
         hFlush stdout
 
+
     printRow :: [Maybe Cell] -> IO ()
     printRow row = do
         mapM_ printCell row
@@ -108,7 +109,10 @@ module Controllers.SimulationController where
         cellsJayzon <- readCells arq
         case decode cellsJayzon :: Maybe [Cell] of 
             Nothing -> putStrLn "vaitomacu"
-            Just cells -> simulate cells matrix 0
+            Just cells -> do 
+                hSetBuffering stdout( BlockBuffering Nothing) -- Ligando o buffer
+                simulate cells matrix 0
+                hSetBuffering stdout NoBuffering
 
 
     simulate :: [Cell] -> Matrix (Maybe Cell) -> Int -> IO()
@@ -119,6 +123,7 @@ module Controllers.SimulationController where
         putStrLn "digite G para iniciar a geração"
         putStrLn "digite N para simular só o próximo estágio"
         putStrLn "digite I para inserir células"
+        hFlush stdout
         option <- getLine
         actionChooser cells matrix count option
 
