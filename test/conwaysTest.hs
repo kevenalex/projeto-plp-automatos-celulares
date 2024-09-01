@@ -22,10 +22,10 @@ module Test.Simulation where
 --}
 
     conways :: Cell
-    conways = Cell "C" (Rule [3] [2,3]) "Verde"
+    conways = Cell "C" (Rule [3] [2,3]) "VERDE"
 
     highLife :: Cell
-    highLife = Cell "H" (Rule [3, 6] [2,3]) "Vermelho"
+    highLife = Cell "H" (Rule [3, 6] [2,3]) "VERMELHO"
     
     square :: Int -> Matrix (Maybe Cell)
     square n = gridGenerate n n
@@ -33,6 +33,9 @@ module Test.Simulation where
     fullGOL3Grid :: Matrix (Maybe Cell)
     fullGOL3Grid = insertCells (square 3) conways [(1,1), (1,2), (1,3), (2,1), (2,2), (2,3), (3,1), (3,2), (3,3)]
  
+    fullHL3Grid :: Matrix (Maybe Cell)
+    fullHL3Grid = insertCells (square 3) highLife [(1,1), (1,2), (1,3), (2,1), (2,2), (2,3), (3,1), (3,2), (3,3)]
+
 ------------------------------------------------ [VARIÁVEIS] ------------------------------------------------------
 
 {--
@@ -55,7 +58,8 @@ module Test.Simulation where
             testLifeCellsCoord3, testValidCoord0, testValidCoord1, testValidCoord2, testValidCoord3, testValidCoord4,
             testValidCoord5, testValidCoord6, testValidCoord7, testValidCoord8, testValidCoord9, testValidCoord10, 
             testListOfValidCoords0, testListOfValidCoords1, testListOfValidCoords2, testListOfValidCoords3, 
-            testListOfValidCoords4, testListOfValidCoords5
+            testListOfValidCoords4, testListOfValidCoords5, testMostFrequentCell0, testMostFrequentCell2,
+            testMostFrequentCell3, testMostFrequentCell4
         ]
 
 ----------------------------------------- [MAIN: TESTES DO MÓDULO GRID] ------------------------------------------
@@ -422,5 +426,50 @@ module Test.Simulation where
             where
                 result = listOfValidCoords [] 1 1
                 expected = []
+
+-----------------------------------------------------------------------------------------------------------------
+
+{--
+    mostFrequentCell: verifica se a função retorna a célula que mais se 
+    repete na vizinhança de uma dada célula
+--}
+
+    testMostFrequentCell0 :: Test
+    testMostFrequentCell0 = TestCase $ do
+        assertEqual "mostFrequentCell 0" expected result
+            where
+                result = mostFrequentCell (2,2) fullGOL3Grid
+                expected = conways
+
+{-- POSSÍVEL ERR0 LÓGICO DETECTADO: a função não trata o caso de matriz vazia (Const Nothing)
+    testMostFrequentCell1 :: Test
+    testMostFrequentCell1 = TestCase $ do
+        assertEqual "mostFrequentCell 1" expected result
+            where
+                result = mostFrequentCell (2,2) (square 3)
+                expected = Nothing 
+--}
+    
+    testMostFrequentCell2 :: Test
+    testMostFrequentCell2 = TestCase $ do
+        assertEqual "mostFrequentCell 2" expected result
+            where
+                result = mostFrequentCell (2,2) fullHL3Grid
+                expected = highLife
+
+    testMostFrequentCell3 :: Test
+    testMostFrequentCell3 = TestCase $ do
+        assertEqual "mostFrequentCell 3" expected result
+            where
+                grid = insertCells fullGOL3Grid highLife [(3,1), (3,2), (3,3)]
+                result = mostFrequentCell (2,2) grid
+                expected = conways
+    
+    testMostFrequentCell4 :: Test
+    testMostFrequentCell4 = TestCase $ do
+        assertEqual "mostFrequentCell 3" expected result
+            where
+                result = mostFrequentCell (4,4) fullGOL3Grid
+                expected = conways
 
 -----------------------------------------------------------------------------------------------------------------

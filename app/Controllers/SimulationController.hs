@@ -16,6 +16,7 @@ module Controllers.SimulationController where
     import Files.Scene
     import Text.Read (readMaybe)
     import Utils.Render
+    import Models.Cell
     
 
     -- Funções que gerem a impressão da Matrix (Maybe Cell)
@@ -62,28 +63,11 @@ module Controllers.SimulationController where
                 putStr "██"
                 setSGR [Reset]
             Just cell -> do
-                setColor (color cell)
+                setSGR $ setColor (color cell)
                 putStr "██"
                 setSGR [Reset]
 
-    setColor :: String -> IO()
-    setColor str =
-        case str of 
-            "VERMELHO" -> setSGR [SetColor Foreground Dull Red]
-            "VERMELHO  BRILHANTE" -> setSGR [SetColor Foreground Vivid Red]
-            "VERDE" -> setSGR [SetColor Foreground Dull Green]
-            "VERDE BRILHANTE" -> setSGR [SetColor Foreground Vivid Green]
-            "AMARELO" -> setSGR [SetColor Foreground Dull Yellow]
-            "AMARELO BRILHANTE" -> setSGR [SetColor Foreground Vivid Yellow]
-            "AZUL" -> setSGR [SetColor Foreground Dull Blue]
-            "AZUL BRILHANTE" -> setSGR [SetColor Foreground Vivid Blue]
-            "MAGENTA" -> setSGR [SetColor Foreground Dull Magenta]
-            "MAGENTA BRILHANTE" -> setSGR [SetColor Foreground Vivid Magenta]
-            "CIANO" -> setSGR [SetColor Foreground Dull Cyan]
-            "CIANO BRILHANTE" -> setSGR [SetColor Foreground Vivid Cyan]
-            "BRANCO" -> setSGR [SetColor Foreground Dull White]
-            "BRANCO BRILHANTE" -> setSGR [SetColor Foreground Vivid White]
-            _ -> return ()
+
 
     toColor :: String -> Maybe Color
     toColor color = case color of
