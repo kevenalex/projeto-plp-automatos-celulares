@@ -57,3 +57,8 @@ module Utils.Render where
 
     trim :: String -> String
     trim = unwords . words
+
+    printMidScreen :: String -> IO ()
+    printMidScreen str = do setCursorColumn (100 - halfLengthStr); putStrLn str;
+        where
+            halfLengthStr = (length str) `div` 2

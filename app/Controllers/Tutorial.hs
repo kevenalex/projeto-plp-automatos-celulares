@@ -33,7 +33,7 @@ module Controllers.Tutorial where
         setCursorColumn 87
         print conways
         printEmptyLinesWithDelay 25
-        setCursorColumn 80
+        setCursorColumn 86
         putStrLn "aperte Enter para continuar..."
         _ <- getLine
 
@@ -62,7 +62,7 @@ module Controllers.Tutorial where
         printScreen "app/storage/tutorial/explicaStay.txt" False False
         
         printEmptyLinesWithDelay 18
-        setCursorColumn 87
+        setCursorColumn 86
         putStrLn "aperte Enter para continuar..."
         _ <- getLine
         printScreen "app/storage/tutorial/maisDeStay.txt" True False
@@ -78,7 +78,7 @@ module Controllers.Tutorial where
         putStrLn "V"
         printEmptyLinesWithDelay 1
         printGridTutorial $ gridUpdate grid2
-        setCursorColumn 81
+        setCursorColumn 86
         putStrLn "aperte Enter para ver nada catastrófico..."
 
         _ <- getLine
