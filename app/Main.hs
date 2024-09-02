@@ -2,6 +2,7 @@ module Main where
 
 import Controllers.CellController (menuCells)
 import Controllers.SimulationController
+import Controllers.SceneController
 import System.Console.ANSI
 import System.Exit (exitSuccess)
 import Utils.Render
