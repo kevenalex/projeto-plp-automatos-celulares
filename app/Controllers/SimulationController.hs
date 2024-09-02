@@ -134,7 +134,9 @@ module Controllers.SimulationController where
     prepareSimulate matrix arq = do
         cellsJayzon <- readCells arq
         case decode cellsJayzon :: Maybe [Cell] of
-            Nothing -> putStrLn "faltou o array de celulas"
+            Nothing -> do 
+                printMidScreen "CRIE CÉLULAS PRIMEIRO!"
+                threadDelay 930000
             Just cells -> do
                 hSetBuffering stdout (BlockBuffering Nothing) -- Ligando o buffer
                 hSetBuffering stdin NoBuffering
