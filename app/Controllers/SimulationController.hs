@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use when" #-}
 module Controllers.SimulationController where
 
     import Models.Cell
@@ -129,10 +127,7 @@ module Controllers.SimulationController where
 
         let inputList = words input
 
-        if length inputList /= 2 then do
-            printMidScreen "TENTE INSERIR (LINHAS,COLUNAS)"
-            threadDelay 930000
-            return ()
+        if length inputList /= 2 then return ()
         else do
 
             let dimensoes = (,) <$> readMaybe (inputList !! 0) <*> readMaybe (inputList !! 1)
@@ -142,10 +137,8 @@ module Controllers.SimulationController where
                     clearScreen
                     prepareSimulate (gridGenerate rows cols) path
                     
-                Nothing -> do 
-                    printMidScreen "TENTE INSERIR (LINHAS,COLUNAS)"
-                    threadDelay 930000
-                    return ()
+                Nothing -> do printMidScreen "TENTE INSERIR (LINHAS,COLUNAS)"; return (); 
+                
        
 
     prepareSimulate :: Matrix (Maybe Cell) -> FilePath -> IO()
@@ -161,13 +154,7 @@ module Controllers.SimulationController where
                 simulate cells matrix 0
                 hSetBuffering stdin LineBuffering
                 hSetBuffering stdout NoBuffering
-                printMidScreen "REINICIAR CENA? (S)IM ou (N)ÃO"
-                option <- getLine
-                if option == "S" || option == "s" 
-                    then 
-                        prepareSimulate matrix arq
-                    else return ()
-        
+
     simulate :: [Cell] -> Matrix (Maybe Cell) -> Int -> IO()
     simulate cells matrix count = do
         clearScreen
@@ -188,7 +175,7 @@ module Controllers.SimulationController where
             '1' -> runLoop cells grid count
             '2' -> nextStep cells grid count
             '3' -> insertion cells grid count
-            '4' -> remove cells grid count
+            -- '4' -> remove cells grid count
             '5' -> saveScene cells grid count
             '6' -> return ()
             _ -> simulate cells grid count
@@ -206,8 +193,14 @@ module Controllers.SimulationController where
                     hSetEcho stdin True
                     simulate cells grid count
                 else do
-                  loopFunction grid
-                  runLoop cells (gridUpdate grid) (count + 1)
+                    let newGrid = gridUpdate grid
+                    if noChangeGenerations grid newGrid then do
+                        hSetEcho stdin True
+                        simulate cells grid count
+                    else do
+                        loopFunction grid
+                        runLoop cells (gridUpdate grid) (count + 1)
+
         checkInput
 
     loopFunction ::Matrix (Maybe Cell) -> IO()
@@ -222,7 +215,12 @@ module Controllers.SimulationController where
 
 
     nextStep :: [Cell] -> Matrix (Maybe Cell) -> Int-> IO()
-    nextStep cells grid count = simulate cells (gridUpdate grid) (count + 1)
+    nextStep cells grid count = do
+        let newGrid = gridUpdate grid
+        if noChangeGenerations grid newGrid then
+            simulate cells grid count
+        else 
+            simulate cells (gridUpdate grid) (count + 1)
 
 
 -----------------------------------------------------------------------------------------------------------
@@ -257,8 +255,7 @@ module Controllers.SimulationController where
     printCelsJson :: [Cell] -> Int -> IO()
     printCelsJson [] _ = return ()
     printCelsJson (x:xs) n = do
-        setCursorColumn 85
-        putStrLn $ "    " ++ show n ++ " - " ++ show x
+        printMidScreen $ "    " ++ show n ++ " - " ++ show x
         printCelsJson xs (n + 1)
 
 
@@ -309,5 +306,12 @@ module Controllers.SimulationController where
 
 ------------------------------------------------------------------------------------------------------
 
-    remove :: IO () 
-    remove = do
+    -- remove :: [Cell] -> Matrix (Maybe Cell) -> Int -> IO () 
+    -- remove cells grid count = do
+    --     clearScreen
+    --     printGridWithNumbers grid
+    --     printEmptyLines 2
+
+    --     printMidScreen "Quais posições você deseja remover a célula ?"
+    --     hFlush stdout
+    --     posicoes <- getLine
