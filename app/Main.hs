@@ -1,6 +1,7 @@
 module Main where
 
 import Controllers.CellController (menuCells)
+import Controllers.SceneController (menuScenes)
 import Controllers.SimulationController
 import Data.Char
 import System.Console.ANSI
