@@ -25,7 +25,8 @@ module Controllers.SimulationController where
     printGridWithNumbers :: Matrix (Maybe Cell) ->  IO ()
     printGridWithNumbers matrix = do
         clearScreen
-        putStrLn $ buildLineWithNumber 0
+        putStrLn $ buildLineWithNumber $ ncols matrix
+        
 
 
 
@@ -35,13 +36,18 @@ module Controllers.SimulationController where
         mapM_ printRow (gridToLists grid)
         hFlush stdout
 
-
     printRow :: [Maybe Cell] -> IO ()
     printRow row = do
         setCursorColumn $ 100 - length row `div` 2
         mapM_ printCell row
         putStrLn ""
 
+    printRowWithNumber :: [Maybe Cell] -> IO ()
+    printRowWithNumber row = do
+        setCursorColumn $ 100 - length row `div` 2
+        
+
+    
     printCell :: Maybe Cell -> IO ()
     printCell cell = do
         case cell of 
@@ -54,8 +60,6 @@ module Controllers.SimulationController where
                 putStr "██"
                 setSGR [Reset]
 
-
-
     toColor :: String -> Maybe Color
     toColor color = case color of
         "PRETO" -> Just Black
@@ -67,6 +71,7 @@ module Controllers.SimulationController where
         "CIANO" -> Just Cyan
         "BRANCO" -> Just White
         _ -> Nothing
+
 
 
 
