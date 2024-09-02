@@ -14,6 +14,7 @@ module Controllers.CellController where
     import Control.Concurrent(threadDelay)
     import qualified Data.ByteString.Lazy as B
 
+    import Text.Read
     menuCells :: FilePath -> IO()
     menuCells path = do
 
@@ -105,14 +106,20 @@ module Controllers.CellController where
     addColor path nameCellT regra = do
         printColors
         setCursorColumn 85
-        colorI <- readLn :: IO Int
-        if handleColorChoice colorI then do
-            let cell = Cell nameCellT regra $ fromJust $ selectColor colorI
-            addCell path cell
-        else do
-            putStrLn "INPUT ERRADO, TENTE NOVAMENTE"
-            threadDelay 800000
-            addColor path nameCellT regra
+        colorI <- getLine
+        case readMaybe colorI :: Maybe Int of 
+            Just color -> 
+                if handleColorChoice color then do
+                    let cell = Cell nameCellT regra $ fromJust $ selectColor color
+                    addCell path cell
+                else do
+                    putStrLn "INPUT ERRADO, TENTE NOVAMENTE"
+                    threadDelay 800000
+                    addColor path nameCellT regra
+            Nothing -> do
+                    putStrLn "INPUT ERRADO, TENTE NOVAMENTE"
+                    threadDelay 800000
+                    addColor path nameCellT regra
 
     printColors :: IO()
     printColors = do
@@ -256,4 +263,4 @@ module Controllers.CellController where
     -- Faz o tratamento da entrada de cor, verifica se ela não é um 'Enter' e se é um char entre '1' e '7'
     -- Editar função pra tratar o buffer do teclado
     handleColorChoice :: Int -> Bool
-    handleColorChoice cor = cor > 0 && cor < 22
+    handleColorChoice cor = cor > 0 && cor < 23
