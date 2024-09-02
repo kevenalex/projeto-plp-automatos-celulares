@@ -108,13 +108,15 @@ module Controllers.Tutorial where
         printEmptyLines 20
         hFlush stdout
         a <- getLine
-        
-        if not (null a) && head a == 'A' || head a == 'a'
-            then do
-                ataqueAutomatico (gridUpdate grid) (n + 1)
-                return () 
-            else
-                ataque (gridUpdate grid) (n + 1)
+                
+        if null a then ataque (gridUpdate grid) (n + 1)
+        else  
+            if head a == 'A' || head a == 'a'
+                then do
+                    ataqueAutomatico (gridUpdate grid) (n + 1)
+                    return () 
+                else
+                    ataque (gridUpdate grid) (n + 1)
 
     ataqueAutomatico :: Matrix (Maybe Cell) -> Int -> IO ()
     ataqueAutomatico _ 65 = return()
