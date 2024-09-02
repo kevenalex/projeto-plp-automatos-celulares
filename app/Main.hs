@@ -27,8 +27,9 @@ selectOption delay = do
     opcao <- getLine
     if null opcao 
         then  do
+            setCursorColumn 97
             putStrLn "OPCÃO INVÁLIDA, TENTE NOVAMENTE"
-            threadDelay 830000
+            threadDelay 2000000
             selectOption False
         else
             case head opcao of
@@ -41,6 +42,8 @@ selectOption delay = do
                     printScreen "app/storage/mainMenuController/emptyMenu.txt" False True 
                     exitSuccess
                 _ -> do
+                    setCursorColumn 97
                     putStrLn "OPCÃO INVÁLIDA, TENTE NOVAMENTE"
-                    threadDelay 830000
+                    threadDelay 2000000
+
                     selectOption False
