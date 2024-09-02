@@ -32,7 +32,7 @@ selectOption delay = do
         else
             case head opcao of
                 '1' -> do emptyScene "app/storage/cells.json"; selectOption False;
-                -- '2' -> do menuAutomatasCarregarCena "app/storage/cells.json"; selectOption False;
+                '2' -> do menuScenes "app/storage/scenes.json"; selectOption False;
                 '3' -> do menuCells "app/storage/cells.json"; selectOption False
                 '4' -> do tutorial; selectOption False;
                 '5' -> do
