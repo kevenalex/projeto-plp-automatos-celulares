@@ -123,16 +123,15 @@ module Controllers.SimulationController where
         actionChooser cells matrix count option
 
     actionChooser :: [Cell] -> Matrix (Maybe Cell) -> Int -> String -> IO()
-    actionChooser cells grid count opt
-        | option == '1' = runLoop cells grid count
-        | option == '2' = nextStep cells grid count
-        | option == '3' = insertion cells grid count
-        | option == '4' = saveScene cells grid count
-        | option == '5' = return ()
-        | otherwise = simulate cells grid count
-
-        where
-            option = toUpper $ head opt
+    actionChooser cells grid count opt = 
+        if null opt then simulate cells grid count
+        else case head opt of
+            '1' -> runLoop cells grid count
+            '2' -> nextStep cells grid count
+            '3' -> insertion cells grid count
+            '4' -> saveScene cells grid count
+            '5' -> return ()
+            _ -> simulate cells grid count
 
 -----------------------------------------------------------------------------------------------------------
 
