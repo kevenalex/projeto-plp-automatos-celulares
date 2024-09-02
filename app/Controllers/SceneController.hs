@@ -63,14 +63,15 @@ module Controllers.SceneController where
         print x
         printScenes xs
 
-    -- Print da listagem de cenas existentes + listas vazias para organizar
+    -- Print da listagem de cenas existentes + opção de retorno para organizar
     -- os menus e evitar repetição de código desnecessária em simulateScenesChoice
     -- e deleteScenesChoice
     formatedOutput :: M.Map String Scene -> IO ()
     formatedOutput scenes = do
         printEmptyLines 2
         printScenes $ extractSceneNames scenes 
-        printScreen "app/storage/sceneController/sceneEmptyLines.txt" False False
+        printScreen "app/storage/sceneController/sceneReturnOption.txt" False False
+        printEmptyLines 1
         setCursorColumn 85
 
     -- Menu de escolha de simulação de Cena, retorna a simulação com a Cena escolhida
@@ -93,24 +94,27 @@ module Controllers.SceneController where
                     threadDelay 800000
                     simulateScenesChoice path scenes
             
-        else do
-            putStrLn "INPUT ERRADO, TENTE NOVAMENTE"
-            threadDelay 800000
-            simulateScenesChoice path scenes
+        else if choice == "3"
+            then return ()
+            else do
+                putStrLn "INPUT ERRADO, TENTE NOVAMENTE"
+                threadDelay 800000
+                simulateScenesChoice path scenes
 
     -- Menu de exclusão de Cena, retorna o menu de escolha de Cenas sem a Cena deletada
     deleteScenesChoice :: FilePath -> M.Map String Scene -> IO ()
     deleteScenesChoice path scenes = do
         printScreen "app/storage/sceneController/sceneDeleteQuestion.txt" True False
-
+        
         formatedOutput scenes
-
+        
         setCursorInput
         choice <- getLine
         if M.member choice scenes then do
             deleteScene path choice
-            
-        else do
-            putStrLn "INPUT ERRADO, TENTE NOVAMENTE"
-            threadDelay 800000
-            deleteScenesChoice path scenes
+        else if choice == "3"
+            then return ()
+            else do
+                putStrLn "INPUT ERRADO, TENTE NOVAMENTE"
+                threadDelay 800000
+                deleteScenesChoice path scenes
