@@ -350,4 +350,4 @@ module Controllers.SimulationController where
 
     checkPairs :: (Int, Int) -> [(Int, Int)] -> Bool
     checkPairs _ [] = False
-    checkPairs (x, y) pares = all (\(a, b) -> a < x && b < y) pares
+    checkPairs (x, y) pares = all (\(a, b) -> a <= x && b <= y) pares

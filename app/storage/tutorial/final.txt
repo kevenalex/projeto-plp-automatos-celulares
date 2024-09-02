@@ -11,7 +11,7 @@
                                                                                       Ah no final deu tudo certo
 
                                                                                 
-                                                                          Como você pode ver, autômatos são bem iprevisíveis, 
+                                                                          Como você pode ver, autômatos são bem imprevisíveis, 
                                                                             mesmo seguindo regras simples. Especialmente 
                                                                                   quando misturamos tipos diferentes.
 
