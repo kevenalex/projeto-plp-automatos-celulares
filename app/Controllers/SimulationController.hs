@@ -129,7 +129,10 @@ module Controllers.SimulationController where
 
         let inputList = words input
 
-        if length inputList /= 2 then return ()
+        if length inputList /= 2 then do
+            printMidScreen "TENTE INSERIR (LINHAS,COLUNAS)"
+            threadDelay 930000
+            return ()
         else do
 
             let dimensoes = (,) <$> readMaybe (inputList !! 0) <*> readMaybe (inputList !! 1)
@@ -139,8 +142,10 @@ module Controllers.SimulationController where
                     clearScreen
                     prepareSimulate (gridGenerate rows cols) path
                     
-                Nothing -> do printMidScreen "TENTE INSERIR (LINHAS,COLUNAS)"; return (); 
-                
+                Nothing -> do 
+                    printMidScreen "TENTE INSERIR (LINHAS,COLUNAS)"
+                    threadDelay 930000
+                    return ()
        
 
     prepareSimulate :: Matrix (Maybe Cell) -> FilePath -> IO()
@@ -158,7 +163,7 @@ module Controllers.SimulationController where
                 hSetBuffering stdout NoBuffering
                 printMidScreen "REINICIAR CENA? (S)IM ou (N)ÃO"
                 option <- getLine
-                if option == "S" 
+                if option == "S" || option == "s" 
                     then 
                         prepareSimulate matrix arq
                     else return ()
