@@ -74,7 +74,6 @@ module Controllers.SceneController where
             -- prepareSimulate (gridGenerate row cols) "app/storage/cells.json" 
             case M.lookup choice scenes of 
                 Just scene -> do
-                    print "entrou aqui"
                     let grid = sceneToGrid scene
                     prepareSimulate grid "app/storage/cells.json"
                 Nothing -> do
