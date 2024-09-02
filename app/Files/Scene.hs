@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
 
-module Files.Scene (readScenes, addScene, deleteScene, Scene(Scene), title) where
+module Files.Scene (readScenes, addScene, deleteScene, Scene(Scene), title, rows, cols) where
     import Data.Aeson
     import GHC.Generics
 
