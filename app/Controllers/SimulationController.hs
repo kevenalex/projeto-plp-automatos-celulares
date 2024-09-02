@@ -11,7 +11,7 @@ module Controllers.SimulationController where
     import GHC.Conc
     import Files.Cell
     import Files.Scene
-    import Text.Read (readMaybe)
+    import Text.Read (readMaybe, Lexeme (String))
     import Utils.Render
 
 
@@ -119,23 +119,34 @@ module Controllers.SimulationController where
 
     emptyScene :: FilePath -> IO ()
     emptyScene path = do
-        printMidScreen "Vamos criar a sua matrix"
-        printMidScreen "Qual tamanho voce deseja ?"
-        printMidScreen "Digite o tamanho da altura:"
+        printMidScreen "VAMOS CRIAR A SUA MATRIX"
+        printMidScreen "QUAIS AS DIMENSOES DA SUA MATRIX? (LINHAS,COLUNAS)"
         hFlush stdout
-        altura <- readLn :: IO Int
-        printMidScreen "Digite o tamanho da largura:"
-        hFlush stdout
-        largura <- readLn :: IO Int
-        clearScreen
-        prepareSimulate (gridGenerate altura largura) path
+        setCursorInput
+        input <- getLine :: IO String
+
+        let inputList = words input
+
+        if length inputList /= 2 then return ()
+        else do
+
+            let dimensoes = (,) <$> readMaybe (inputList !! 0) <*> readMaybe (inputList !! 1)
+
+            case dimensoes of
+                Just (rows, cols) -> do
+                    clearScreen
+                    prepareSimulate (gridGenerate rows cols) path
+                    
+                Nothing -> do printMidScreen "TENTE INSERIR (LINHAS,COLUNAS)"; return (); 
+                
+       
 
     prepareSimulate :: Matrix (Maybe Cell) -> FilePath -> IO()
     prepareSimulate matrix arq = do
         cellsJayzon <- readCells arq
         case decode cellsJayzon :: Maybe [Cell] of
             Nothing -> do 
-                printMidScreen "CRIE CÉLULAS PRIMEIRO!"
+                printMidScreen "CRIE CELULAS PRIMEIRO!"
                 threadDelay 930000
             Just cells -> do
                 hSetBuffering stdout (BlockBuffering Nothing) -- Ligando o buffer
@@ -148,8 +159,10 @@ module Controllers.SimulationController where
     simulate cells matrix count = do
         clearScreen
         printGrid  matrix
+        printEmptyLines 2
         printSimulationMenu count
         hFlush stdout
+        setCursorInput
         option <- getLine
         actionChooser cells matrix count option
 
@@ -173,6 +186,7 @@ module Controllers.SimulationController where
         hSetBuffering stdin NoBuffering -- Desabilita o buffer do input
         hSetEcho stdin False            -- Desabilita a ecoação do input no terminal
         let checkInput = do
+                setCursorInput
                 inputAvaliable <- hReady stdin
                 if inputAvaliable then do
                     hSetEcho stdin True
@@ -185,6 +199,7 @@ module Controllers.SimulationController where
     loopFunction ::Matrix (Maybe Cell) -> IO()
     loopFunction grid = do
         printGrid  grid
+        printEmptyLines 2
         printMidScreen "Aperte qualquer tecla para para a simulacao"
         hFlush stdout
         threadDelay 500000
@@ -205,15 +220,18 @@ module Controllers.SimulationController where
 
         clearScreen
         printGridWithNumbers grid
+        printEmptyLines 2
 
         printMidScreen "Qual celula voce deseja adicionar ?"
         _ <- printCelsJson cells 1
         hFlush stdout
+        setCursorInput
         cell <- readLn :: IO Int
 
         printMidScreen "Em pares de numeros separados por espacos e virgulas, digite onde deseja adicionar essa celula"
         printMidScreen "Por exemplo: '1 3,3 1' adicionara celulas na posicao linha 1 coluna 3 e na posicao linha 3 coluna 1"
         hFlush stdout
+        setCursorInput
         coordernates <- getLine
         let coordinates = parsePairs coordernates
         let newGrid = insertCells grid (cells !! (cell-1)) coordinates
@@ -254,8 +272,9 @@ module Controllers.SimulationController where
 
     saveScene :: [Cell] -> Matrix (Maybe Cell) -> Int -> IO()
     saveScene cells grid count = do
-        putStrLn "Digite um nome para essa cena:"
+        printMidScreen "Digite um nome para essa cena:"
         hFlush stdout
+        setCursorInput
         nome <- getLine
         let scene = Scene nome (nrows grid) (ncols grid) (toList grid)
         addScene "./app/storage/scenes.json" scene
@@ -268,6 +287,6 @@ module Controllers.SimulationController where
     printSimulationMenu count = do
         printEmptyLines 1
         setCursorColumn 100
-        putStrLn $ "Numero de passos dados ate agora: " ++ show count
+        printMidScreen $ "Numero de passos dados ate agora: " ++ show count
         setCursorColumn 75
-        putStrLn "1) Iniciar simulacao   2) Simular 1 passo   3) Inserir celulas   4) Salvar a cena   5) Voltar"
+        printMidScreen "1) Iniciar simulacao   2) Simular 1 passo   3) Inserir celulas   4) Salvar a cena   5) Voltar"

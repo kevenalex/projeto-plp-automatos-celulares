@@ -21,6 +21,7 @@ module Controllers.SceneController where
         case decode scenesJSON :: Maybe (M.Map String Scene) of
             Nothing -> do
                 printScreen "app/storage/sceneController/screenNoScenes.txt" True False;
+                setCursorInput
                 opcao <- getLine
                 case opcao of
                     "3" -> return ()
@@ -29,8 +30,7 @@ module Controllers.SceneController where
             Just scenesDict -> do
                 listScenes scenesDict
 
-                setCursorColumn 85
-
+                setCursorInput
                 opcao <- getLine
                 case opcao of
                     "1" -> do simulateScenesChoice path scenesDict; menuScenes path
@@ -67,6 +67,7 @@ module Controllers.SceneController where
 
         formatedOutput scenes
 
+        setCursorInput
         choice <- getLine
         if M.member choice scenes then do
             let row = extractSceneRow scenes choice
@@ -84,6 +85,7 @@ module Controllers.SceneController where
 
         formatedOutput scenes
 
+        setCursorInput
         choice <- getLine
         if M.member choice scenes then do
             deleteScene path choice

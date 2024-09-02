@@ -62,3 +62,6 @@ module Utils.Render where
     printMidScreen str = do setCursorColumn (100 - halfLengthStr); putStrLn str;
         where
             halfLengthStr = (length str) `div` 2
+
+    setCursorInput :: IO ()
+    setCursorInput = setCursorColumn 85

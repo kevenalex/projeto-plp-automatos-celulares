@@ -17,13 +17,17 @@ main = do
 
     setCursorPosition (screenHeight - 1) 0
 
+    setCursorInput
     selectOption False -- Laço principal
 
 selectOption :: Bool -> IO ()
 selectOption delay = do
     printScreen "app/storage/mainMenuController/mainMenu.txt" True delay
 
+
+    setCursorInput
     opcao <- getLine
+
     if null opcao 
         then  do
             setCursorColumn 97

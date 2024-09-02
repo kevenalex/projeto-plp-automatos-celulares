@@ -31,8 +31,8 @@ module Controllers.CellController where
                                 []
                 Just c -> c
         listCells cells
-        setCursorColumn 85
-                
+        
+        setCursorInput        
         option <- getLine
 
         case option of
@@ -61,8 +61,8 @@ module Controllers.CellController where
     addAutomata path = do
 
         printScreen "app/storage/ruleController/nameCellQuestion.txt" True False
-        setCursorColumn 85
 
+        setCursorInput
         nameCellNT <- getLine
         let nameCellT = map toUpper nameCellNT
 
@@ -73,7 +73,8 @@ module Controllers.CellController where
     addBirthRule :: FilePath -> String -> IO()
     addBirthRule path nameCellT = do
         printScreen "app/storage/ruleController/birthRule.txt" True False
-        setCursorColumn 85
+        
+        setCursorInput
         nascStr <- getLine
         if handleBornAndStayRule nascStr then do
             let nascList = map (\x -> read [x] :: Int) (filter isDigit nascStr)
@@ -88,8 +89,8 @@ module Controllers.CellController where
     addStayRule :: FilePath -> String -> [Int] -> IO()
     addStayRule path nameCellT nascList = do
         printScreen "app/storage/ruleController/stayRule.txt" True False
-        setCursorColumn 85
-
+        
+        setCursorInput
         stayStr <- getLine
         if handleBornAndStayRule stayStr then do
             let stayList = map (\x -> read [x] :: Int) (filter isDigit stayStr)
@@ -105,7 +106,8 @@ module Controllers.CellController where
     addColor :: FilePath -> String -> Rule -> IO()
     addColor path nameCellT regra = do
         printColors
-        setCursorColumn 85
+        
+        setCursorInput
         colorI <- getLine
         case readMaybe colorI :: Maybe Int of 
             Just color -> 
@@ -219,6 +221,7 @@ module Controllers.CellController where
 
             printScreen "app/storage/ruleController/removeCellMenu.txt" False False
 
+            setCursorInput
             nameCellI <- getLine
             let nameCellT = map toUpper nameCellI 
             deleteCell path nameCellT
