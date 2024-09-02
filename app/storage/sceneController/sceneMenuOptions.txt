@@ -1,5 +1,5 @@
                                         
-                                                                            1) VISUALIZAR CENA   2) DELETAR CENA   3) VOLTAR
+                                                                            1) SIMULAR CENA   2) DELETAR CENA   3) VOLTAR
 
 
 
