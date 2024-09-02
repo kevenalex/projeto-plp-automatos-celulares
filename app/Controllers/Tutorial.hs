@@ -126,3 +126,5 @@ module Controllers.Tutorial where
 
     printGridTutorial :: Matrix (Maybe Cell) -> IO()
     printGridTutorial grid =  mapM_ printRow (gridToLists grid)
+
+    1 1, 1 2, 1 3, 2 1, 2 2, 2 3, 3 1, 3 2, 3 3
