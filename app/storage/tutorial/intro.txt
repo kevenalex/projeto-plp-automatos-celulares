@@ -8,8 +8,8 @@
 
 
 
-                                                                              Autômatos Celulares são células (quadradinhos ██)
-                                                                                     que seguem regras bem específicas
+                                                                          Autômatos Celulares são células (quadradinhos ██)
+                                                                                   que seguem regras bem específicas
 
 
 
@@ -51,4 +51,4 @@
 
 
 
-                                                                                     aperte Enter para continuar...
+                                                                                    aperte Enter para continuar...

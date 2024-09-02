@@ -8,21 +8,21 @@
 
 
 
-                                                                                        Ah no final deu tudo certo
+                                                                                      Ah no final deu tudo certo
 
                                                                                 
-                                                                            Como você pode ver, autômatos são bem iprevisíveis, 
-                                                                                mesmo seguindo regras simples. Especialmente 
-                                                                                    quando misturamos tipos diferentes.
+                                                                          Como você pode ver, autômatos são bem iprevisíveis, 
+                                                                            mesmo seguindo regras simples. Especialmente 
+                                                                                  quando misturamos tipos diferentes.
 
 
 
-                                                                            Você pode explorar os autômatos carregando nossas cenas 
-                                                                                    já construidas, ou fazer as suas próprias 
-                                                                                           entrando na sandbox.
+                                                                        Você pode explorar os autômatos carregando nossas cenas 
+                                                                              já construidas, ou fazer as suas próprias 
+                                                                                         entrando na sandbox.
 
 
-                                                                                Você pode também criar os prórprios autômatos!
+                                                                            Você pode também criar os prórprios autômatos!
 
 
 
