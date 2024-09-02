@@ -32,7 +32,7 @@ module Files.Cell (readCells, addCell, deleteCell) where
         case decode cellsJSON :: Maybe [Cell] of
             Nothing -> saveCells path [cell]
             Just cells -> if cell `elem` cells 
-                            then  saveCells path cells
+                            then  putStrLn "JÁ EXISTE UMA CÉLULA COM ESSE NOME!"
                           else saveCells path (cell : cells) 
     -- Esse then é peba, provavelmente eu devia printar aqui,
     -- mas eu quero ter certeza que não vai printar fora do lugar
