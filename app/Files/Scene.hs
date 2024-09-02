@@ -54,10 +54,7 @@ module Files.Scene (readScenes, addScene, deleteScene, Scene(Scene), title, scen
         sceneJSON <- readScenes path
         case decode sceneJSON :: Maybe (M.Map String Scene) of
             Nothing -> saveScenes path $ M.singleton (title scene) scene
-            Just sceneDict -> 
-                if M.member (title scene) sceneDict
-                    then saveScenes path sceneDict -- aqui podia ser um erro
-                else saveScenes path $ M.insert (title scene) scene sceneDict
+            Just sceneDict -> saveScenes path $ M.insert (title scene) scene sceneDict
 
     -- recebe o caminho do arquivo onde as cenas são guardadas, e o título da cena a ser removida
     deleteScene :: FilePath -> String -> IO()
