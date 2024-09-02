@@ -59,8 +59,9 @@ module Controllers.Tutorial where
         printEmptyLinesWithDelay 18
         printMidScreen "aperte Enter para continuar..."
         _ <- getLine
-        printScreen "app/storage/tutorial/maisDeStay.txt" True False
-        printEmptyLinesWithDelay 40
+        
+        clearScreen   
+        printMidScreen "No caso abaixo, todas as células estão confortavelmente juntas. Cada uma tem exatamente 3 vizinhos."
 
         let grid2 = insertCells square conways [(1,1), (1,2),(2,1), (2,2)]
 
@@ -72,6 +73,8 @@ module Controllers.Tutorial where
         printEmptyLinesWithDelay 1
         printGridTutorial $ gridUpdate grid2
         printMidScreen "aperte Enter para ver nada catastrófico..."
+        printEmptyLinesWithDelay 30
+
         _ <- getLine
         let grid3 = insertCells (gridGenerate 10 25) conways [(4, 20), (5,20), (4, 21), (5,21)]
         let gridAtaque = insertCells grid3 highLife [(4,1), (5,1), (4,2), (5,2), (6,2), (3,3), (5,3), (6,3), (3,4), (4,4), (5,4), (4,5)]
