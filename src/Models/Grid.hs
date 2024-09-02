@@ -23,6 +23,13 @@ module Models.Grid where
     insertCells grid cell (h:t) = insertCells (insertCell grid cell h) cell t
     insertCells grid _ [] = grid
 
+    removeCells :: Matrix (Maybe Cell) -> [(Int,Int)] -> Matrix (Maybe Cell)
+    removeCells grid [] = grid
+    removeCells grid (h:t) = removeCells (removeCell grid h) t
+
+    removeCell :: Matrix (Maybe Cell)  -> (Int, Int) -> Matrix (Maybe Cell)
+    removeCell grid (x,y) = setElem Nothing (x,y) grid
+
     ---  Retorna a quantidade de células existentes na vizinhança de uma célula da grade. Esta função recebe a posição 
     --- da célula a ser analisada, e a matriz de celulas correspondente.
     numOfLiveNeighbors :: (Int, Int) -> Matrix (Maybe Cell) -> Int

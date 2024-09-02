@@ -175,7 +175,7 @@ module Controllers.SimulationController where
             '1' -> runLoop cells grid count
             '2' -> nextStep cells grid count
             '3' -> insertion cells grid count
-            -- '4' -> remove cells grid count
+            '4' -> remove cells grid count
             '5' -> saveScene cells grid count
             '6' -> return ()
             _ -> simulate cells grid count
@@ -224,31 +224,6 @@ module Controllers.SimulationController where
 
 
 -----------------------------------------------------------------------------------------------------------
-
-
-    insertion :: [Cell] -> Matrix (Maybe Cell) -> Int -> IO()
-    insertion cells grid count = do
-        hSetBuffering stdin LineBuffering
-
-        clearScreen
-        printGridWithNumbers grid
-        printEmptyLines 2
-
-        printMidScreen "Qual célula você deseja adicionar ?"
-        _ <- printCelsJson cells 1
-        hFlush stdout
-        setCursorInput
-        cell <- readLn :: IO Int
-
-        printMidScreen "Em pares de numeros separados por espacos e virgulas, digite onde deseja adicionar essa celula"
-        printMidScreen "Por exemplo: '1 3,3 1' adicionara celulas na posicao linha 1 coluna 3 e na posicao linha 3 coluna 1"
-        hFlush stdout
-        setCursorInput
-        coordernates <- getLine
-        let coordinates = parsePairs coordernates
-        let newGrid = insertCells grid (cells !! (cell-1)) coordinates
-
-        simulate cells newGrid 0
 
 
 
@@ -306,12 +281,42 @@ module Controllers.SimulationController where
 
 ------------------------------------------------------------------------------------------------------
 
-    -- remove :: [Cell] -> Matrix (Maybe Cell) -> Int -> IO () 
-    -- remove cells grid count = do
-    --     clearScreen
-    --     printGridWithNumbers grid
-    --     printEmptyLines 2
+    remove :: [Cell] -> Matrix (Maybe Cell) -> Int -> IO () 
+    remove cells grid count = do
+        clearScreen
+        printGridWithNumbers grid
+        printEmptyLines 2
 
-    --     printMidScreen "Quais posições você deseja remover a célula ?"
-    --     hFlush stdout
-    --     posicoes <- getLine
+        printMidScreen "Quais posições você deseja remover a célula ?"
+        hFlush stdout
+        setCursorInput
+        coordernates <- getLine
+        let coordinates = parsePairs coordernates
+        let newGrid = removeCells grid coordinates
+        simulate cells newGrid 0
+
+
+
+    insertion :: [Cell] -> Matrix (Maybe Cell) -> Int -> IO()
+    insertion cells grid count = do
+        hSetBuffering stdin LineBuffering
+
+        clearScreen
+        printGridWithNumbers grid
+        printEmptyLines 2
+
+        printMidScreen "Qual célula você deseja adicionar ?"
+        _ <- printCelsJson cells 1
+        hFlush stdout
+        setCursorInput
+        cell <- readLn :: IO Int
+
+        printMidScreen "Em pares de numeros separados por espacos e virgulas, digite onde deseja adicionar essa celula"
+        printMidScreen "Por exemplo: '1 3,3 1' adicionara celulas na posicao linha 1 coluna 3 e na posicao linha 3 coluna 1"
+        hFlush stdout
+        setCursorInput
+        coordernates <- getLine
+        let coordinates = parsePairs coordernates
+        let newGrid = insertCells grid  (cells !! (cell-1)) coordinates
+
+        simulate cells newGrid 0
