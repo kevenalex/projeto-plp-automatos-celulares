@@ -22,21 +22,12 @@ module Controllers.SimulationController where
     -- método gridToLists aplicado a uma Matrix (Maybe Cell). Sempre inicie o método com o n igual a 0, e procure não utilizar uma matriz
     -- com mais de 2 casas decimais para não quebrar a formatação
 
-    -- printGridWithNumbers :: [[Maybe Cell]] -> Int ->  IO ()
-    -- printGridWithNumbers [] n =  return ()
-    -- printGridWithNumbers (x:xs) n = 
-    --     if n == 0 then do
-    --         putStrLn $ "  " ++ buildLineWithNumber (length x)
-    --         printGridWithNumbers (x:xs) (n + 1)
+    printGridWithNumbers :: Matrix (Maybe Cell) ->  IO ()
+    printGridWithNumbers matrix = do
+        clearScreen
+        putStrLn $ buildLineWithNumber 0
 
-    --     else do
-    --         putStrLn $ nStr ++ buildLine x
-    --         printGridWithNumbers xs (n + 1)
 
-    --     where
-    --         nStr = if n < 10 then " " ++ show n else show n
-               
-    -- Função que imprime uma Matrix (Maybe Cell) sem os números correspondentes a cada linha e coluna.
 
     printGrid :: Matrix (Maybe Cell) -> IO ()
     printGrid grid = do
@@ -81,7 +72,7 @@ module Controllers.SimulationController where
 
     -- Retorna a String formatada dos números correspondentes a cada coluna de uma Matrix (Maybe Cell)
     buildLineWithNumber :: Int -> String
-    buildLineWithNumber n = intercalate " " list ++ " "
+    buildLineWithNumber n = intercalate "|" list ++ " "
         where list = [if c > 9 then show c else " " ++ show c | c <-[1..n]]
 
     -- buildLine :: [Maybe Cell] -> IO()
@@ -90,12 +81,12 @@ module Controllers.SimulationController where
 
     emptyScene :: FilePath -> IO ()
     emptyScene path = do
-        putStrLn "Vamos criar a sua matrix"
-        putStrLn "Qual tamanho voce deseja ?"
-        putStr "Digite o tamanho da altura:"
+        printMidScreen "Vamos criar a sua matrix"
+        printMidScreen "Qual tamanho voce deseja ?"
+        printMidScreen "Digite o tamanho da altura:"
         hFlush stdout
         altura <- readLn :: IO Int
-        putStr "Digite o tamanho da largura:"
+        printMidScreen "Digite o tamanho da largura:"
         hFlush stdout
         largura <- readLn :: IO Int
         clearScreen
@@ -124,7 +115,9 @@ module Controllers.SimulationController where
 
     actionChooser :: [Cell] -> Matrix (Maybe Cell) -> Int -> String -> IO()
     actionChooser cells grid count opt = 
-        if null opt then simulate cells grid count
+        if null opt 
+            then simulate cells grid count
+
         else case head opt of
             '1' -> runLoop cells grid count
             '2' -> nextStep cells grid count
@@ -152,7 +145,7 @@ module Controllers.SimulationController where
     loopFunction ::Matrix (Maybe Cell) -> IO()
     loopFunction grid = do
         printGrid  grid
-        putStrLn "Aperte qualquer tecla para para a simulacao"
+        printMidScreen "Aperte qualquer tecla para para a simulacao"
         hFlush stdout
         threadDelay 500000
 
@@ -170,13 +163,13 @@ module Controllers.SimulationController where
     insertion cells grid count = do
         hSetBuffering stdin LineBuffering
 
-        putStrLn "Qual celula voce deseja adicionar ?"
+        printMidScreen "Qual celula voce deseja adicionar ?"
         _ <- printCelsJson cells 1
         hFlush stdout
         cell <- readLn :: IO Int
         
-        putStrLn "Em pares de numeros separados por espacos e virgulas, digite onde deseja adicionar essa celula"
-        putStrLn "Por exemplo: '1 3,3 1' adicionara celulas na posicao linha 1 coluna 3 e na posicao linha 3 coluna 1"
+        printMidScreen "Em pares de numeros separados por espacos e virgulas, digite onde deseja adicionar essa celula"
+        printMidScreen "Por exemplo: '1 3,3 1' adicionara celulas na posicao linha 1 coluna 3 e na posicao linha 3 coluna 1"
         hFlush stdout
         coordernates <- getLine        
         let coordinates = parsePairs coordernates
@@ -184,12 +177,16 @@ module Controllers.SimulationController where
 
         simulate cells newGrid 0
 
+
+
     printCelsJson :: [Cell] -> Int -> IO()
     printCelsJson [] _ = return ()
     printCelsJson (x:xs) n = do
-        putStrLn $ "    " ++ show n ++ " - " ++ show x
+        printMidScreen $ "    " ++ show n ++ " - " ++ show x
         printCelsJson xs (n + 1)
 
+
+-----------------------------------------------------------------------------------------------------
     parsePairs :: String -> [(Int, Int)]
     parsePairs "" = []
     parsePairs s = 
