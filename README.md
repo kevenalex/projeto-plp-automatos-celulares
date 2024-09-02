@@ -3,7 +3,7 @@
 
 ## Instalação
 
-- Baixar GHCUP pelo download oficial: https://www.haskell.org/ghcup/
+- Baixar GHCUP pelo download oficial: https://www.haskell.org/ghcup/ (que deve incluir o stack)
 
 - Clonar esse repositório
 
