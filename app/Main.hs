@@ -34,19 +34,25 @@ selectOption delay = do
             putStrLn "OPCÃO INVÁLIDA, TENTE NOVAMENTE"
             threadDelay 2000000
             selectOption False
-        else
-            case head opcao of
-                '1' -> do emptyScene "app/storage/cells.json"; selectOption False;
-                '2' -> do menuScenes "app/storage/scenes.json"; selectOption False;
-                '3' -> do menuCells "app/storage/cells.json"; selectOption False
-                '4' -> do tutorial; selectOption False;
-                '5' -> do
-                    setCursorPosition 0 0
-                    printScreen "app/storage/mainMenuController/emptyMenu.txt" False True 
-                    exitSuccess
-                _ -> do
-                    setCursorColumn 97
-                    putStrLn "OPCÃO INVÁLIDA, TENTE NOVAMENTE"
-                    threadDelay 2000000
+        else do 
+            if length opcao >= 2 then do             
+                setCursorColumn 97
+                putStrLn "OPCÃO INVÁLIDA, TENTE NOVAMENTE"
+                threadDelay 2000000
+                selectOption False
+            else 
+                case head opcao of
+                    '1' -> do emptyScene "app/storage/cells.json"; selectOption False;
+                    '2' -> do menuScenes "app/storage/scenes.json"; selectOption False;
+                    '3' -> do menuCells "app/storage/cells.json"; selectOption False
+                    '4' -> do tutorial; selectOption False;
+                    '5' -> do
+                        setCursorPosition 0 0
+                        printScreen "app/storage/mainMenuController/emptyMenu.txt" False True 
+                        exitSuccess
+                    _ -> do
+                        setCursorColumn 97
+                        putStrLn "OPCÃO INVÁLIDA, TENTE NOVAMENTE"
+                        threadDelay 2000000
 
-                    selectOption False
+                        selectOption False

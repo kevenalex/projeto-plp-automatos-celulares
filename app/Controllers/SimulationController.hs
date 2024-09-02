@@ -3,15 +3,13 @@ module Controllers.SimulationController where
     import Models.Cell
     import Models.Grid
     import Data.Matrix hiding (matrix)
-    import Data.List (intercalate)
-    import Data.Char (toUpper)
     import Data.Aeson
     import System.Console.ANSI
     import System.IO
     import GHC.Conc
     import Files.Cell
     import Files.Scene
-    import Text.Read (readMaybe, Lexeme (String))
+    import Text.Read (readMaybe)
     import Utils.Render
 
 
@@ -135,7 +133,8 @@ module Controllers.SimulationController where
             case dimensoes of
                 Just (rows, cols) -> do
                     clearScreen
-                    prepareSimulate (gridGenerate rows cols) path
+                    if cols >= 100 then do printMidScreen "NÃO PODE CRIAR TABELA COM 100 OU MAIS COLUNAS"
+                    else prepareSimulate (gridGenerate rows cols) path
 
                 Nothing -> do printMidScreen "TENTE INSERIR (LINHAS,COLUNAS)"; return ();
 
@@ -168,17 +167,17 @@ module Controllers.SimulationController where
 
     actionChooser :: [Cell] -> Matrix (Maybe Cell) -> Int -> String -> IO()
     actionChooser cells grid count opt =
-        if null opt
-            then simulate cells grid count
-
-        else case head opt of
-            '1' -> runLoop cells grid count
-            '2' -> nextStep cells grid count
-            '3' -> insertion cells grid count
-            '4' -> remove cells grid count
-            '5' -> saveScene cells grid count
-            '6' -> return ()
-            _ -> simulate cells grid count
+        if null opt || (length opt >= 2) 
+            then simulate cells grid count 
+        else 
+            case head opt of
+                '1' -> runLoop cells grid count
+                '2' -> nextStep cells grid count
+                '3' -> insertion cells grid count
+                '4' -> remove cells grid count
+                '5' -> saveScene cells grid count
+                '6' -> return ()
+                _ -> simulate cells grid count
 
 -----------------------------------------------------------------------------------------------------------
 
@@ -207,7 +206,7 @@ module Controllers.SimulationController where
     loopFunction grid = do
         printGrid  grid
         printEmptyLines 2
-        printMidScreen "Aperte qualquer tecla para para a simulacao"
+        printMidScreen "Aperte qualquer tecla para parar a simulacao"
         hFlush stdout
         threadDelay 100000
 
@@ -346,7 +345,7 @@ module Controllers.SimulationController where
                         hFlush stdout
                         threadDelay 1000000
                         simulate cells grid count
-        
+
 
     checkPairs :: (Int, Int) -> [(Int, Int)] -> Bool
     checkPairs _ [] = False
