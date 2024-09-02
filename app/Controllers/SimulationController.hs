@@ -175,8 +175,9 @@ module Controllers.SimulationController where
             '1' -> runLoop cells grid count
             '2' -> nextStep cells grid count
             '3' -> insertion cells grid count
-            '4' -> saveScene cells grid count
-            '5' -> return ()
+            '4' -> remove cells grid count
+            '5' -> saveScene cells grid count
+            '6' -> return ()
             _ -> simulate cells grid count
 
 -----------------------------------------------------------------------------------------------------------
@@ -222,7 +223,7 @@ module Controllers.SimulationController where
         printGridWithNumbers grid
         printEmptyLines 2
 
-        printMidScreen "Qual celula voce deseja adicionar ?"
+        printMidScreen "Qual célula você deseja adicionar ?"
         _ <- printCelsJson cells 1
         hFlush stdout
         setCursorInput
@@ -289,4 +290,10 @@ module Controllers.SimulationController where
         setCursorColumn 100
         printMidScreen $ "Numero de passos dados ate agora: " ++ show count
         setCursorColumn 75
-        printMidScreen "1) Iniciar simulacao   2) Simular 1 passo   3) Inserir celulas   4) Salvar a cena   5) Voltar"
+        printMidScreen "1) Iniciar simulacao   2) Simular 1 passo   3) Inserir celulas   4) Remove Células   5) Salvar cena   6) Voltar"
+
+
+------------------------------------------------------------------------------------------------------
+
+    remove :: IO () 
+    remove = do
