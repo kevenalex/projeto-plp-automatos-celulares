@@ -242,7 +242,7 @@ module Controllers.SimulationController where
             pair = parsePair pairStr
         in case pair of
             Just p  -> p : parsePairs (dropWhile (== ' ') (drop 1 rest))
-            Nothing -> error $ "Entrada inválida: " ++ pairStr
+            Nothing -> []
 
     parsePair :: String -> Maybe (Int, Int)
     parsePair s =
@@ -291,9 +291,16 @@ module Controllers.SimulationController where
         hFlush stdout
         setCursorInput
         coordernates <- getLine
+
         let coordinates = parsePairs coordernates
-        let newGrid = removeCells grid coordinates
-        simulate cells newGrid 0
+        if checkPairs (nrows grid, ncols grid) coordinates then do
+            let newGrid = removeCells grid coordinates
+            simulate cells newGrid 0
+        else do
+            printMidScreen "OPÇÃO INVÁLIDA"
+            hFlush stdout
+            threadDelay 1000000
+            simulate cells grid count
 
 
 
@@ -309,31 +316,38 @@ module Controllers.SimulationController where
         _ <- printCelsJson cells 1
         hFlush stdout
         setCursorInput
-        cell <- readLn :: IO Int
+        cell <- getLine
+        case readMaybe cell :: Maybe Int of
+            Just n ->
+                if n > length cells then do
+                    printMidScreen "OPÇÃO INVÁLIDA"
+                    hFlush stdout
+                    threadDelay 1000000
+                    simulate cells grid count
 
-        if cell > length cells then do
-            printMidScreen "OPÇÃO INVÁLIDA"
-            hFlush stdout
-            threadDelay 1000000
-            simulate cells grid count
+                else do
 
-        else do
-
-            printMidScreen "Em pares de numeros separados por espacos e virgulas, digite onde deseja adicionar essa celula"
-            printMidScreen "Por exemplo: '1 3,3 1' adicionara celulas na posicao linha 1 coluna 3 e na posicao linha 3 coluna 1"
-            hFlush stdout
-            setCursorInput
-            coord <- getLine
-            let coordenates = parsePairs coord
-            if checkPairs (nrows grid, ncols grid) coordenates then do
-                let newGrid = insertCells grid  (cells !! (cell-1)) coordenates
-                simulate cells newGrid 0
-            else do
-                printMidScreen "OPÇÃO INVÁLIDA"
-                hFlush stdout
-                threadDelay 1000000
-                simulate cells grid count
+                    printMidScreen "Em pares de numeros separados por espacos e virgulas, digite onde deseja adicionar essa celula"
+                    printMidScreen "Por exemplo: '1 3,3 1' adicionara celulas na posicao linha 1 coluna 3 e na posicao linha 3 coluna 1"
+                    hFlush stdout
+                    setCursorInput
+                    coord <- getLine
+                    let coordenates = parsePairs coord
+                    if checkPairs (nrows grid, ncols grid) coordenates then do
+                        let newGrid = insertCells grid  (cells !! (n-1)) coordenates
+                        simulate cells newGrid 0
+                    else do
+                        printMidScreen "OPÇÃO INVÁLIDA"
+                        hFlush stdout
+                        threadDelay 1000000
+                        simulate cells grid count
+            Nothing -> do
+                        printMidScreen "OPÇÃO INVÁLIDA"
+                        hFlush stdout
+                        threadDelay 1000000
+                        simulate cells grid count
+        
 
     checkPairs :: (Int, Int) -> [(Int, Int)] -> Bool
-    checkPairs _ [] = True
+    checkPairs _ [] = False
     checkPairs (x, y) pares = all (\(a, b) -> a < x && b < y) pares
