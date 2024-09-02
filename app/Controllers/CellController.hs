@@ -118,57 +118,80 @@ module Controllers.CellController where
     printColors = do
         clearScreen
         cursorUpLine 30
-        setCursorColumn 90
-        putStrLn "QUAL A COR DA CÉLULA?"
-        threadDelay 130000
-        setCursorColumn 85
-        putStrLn "Cores dependem do tema do seu terminal\n"
-        setCursorColumn 85
-        threadDelay 130000
+        printMidScreen "QUAL A COR DA CÉLULA?"
+        printColorsHelper 85
+        printMidScreen "Cores dependem do tema do seu terminal\n"
+        printColorsHelper 85
         setSGR [SetColor Foreground Dull Red]
         putStr "1) VERMELHO     "
         setSGR [SetColor Foreground Vivid Red]
         putStrLn "2) VERMELHO BRILHANTE"
-        setCursorColumn 85
-        threadDelay 130000
+        printColorsHelper 85
         setSGR [SetColor Foreground Dull Green]
         putStr "3) VERDE        "
         setSGR [SetColor Foreground Vivid Green]
         putStrLn "4) VERDE BRILHANTE"
-        setCursorColumn 85
-        threadDelay 130000
+        printColorsHelper 85
         setSGR [SetColor Foreground Dull Yellow]
         putStr "5) AMARELO      "
         setSGR [SetColor Foreground Vivid Yellow]
         putStrLn "6) AMARELO BRILHANTE"
-        setCursorColumn 85
-        threadDelay 130000
+        printColorsHelper 85
         setSGR [SetColor Foreground Dull Blue]
         putStr "7) AZUL         "
         setSGR [SetColor Foreground Vivid Blue]
         putStrLn "8) AZUL BRILHANTE"
-        setCursorColumn 85
-        threadDelay 130000
+        printColorsHelper 85
         setSGR [SetColor Foreground Dull Magenta]
         putStr "9) MAGENTA      "
         setSGR [SetColor Foreground Vivid Magenta]
         putStrLn "10) MAGENTA BRILHANTE"
-        setCursorColumn 85
-        threadDelay 130000
+        printColorsHelper 85
         setSGR [SetColor Foreground Dull Cyan]
         putStr "11) CIANO       "
         setSGR [SetColor Foreground Vivid Cyan]
         putStrLn "12) CIANO BRILHANTE"
-        setCursorColumn 85
-        threadDelay 130000
+        printColorsHelper 85
         setSGR [SetColor Foreground Dull White]
         putStr "13) BRANCO      "
         setSGR [SetColor Foreground Vivid White]
         putStrLn "14) BRANCO BRILHANTE"
-        setCursorColumn 85
-        threadDelay 130000
+        printColorsHelper 85
+        setSGR [Reset]
+        printMidScreen "--- CORES INDEPENDENTES DO TERMINAL ---"
+
+        printColorsHelper 95
+        setSGR [SetPaletteColor Foreground 214]
+        putStrLn "15) DOURADO     "
+        printColorsHelper 95
+        setSGR [SetPaletteColor Foreground 57]
+        putStrLn "16) ROXO"
+        printColorsHelper 95 
+        setSGR [SetPaletteColor Foreground 50]
+        putStrLn "17) VERDE ÁGUA  "
+        printColorsHelper 95
+        setSGR [SetPaletteColor Foreground 217]
+        putStrLn "18) SALMÃO    "
+        printColorsHelper 95
+        setSGR [SetPaletteColor Foreground 202]
+        putStrLn "19) LARANJA     "
+        printColorsHelper 95
+        setSGR [SetPaletteColor Foreground 219]
+        putStrLn "20) ROSINHA   "
+        printColorsHelper 95
+        setSGR [SetPaletteColor Foreground 201]
+        putStrLn "21) ROSA SHOCK  "
+        printColorsHelper 95
+        setSGR [SetPaletteColor Foreground 46]
+        putStrLn "22) VERDE NEON"
+        setSGR [Reset]
         printEmptyLines 20
-        setCursorColumn 85
+
+    printColorsHelper  :: Int ->  IO ()
+    printColorsHelper n = do
+        setCursorColumn n
+        threadDelay 130000
+
 
 
     removeAutomata :: FilePath -> [Cell] -> IO()
@@ -216,6 +239,14 @@ module Controllers.CellController where
         12 -> Just "CIANO BRILHANTE"
         13 -> Just "BRANCO"
         14 -> Just "BRANCO BRILHANTE"
+        15 -> Just "DOURADO" 
+        16 -> Just "ROXO"
+        17 -> Just "VERDE ÁGUA"
+        18 -> Just "SALMÃO"
+        19 -> Just "LARANJA"
+        20 -> Just "ROSINHA"
+        21 -> Just "ROSA SHOCK"
+        22 -> Just "VERDE NEON"
         _ -> Nothing
 
     -- Faz o tratemento das entradas das regras de Nascimento e Permanência
@@ -225,4 +256,4 @@ module Controllers.CellController where
     -- Faz o tratamento da entrada de cor, verifica se ela não é um 'Enter' e se é um char entre '1' e '7'
     -- Editar função pra tratar o buffer do teclado
     handleColorChoice :: Int -> Bool
-    handleColorChoice cor = cor > 0 && cor < 15
+    handleColorChoice cor = cor > 0 && cor < 22
