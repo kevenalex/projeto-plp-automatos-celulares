@@ -3,7 +3,6 @@ module Models.Grid where
     import Models.Cell
     import Data.Maybe
     import Models.Rule
-    import Data.List
 
     import qualified Data.Set as Set
 

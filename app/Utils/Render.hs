@@ -48,5 +48,12 @@ module Utils.Render where
     printEmptyLines 0 = return ()
     printEmptyLines n = do putStrLn ""; printEmptyLines (n-1) 
 
+    printEmptyLinesWithDelay :: Int -> IO ()
+    printEmptyLinesWithDelay 0 = return ()
+    printEmptyLinesWithDelay n = do 
+        putStr "\n"
+        threadDelay 330000
+        printEmptyLines (n-1) 
+
     trim :: String -> String
     trim = unwords . words

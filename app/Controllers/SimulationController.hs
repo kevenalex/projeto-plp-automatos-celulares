@@ -2,13 +2,10 @@ module Controllers.SimulationController where
 
     import Models.Cell
     import Models.Grid
-    import Models.Rule
     import Data.Matrix hiding (matrix)
     import Data.List (intercalate)
-    import Data.Maybe
     import Data.Char (toUpper)
     import Data.Aeson
-    import System.Process (system)
     import System.Console.ANSI
     import System.IO
     import GHC.Conc
@@ -16,7 +13,6 @@ module Controllers.SimulationController where
     import Files.Scene
     import Text.Read (readMaybe)
     import Utils.Render
-    import Models.Cell
     
 
     -- Funções que gerem a impressão da Matrix (Maybe Cell)
@@ -51,12 +47,12 @@ module Controllers.SimulationController where
 
     printRow :: [Maybe Cell] -> IO ()
     printRow row = do
-        -- setCursorForPrintGrid 
+        setCursorColumn $ 100 - length row `div` 2
         mapM_ printCell row
         putStrLn ""
 
     printCell :: Maybe Cell -> IO ()
-    printCell cell =
+    printCell cell = do
         case cell of 
             Nothing -> do
                 setSGR [SetColor Foreground Vivid Black]
