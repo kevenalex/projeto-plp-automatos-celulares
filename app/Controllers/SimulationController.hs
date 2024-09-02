@@ -316,7 +316,7 @@ module Controllers.SimulationController where
             hFlush stdout
             threadDelay 1000000
             simulate cells grid count
-            
+
         else do
 
             printMidScreen "Em pares de numeros separados por espacos e virgulas, digite onde deseja adicionar essa celula"
