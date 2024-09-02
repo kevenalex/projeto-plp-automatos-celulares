@@ -70,9 +70,17 @@ module Controllers.SceneController where
         setCursorInput
         choice <- getLine
         if M.member choice scenes then do
-            let row = extractSceneRow scenes choice
-            let cols = extractSceneCol scenes choice
-            prepareSimulate (gridGenerate row cols) "app/storage/cells.json"
+            -- let row = extractSceneRow scenes choice
+            -- let cols = extractSceneCol scenes choice
+            -- prepareSimulate (gridGenerate row cols) "app/storage/cells.json" 
+            case M.lookup choice scenes of 
+                Just scene -> do
+                    let grid = sceneToGrid scene
+                    prepareSimulate grid "app/storage/cells.json"
+                Nothing -> do
+                    putStrLn "INPUT ERRADO, TENTE NOVAMENTE"
+                    threadDelay 800000
+                    simulateScenesChoice path scenes
             
         else do
             putStrLn "INPUT ERRADO, TENTE NOVAMENTE"
@@ -104,15 +112,24 @@ module Controllers.SceneController where
         setCursorColumn 85
 
     -- Extrai o numero de linhas da Cena, como o gridGenerate não aceita Maybe Int, tem que ter um default
-    extractSceneRow :: M.Map String Scene -> String -> Int
-    extractSceneRow scene choice =
-            rows $ fromMaybe defaultScene (M.lookup choice scene)
-        where
-            defaultScene = Scene { title = choice, rows = 0, cols = 0}
+    -- extractSceneRow :: M.Map String Scene -> String -> Sce
+    -- extractSceneRow scene choice =
+    --         rows $ fromMaybe defaultScene (M.lookup choice scene)
+    --     where
+    --         defaultScene = Scene { title = choice, rows = 0, cols = 0}
 
-    -- Extrai o numero de colunas da Cena, como o gridGenerate não aceita Maybe Int, tem que ter um default
-    extractSceneCol :: M.Map String Scene -> String -> Int
-    extractSceneCol scene choice =
-            cols $ fromMaybe defaultScene (M.lookup choice scene)
-        where
-            defaultScene = Scene { title = choice, rows = 0, cols = 0}
+    -- -- Extrai o numero de colunas da Cena, como o gridGenerate não aceita Maybe Int, tem que ter um default
+    -- extractSceneCol :: M.Map String Scene -> String -> Int
+    -- extractSceneCol scene choice =
+    --         cols $ fromMaybe defaultScene (M.lookup choice scene)
+    --     where
+    --         defaultScene = Scene { title = choice, rows = 0, cols = 0}
+
+    -- extractSceneCol :: M.Map String Scene -> String -> Int
+    -- extractSceneCol scene choice =
+    --         cols $ fromMaybe defaultScene (M.lookup choice scene)
+    --     where
+    --         defaultScene = Scene { title = choice, rows = 0, cols = 0}
+
+    extractSceneFromDict :: M.Map String Scene -> String -> Maybe Scene
+    extractSceneFromDict scenes sceneName = M.lookup sceneName scenes

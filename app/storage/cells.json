@@ -1,1 +1,1 @@
-[{"color":"VERDE NEON","name":"LOBO","rule":{"birth":[1,2],"stay":[4,5,6]}},{"color":"DOURADO","name":"MAZE","rule":{"birth":[3],"stay":[1,2,3,4,5]}}]
+[{"color":"LARANJA","name":"ASD","rule":{"birth":[1,2,3,4,5],"stay":[1,2]}},{"color":"VERDE","name":"GOF","rule":{"birth":[3],"stay":[2,3]}}]
