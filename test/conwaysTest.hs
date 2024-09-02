@@ -5,6 +5,7 @@ module Test.Simulation where
     import Data.Matrix
     import Test.HUnit 
     import qualified Control.Applicative as Aqui
+    import Data.Maybe
     
 {----------------------------------------------- [OBSERVAÇÕES] ---------------------------------------------------
 
@@ -438,38 +439,37 @@ module Test.Simulation where
     testMostFrequentCell0 = TestCase $ do
         assertEqual "mostFrequentCell 0" expected result
             where
-                result = mostFrequentCell (2,2) fullGOL3Grid
-                expected = conways
+                result =  mostFrequentCell (2,2) fullGOL3Grid
+                expected = Just conways
 
-{-- POSSÍVEL ERR0 LÓGICO DETECTADO: a função não trata o caso de matriz vazia (Const Nothing)
+-- POSSÍVEL ERR0 LÓGICO DETECTADO: a função não trata o caso de matriz vazia (Const Nothing)
     testMostFrequentCell1 :: Test
     testMostFrequentCell1 = TestCase $ do
         assertEqual "mostFrequentCell 1" expected result
             where
                 result = mostFrequentCell (2,2) (square 3)
                 expected = Nothing 
---}
     
     testMostFrequentCell2 :: Test
     testMostFrequentCell2 = TestCase $ do
         assertEqual "mostFrequentCell 2" expected result
             where
-                result = mostFrequentCell (2,2) fullHL3Grid
-                expected = highLife
+                result =  mostFrequentCell (2,2) fullHL3Grid
+                expected = Just highLife
 
     testMostFrequentCell3 :: Test
     testMostFrequentCell3 = TestCase $ do
         assertEqual "mostFrequentCell 3" expected result
             where
                 grid = insertCells fullGOL3Grid highLife [(3,1), (3,2), (3,3)]
-                result = mostFrequentCell (2,2) grid
-                expected = conways
+                result =  mostFrequentCell (2,2) grid
+                expected = Just conways
     
     testMostFrequentCell4 :: Test
     testMostFrequentCell4 = TestCase $ do
         assertEqual "mostFrequentCell 3" expected result
             where
-                result = mostFrequentCell (4,4) fullGOL3Grid
-                expected = conways
+                result =  mostFrequentCell (4,4) fullGOL3Grid
+                expected = Just conways
 
 -----------------------------------------------------------------------------------------------------------------

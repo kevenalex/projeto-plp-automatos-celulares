@@ -68,8 +68,9 @@ module Models.Grid where
     listOfValidCoords coords rowLimit colLimit = [(x,y) | (x,y) <- coords, validCoord (x,y) rowLimit colLimit]
 
     --  Retorna a Cell que mais se repete na vizinhança de uma Cell
-    mostFrequentCell :: (Int, Int) -> Matrix (Maybe Cell) -> Cell
-    mostFrequentCell (row, col) grid = fromJust cell
+    mostFrequentCell :: (Int, Int) -> Matrix (Maybe Cell) -> Maybe Cell
+    mostFrequentCell (row, col) grid = 
+        if isNothing cell then Nothing else cell
         where
           (_, cell) = biggestOnList frequencias
           frequencias = frequencyCells vizinhanca grid
