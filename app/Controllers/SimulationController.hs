@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use when" #-}
 module Controllers.SimulationController where
 
     import Models.Cell
@@ -154,7 +156,13 @@ module Controllers.SimulationController where
                 simulate cells matrix 0
                 hSetBuffering stdin LineBuffering
                 hSetBuffering stdout NoBuffering
-
+                printMidScreen "REINICIAR CENA? (S)IM ou (N)ÃO"
+                option <- getLine
+                if option == "S" 
+                    then 
+                        prepareSimulate matrix arq
+                    else return ()
+        
     simulate :: [Cell] -> Matrix (Maybe Cell) -> Int -> IO()
     simulate cells matrix count = do
         clearScreen
@@ -243,7 +251,8 @@ module Controllers.SimulationController where
     printCelsJson :: [Cell] -> Int -> IO()
     printCelsJson [] _ = return ()
     printCelsJson (x:xs) n = do
-        printMidScreen $ "    " ++ show n ++ " - " ++ show x
+        setCursorColumn 85
+        putStrLn $ "    " ++ show n ++ " - " ++ show x
         printCelsJson xs (n + 1)
 
 
