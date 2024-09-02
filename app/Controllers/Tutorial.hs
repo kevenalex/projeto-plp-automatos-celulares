@@ -56,7 +56,8 @@ module Controllers.Tutorial where
         printEmptyLinesWithDelay 1
         printGridTutorial $ gridUpdate gridInicial
 
-        setCursorColumn 90
+        printEmptyLinesWithDelay 1
+        setCursorColumn 95
         print conways
         printScreen "app/storage/tutorial/explicaStay.txt" False False
         
@@ -92,7 +93,11 @@ module Controllers.Tutorial where
         hSetBuffering stdout (BlockBuffering Nothing)
         ataque gridAtaque 0
         hSetBuffering stdout NoBuffering
-        print "caboci"
+
+        printScreen "app/storage/tutorial/Final.txt" False False
+        setCursorColumn 91
+        putStrLn "aperte Enter para voltar!"
+        _ <- getLine
 
         hSetEcho stdin True
         showCursor
@@ -122,6 +127,7 @@ module Controllers.Tutorial where
     ataqueAutomatico _ 65 = return()
     ataqueAutomatico grid n = do
         printGrid grid
+        printEmptyLines 20
         setCursorColumn 81
         hFlush stdout
         threadDelay 400000
