@@ -100,7 +100,7 @@ module Controllers.Tutorial where
     ataque grid n = do 
         printGrid grid
         setCursorColumn 81
-        putStrLn "aperte Enter para continuar! Ou A e Enter para passar automáticamente!"
+        printMidScreen "aperte Enter para continuar! Ou A e Enter para passar automáticamente!"
         printEmptyLines 20
         hFlush stdout
         a <- getLine
