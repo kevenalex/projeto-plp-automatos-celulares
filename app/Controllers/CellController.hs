@@ -176,7 +176,7 @@ module Controllers.CellController where
         putStrLn "14) BRANCO BRILHANTE"
         printColorsHelper 85
         setSGR [Reset]
-        printMidScreen "--- CORES INDEPENDENTES DO TERMINAL ---"
+        printMidScreen "--- CORES INDEPENDENTES DO TEMA ---"
 
         printColorsHelper 95
         setSGR [SetPaletteColor Foreground 214]
