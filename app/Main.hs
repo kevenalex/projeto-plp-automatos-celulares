@@ -30,7 +30,7 @@ selectOption delay = do
             threadDelay 830000
             selectOption False
         else
-            case toUpper $ head opcao of
+            case head opcao of
                 '1' -> do emptyScene "app/storage/cells.json"; selectOption False;
                 -- '2' -> do menuAutomatasCarregarCena "app/storage/cells.json"; selectOption False;
                 '3' -> do menuCells "app/storage/cells.json"; selectOption False
