@@ -18,7 +18,7 @@ main = do
     setCursorPosition (screenHeight - 1) 0
 
     setCursorInput
-    selectOption False -- Laço principal
+    selectOption True -- Laço principal
 
 selectOption :: Bool -> IO ()
 selectOption delay = do
