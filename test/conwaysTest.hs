@@ -60,7 +60,10 @@ module Test.Simulation where
             testValidCoord5, testValidCoord6, testValidCoord7, testValidCoord8, testValidCoord9, testValidCoord10, 
             testListOfValidCoords0, testListOfValidCoords1, testListOfValidCoords2, testListOfValidCoords3, 
             testListOfValidCoords4, testListOfValidCoords5, testMostFrequentCell0, testMostFrequentCell2,
-            testMostFrequentCell3, testMostFrequentCell4
+            testMostFrequentCell3, testMostFrequentCell4, noChangeGenerations0, noChangeGenerations1, 
+            noChangeGenerations2, noChangeGenerations3, noChangeGenerations4, isDeadSimulation0,isDeadSimulation1, 
+            isDeadSimulation2, gridToLists0, gridToLists0, gridToLists1, gridToLists2, gridToLists3, insertCell0,
+            insertCell1, insertCell2, testListOfCoord2, testListOfCoord3
         ]
 
 ----------------------------------------- [MAIN: TESTES DO MÓDULO GRID] ------------------------------------------
@@ -360,8 +363,8 @@ module Test.Simulation where
 -----------------------------------------------------------------------------------------------------------------
 
 {--
-    listOfCoord: verifica se a lista contempla todas coordenadas 
-    que estão na vizinhança de determinada coordenada
+    listOfCoord: verifica se a lista contempla todas coordenadas que estão na 
+    vizinhança de determinada coordenada, independente do escopo da matriz
 --}
 
     testListOfCoord0 :: Test
@@ -376,6 +379,20 @@ module Test.Simulation where
         assertEqual "listOfCoord 1" expected result
             where
                 result = listOfCoord (4,4) (square 3)
+                expected = [(3,3), (3,4), (3,5), (4,3), (4,5), (5,3), (5,4), (5,5)]
+
+    testListOfCoord2 :: Test
+    testListOfCoord2 = TestCase $ do
+        assertEqual "listOfCoord 2" expected result
+            where
+                result = listOfCoord (2,2) (square 1)
+                expected = [(1,1), (1,2), (1,3), (2,1), (2,3), (3,1), (3,2), (3,3)]
+
+    testListOfCoord3 :: Test
+    testListOfCoord3 = TestCase $ do
+        assertEqual "listOfCoord 3" expected result
+            where
+                result = listOfCoord (4,4) (square 100)
                 expected = [(3,3), (3,4), (3,5), (4,3), (4,5), (5,3), (5,4), (5,5)]
 
 -----------------------------------------------------------------------------------------------------------------
@@ -442,7 +459,6 @@ module Test.Simulation where
                 result =  mostFrequentCell (2,2) fullGOL3Grid
                 expected = Just conways
 
--- POSSÍVEL ERR0 LÓGICO DETECTADO: a função não trata o caso de matriz vazia (Const Nothing)
     testMostFrequentCell1 :: Test
     testMostFrequentCell1 = TestCase $ do
         assertEqual "mostFrequentCell 1" expected result
@@ -467,9 +483,170 @@ module Test.Simulation where
     
     testMostFrequentCell4 :: Test
     testMostFrequentCell4 = TestCase $ do
-        assertEqual "mostFrequentCell 3" expected result
+        assertEqual "mostFrequentCell 4" expected result
             where
                 result =  mostFrequentCell (4,4) fullGOL3Grid
                 expected = Just conways
+
+-----------------------------------------------------------------------------------------------------------------
+
+{--
+    noChangeGenerations: verifica se a função retorna se houve mudanças 
+    entre duas gerações da simulação. Uma forma simples de fazer isso
+    é comparado duas grids e iguais ou não
+--}
+
+    noChangeGenerations0 :: Test
+    noChangeGenerations0 = TestCase $ do
+        assertEqual "noChangeGenerations 0" expected result
+            where
+                result = noChangeGenerations fullGOL3Grid fullGOL3Grid
+                expected = True
+
+    noChangeGenerations1 :: Test
+    noChangeGenerations1 = TestCase $ do
+        assertEqual "noChangeGenerations 1" expected result
+            where
+                result = noChangeGenerations fullHL3Grid fullHL3Grid
+                expected = True
+
+    noChangeGenerations2 :: Test
+    noChangeGenerations2 = TestCase $ do
+        assertEqual "noChangeGenerations 2" expected result
+            where
+                result = noChangeGenerations fullHL3Grid fullGOL3Grid
+                expected = False
+
+    noChangeGenerations3 :: Test
+    noChangeGenerations3 = TestCase $ do
+        assertEqual "noChangeGenerations 3" expected result
+            where
+                result = noChangeGenerations (square 3) (square 3)
+                expected = True
+
+    noChangeGenerations4 :: Test
+    noChangeGenerations4 = TestCase $ do
+        assertEqual "noChangeGenerations 4" expected result
+            where
+                result = noChangeGenerations fullGOL3Grid (square 3)
+                expected = False
+
+-----------------------------------------------------------------------------------------------------------------
+
+{--
+    listOfValidCoords: verifica se a função retorna apenas coordenadas válidas,
+    ou seja, aquelas que não ultrapassam o escopo da matriz
+--}
+
+    isDeadSimulation0 :: Test
+    isDeadSimulation0 = TestCase $ do
+        assertEqual "isDeadSimulation 0" expected result
+            where
+                result = isDeadSimulation (square 3)
+                expected = True
+
+    isDeadSimulation1 :: Test
+    isDeadSimulation1 = TestCase $ do
+        assertEqual "isDeadSimulation 1" expected result
+            where
+                result = isDeadSimulation fullGOL3Grid
+                expected = False
+
+    isDeadSimulation2 :: Test
+    isDeadSimulation2 = TestCase $ do
+        assertEqual "isDeadSimulation 2" expected result
+            where
+                grid = insertCells (square 3) conways [(1,1)]
+                result = isDeadSimulation grid
+                expected = False
+
+-----------------------------------------------------------------------------------------------------------------
+
+{--
+    gridToLists: verifica se a função retorna uma lista de listas, onde 
+    cada sublista representa uma linha da matriz
+--}
+
+    gridToLists0 :: Test
+    gridToLists0 = TestCase $ do
+        assertEqual "gridToLists 0" expected result
+            where
+                result = gridToLists (square 3)
+                expected = [
+                    [Nothing, Nothing, Nothing],
+                    [Nothing, Nothing, Nothing],
+                    [Nothing, Nothing, Nothing]
+                    ]
+
+    gridToLists1 :: Test
+    gridToLists1 = TestCase $ do
+        assertEqual "gridToLists 1" expected result
+            where
+                result = gridToLists fullGOL3Grid
+                expected = [
+                    [Just conways, Just conways, Just conways],
+                    [Just conways, Just conways, Just conways],
+                    [Just conways, Just conways, Just conways]
+                    ]
+
+    gridToLists2 :: Test
+    gridToLists2 = TestCase $ do
+        assertEqual "gridToLists 2" expected result
+            where
+                result = gridToLists fullHL3Grid
+                expected = [
+                    [Just highLife, Just highLife, Just highLife],
+                    [Just highLife, Just highLife, Just highLife],
+                    [Just highLife, Just highLife, Just highLife]
+                    ]
+
+    gridToLists3 :: Test
+    gridToLists3 = TestCase $ do
+        assertEqual "gridToLists 3" expected result
+            where
+                grid = insertCells (insertCells (square 3) conways [(1,2), (2,1), (2,3), (3,2)]) highLife [(1,1), (1,3), (3,1), (3,3)]
+                result = gridToLists grid
+                expected = [
+                    [Just highLife, Just conways, Just highLife],
+                    [Just conways,     Nothing   , Just conways],
+                    [Just highLife, Just conways, Just highLife]
+                    ]
+
+-----------------------------------------------------------------------------------------------------------------
+
+{--
+    insertCell: verifica se a função retorna uma matriz com a célula devidamente inserida
+--}
+
+    insertCell0 :: Test
+    insertCell0 = TestCase $ do
+        assertEqual "insertCell 0" expected result
+            where
+                result = insertCell (square 3) conways (2,2)
+                expected = 
+                    fromLists [
+                        [Nothing,    Nothing,   Nothing],
+                        [Nothing, Just conways, Nothing],
+                        [Nothing,    Nothing,   Nothing]
+                    ]
+
+    insertCell1 :: Test
+    insertCell1 = TestCase $ do
+        assertEqual "insertCell 1" expected result
+            where
+                result = insertCell (square 1) highLife (1,1)
+                expected = fromLists [[Just highLife]]
+
+    insertCell2 :: Test
+    insertCell2 = TestCase $ do
+        assertEqual "insertCell 2" expected result
+            where
+                result = insertCell fullHL3Grid conways (2,2)
+                expected = 
+                    fromLists [
+                        [Just highLife, Just highLife, Just highLife],
+                        [Just highLife, Just  conways, Just highLife],
+                        [Just highLife, Just highLife, Just highLife]
+                    ]
 
 -----------------------------------------------------------------------------------------------------------------
