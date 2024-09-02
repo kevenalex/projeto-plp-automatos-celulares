@@ -93,8 +93,10 @@ module Controllers.SimulationController where
         putStrLn "Vamos criar a sua matrix"
         putStrLn "Qual tamanho voce deseja ?"
         putStr "Digite o tamanho da altura:"
+        hFlush stdout
         altura <- readLn :: IO Int
         putStr "Digite o tamanho da largura:"
+        hFlush stdout
         largura <- readLn :: IO Int
         clearScreen
         prepareSimulate (gridGenerate altura largura) path
@@ -169,11 +171,13 @@ module Controllers.SimulationController where
         hSetBuffering stdin LineBuffering
 
         putStrLn "Qual celula voce deseja adicionar ?"
+        hFlush stdout
         _ <- printCelsJson cells 1
         cell <- readLn :: IO Int
         
         putStrLn "Em pares de numeros separados por espacos e virgulas, digite onde deseja adicionar essa celula"
         putStrLn "Por exemplo: '1 3,3 1' adicionara celulas na posicao linha 1 coluna 3 e na posicao linha 3 coluna 1"
+        hFlush stdout
         coordernates <- getLine        
         let coordinates = parsePairs coordernates
         let newGrid = insertCells grid (cells !! (cell-1)) coordinates
@@ -210,7 +214,8 @@ module Controllers.SimulationController where
 
     saveScene :: [Cell] -> Matrix (Maybe Cell) -> Int -> IO()
     saveScene cells grid count = do
-        putStrLn "Digite um nome para essa cena"
+        putStrLn "Digite um nome para essa cena:"
+        hFlush stdout
         nome <- getLine 
         let scene = Scene nome (nrows grid) (ncols grid) (toList grid)
         addScene "./app/storage/scenes.json" scene
