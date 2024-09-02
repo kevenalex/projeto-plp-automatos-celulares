@@ -15,6 +15,11 @@ module Controllers.CellController where
     import qualified Data.ByteString.Lazy as B
 
     import Text.Read
+
+    -- Menu de Criação de Células
+    -- 1) Direciona para a criação de Célula
+    -- 2) Direciona para o menu de exclusão de Célula existente
+    -- 3) Direciona para o menu principal
     menuCells :: FilePath -> IO()
     menuCells path = do
 
@@ -42,7 +47,8 @@ module Controllers.CellController where
             _ -> menuCells path
 
 
-
+    -- Print formatado do menu de Celulas fazendo o tratamento caso 
+    -- não existam Celulas criadas, e listando-as caso existam. 
     listCells :: [Cell] -> IO()
     listCells cells = 
         if null cells then printScreen "app/storage/ruleController/screenNoCells.txt" True False;
@@ -57,6 +63,8 @@ module Controllers.CellController where
 
                         printScreen "app/storage/ruleController/ruleMenuOptions.txt" False False
 
+    -- Inicio do procedimento de criação da Celula, recebendo o nome da Celula e chamando a função
+    -- para adicionar a regra de nascimento
     addAutomata :: FilePath ->  IO()
     addAutomata path = do
 
@@ -102,7 +110,7 @@ module Controllers.CellController where
             threadDelay 800000
             addStayRule path nameCellT nascList
     
-    -- Criação da Cor da Celula, o usuario pode inserir uma das 7 opções de cor que o terminal disponibiliza.
+    -- Criação da Cor da Celula, o usuario pode inserir uma das 22 opções de cor que o terminal disponibiliza.
     addColor :: FilePath -> String -> Rule -> IO()
     addColor path nameCellT regra = do
         printColors
@@ -123,6 +131,7 @@ module Controllers.CellController where
                     threadDelay 800000
                     addColor path nameCellT regra
 
+    -- Print formatado das opções de cor
     printColors :: IO()
     printColors = do
         clearScreen
@@ -201,8 +210,7 @@ module Controllers.CellController where
         setCursorColumn n
         threadDelay 130000
 
-
-
+    -- Menu de exclusão de célula por nome
     removeAutomata :: FilePath -> [Cell] -> IO()
     removeAutomata path cells = do 
         
@@ -225,7 +233,7 @@ module Controllers.CellController where
             nameCellI <- getLine
             let nameCellT = map toUpper nameCellI 
             deleteCell path nameCellT
-
+    -- Print formatado das células criadas
     printCells :: [Cell] -> Int -> IO()
     printCells [] _ = return ()
     printCells (x:xs) n = do
@@ -233,6 +241,7 @@ module Controllers.CellController where
         putStrLn $ show n ++ " - " ++ show x
         printCells xs (n + 1)
     
+    -- Tratamento da escolha das cores
     selectColor :: Int -> Maybe String
     selectColor color = case color of
         1 -> Just "VERMELHO"
@@ -259,12 +268,12 @@ module Controllers.CellController where
         22 -> Just "VERDE NEON"
         _ -> Nothing
 
-    -- Faz o tratemento das entradas das regras de Nascimento e Permanência
+    -- Faz o tratemento das entradas das regras de Nascimento e Permanência, removendo
+    -- espaços em branco e verificando se há de 0 a 8 dígitos entre 1 e 8.
     handleBornAndStayRule :: String -> Bool
     handleBornAndStayRule regra = let regraFormatada = filter (not . isSpace) regra
                                   in length regraFormatada <= 8 && all (`elem` "12345678") regraFormatada
 
-    -- Faz o tratamento da entrada de cor, verifica se ela não é um 'Enter' e se é um char entre '1' e '7'
-    -- Editar função pra tratar o buffer do teclado
+    -- Faz o tratamento da entrada de cor, verifica se a entrada é um número entre 1 e 22
     handleColorChoice :: Int -> Bool
     handleColorChoice cor = cor > 0 && cor < 23
