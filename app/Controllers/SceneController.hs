@@ -1,19 +1,20 @@
 module Controllers.SceneController where
     import Files.Scene
-    import Data.Aeson
-    import Models.Rule (Rule (Rule))
     import Utils.Render
-    import qualified Data.Map as M
-    import Data.Char
-    import Control.Concurrent(threadDelay)
-    import System.Console.ANSI
-    import Controllers.SimulationController (prepareSimulate)
-    import Data.Maybe
-    import Models.Grid
-    
-    -- se não tiver nenhuma cena ele só printa o 3 e volta
-    -- 
 
+    import Data.Aeson
+    import qualified Data.Map as M
+    
+    import System.Console.ANSI
+    
+    import Control.Concurrent(threadDelay)
+    import Controllers.SimulationController (prepareSimulate)
+    
+    -- Menu Inicial de Cenas que faz o tratamento caso não existam Cenas
+    -- criadas e caso existam, permite três opções:
+    -- 1) Simular Cena, em seguida a Cena deve ser escolhida por nome
+    -- 2) Deletar Cena, em seguida a Cena deve ser escolhida por nome
+    -- 3) Retornar ao menu principal
     menuScenes :: FilePath -> IO()
     menuScenes path = do
         
@@ -38,7 +39,12 @@ module Controllers.SceneController where
                     "3" -> return ()
                     _ -> menuScenes path
 
-    -- literalmente mesma logica de listCells porem com Scenes
+    -- Extrai os nomes das Cenas salvas no arquivo json
+    extractSceneNames :: M.Map String Scene -> [String]
+    extractSceneNames scenesDict = map title (M.elems scenesDict)
+
+    -- Print formatado do menu de Cenas fazendo o tratamento caso 
+    -- não existam Cenas criadas, e listando-as caso existam. 
     listScenes :: M.Map String Scene -> IO()
     listScenes scenes =
         if null scenes then printScreen "app/storage/sceneController/screenNoScenes.txt" True False;
@@ -49,7 +55,7 @@ module Controllers.SceneController where
                         printEmptyLines 1
                         printScreen "app/storage/sceneController/sceneMenuOptions.txt" False False
 
-    -- literalmente mesma logica de printCells porem com Scenes
+    -- Print formatado da listagem de Cenas por nome
     printScenes :: [String] -> IO()
     printScenes [] = return ()
     printScenes (x:xs) = do
@@ -57,10 +63,17 @@ module Controllers.SceneController where
         print x
         printScenes xs
 
-    -- Extrai os nomes das Cenas salvas
-    extractSceneNames :: M.Map String Scene -> [String]
-    extractSceneNames scenesDict = map title (M.elems scenesDict)
+    -- Print da listagem de cenas existentes + listas vazias para organizar
+    -- os menus e evitar repetição de código desnecessária em simulateScenesChoice
+    -- e deleteScenesChoice
+    formatedOutput :: M.Map String Scene -> IO ()
+    formatedOutput scenes = do
+        printEmptyLines 2
+        printScenes $ extractSceneNames scenes 
+        printScreen "app/storage/sceneController/sceneEmptyLines.txt" False False
+        setCursorColumn 85
 
+    -- Menu de escolha de simulação de Cena, retorna a simulação com a Cena escolhida
     simulateScenesChoice :: FilePath -> M.Map String Scene -> IO ()
     simulateScenesChoice path scenes = do
         printScreen "app/storage/sceneController/sceneChoiceQuestion.txt" True False
@@ -70,13 +83,11 @@ module Controllers.SceneController where
         setCursorInput
         choice <- getLine
         if M.member choice scenes then do
-            -- let row = extractSceneRow scenes choice
-            -- let cols = extractSceneCol scenes choice
-            -- prepareSimulate (gridGenerate row cols) "app/storage/cells.json" 
             case M.lookup choice scenes of 
                 Just scene -> do
                     let grid = sceneToGrid scene
                     prepareSimulate grid "app/storage/cells.json"
+                    
                 Nothing -> do
                     putStrLn "INPUT ERRADO, TENTE NOVAMENTE"
                     threadDelay 800000
@@ -87,6 +98,7 @@ module Controllers.SceneController where
             threadDelay 800000
             simulateScenesChoice path scenes
 
+    -- Menu de exclusão de Cena, retorna o menu de escolha de Cenas sem a Cena deletada
     deleteScenesChoice :: FilePath -> M.Map String Scene -> IO ()
     deleteScenesChoice path scenes = do
         printScreen "app/storage/sceneController/sceneDeleteQuestion.txt" True False
@@ -102,34 +114,3 @@ module Controllers.SceneController where
             putStrLn "INPUT ERRADO, TENTE NOVAMENTE"
             threadDelay 800000
             deleteScenesChoice path scenes
-
-    -- Print de listagem de cenas + listas vazias para organizar os prints
-    formatedOutput :: M.Map String Scene -> IO ()
-    formatedOutput scenes = do
-        printEmptyLines 2
-        printScenes $ extractSceneNames scenes 
-        printScreen "app/storage/sceneController/sceneEmptyLines.txt" False False
-        setCursorColumn 85
-
-    -- Extrai o numero de linhas da Cena, como o gridGenerate não aceita Maybe Int, tem que ter um default
-    -- extractSceneRow :: M.Map String Scene -> String -> Sce
-    -- extractSceneRow scene choice =
-    --         rows $ fromMaybe defaultScene (M.lookup choice scene)
-    --     where
-    --         defaultScene = Scene { title = choice, rows = 0, cols = 0}
-
-    -- -- Extrai o numero de colunas da Cena, como o gridGenerate não aceita Maybe Int, tem que ter um default
-    -- extractSceneCol :: M.Map String Scene -> String -> Int
-    -- extractSceneCol scene choice =
-    --         cols $ fromMaybe defaultScene (M.lookup choice scene)
-    --     where
-    --         defaultScene = Scene { title = choice, rows = 0, cols = 0}
-
-    -- extractSceneCol :: M.Map String Scene -> String -> Int
-    -- extractSceneCol scene choice =
-    --         cols $ fromMaybe defaultScene (M.lookup choice scene)
-    --     where
-    --         defaultScene = Scene { title = choice, rows = 0, cols = 0}
-
-    extractSceneFromDict :: M.Map String Scene -> String -> Maybe Scene
-    extractSceneFromDict scenes sceneName = M.lookup sceneName scenes
