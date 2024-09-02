@@ -7,7 +7,7 @@
                                                                                    mas as de fora morreram, porque?
 
 
-                                                                            Pra explicar isso vamos entender a regra depois de birth,
+                                                                       Pra explicar isso vamos entender a regra depois de birth,
                                                                               S de Stay, que define quantos vizinhos uma 
                                                                                 célula viva precisa pra continuar viva.
                                                                             
