@@ -154,6 +154,7 @@ module Controllers.SimulationController where
     loopFunction grid = do
         printGrid  grid
         putStrLn "Aperte qualquer tecla para para a simulacao"
+        hFlush stdout
         threadDelay 500000
 
 ---------------------------------------------------------------------------------------------------------
@@ -171,8 +172,8 @@ module Controllers.SimulationController where
         hSetBuffering stdin LineBuffering
 
         putStrLn "Qual celula voce deseja adicionar ?"
-        hFlush stdout
         _ <- printCelsJson cells 1
+        hFlush stdout
         cell <- readLn :: IO Int
         
         putStrLn "Em pares de numeros separados por espacos e virgulas, digite onde deseja adicionar essa celula"
@@ -227,5 +228,7 @@ module Controllers.SimulationController where
     printSimulationMenu :: Int -> IO()
     printSimulationMenu count = do
         printEmptyLines 1
+        setCursorColumn 100
         putStrLn $ "Numero de passos dados ate agora: " ++ show count
-        putStrLn $ "                                     1) Iniciar simulacao   2) Simular 1 passo   3) Inserir celulas   4) Salvar a cena   5) Voltar"
+        setCursorColumn 75
+        putStrLn "1) Iniciar simulacao   2) Simular 1 passo   3) Inserir celulas   4) Salvar a cena   5) Voltar"
