@@ -13,10 +13,10 @@ module Controllers.Tutorial where
     import GHC.Conc
     
     conways :: Cell
-    conways = Cell "Game of Life" (Rule [3] [2,3]) "VERDE"
+    conways = Cell "Game of Life" (Rule [3] [2,3]) "VERDE BRILHANTE"
 
     highLife :: Cell
-    highLife = Cell "High Life" (Rule [3, 6] [2,3]) "VERMELHO"
+    highLife = Cell "High Life" (Rule [3, 6] [2,3]) "VERMELHO BRILHANTE"
 
     square :: Matrix (Maybe Cell)
     square = gridGenerate 3 3
@@ -59,7 +59,7 @@ module Controllers.Tutorial where
         printEmptyLinesWithDelay 18
         printMidScreen "aperte Enter para continuar..."
         _ <- getLine
-        
+
         clearScreen   
         printMidScreen "No caso abaixo, todas as células estão confortavelmente juntas. Cada uma tem exatamente 3 vizinhos."
 
