@@ -58,7 +58,7 @@ module Controllers.Tutorial where
         printMidScreen "aperte Enter para continuar..."
         _ <- getLine
         printScreen "app/storage/tutorial/maisDeStay.txt" True False
-        printEmptyLinesWithDelay 1
+        printEmptyLinesWithDelay 40
 
         let grid2 = insertCells square conways [(1,1), (1,2),(2,1), (2,2)]
 
