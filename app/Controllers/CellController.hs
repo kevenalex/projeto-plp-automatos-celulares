@@ -84,7 +84,7 @@ module Controllers.CellController where
         
         setCursorInput
         nascStr <- getLine
-        if handleBornAndStayRule nascStr then do
+        if handleBornRule nascStr then do
             let nascList = map (\x -> read [x] :: Int) (filter isDigit nascStr)
             addStayRule path nameCellT $ Set.toList (Set.fromList nascList)
         
@@ -100,7 +100,7 @@ module Controllers.CellController where
         
         setCursorInput
         stayStr <- getLine
-        if handleBornAndStayRule stayStr then do
+        if handleStayRule stayStr then do
             let stayList = map (\x -> read [x] :: Int) (filter isDigit stayStr)
             let regra = Rule nascList $ Set.toList (Set.fromList stayList)
             addColor path nameCellT regra
@@ -270,9 +270,13 @@ module Controllers.CellController where
 
     -- Faz o tratemento das entradas das regras de Nascimento e Permanência, removendo
     -- espaços em branco e verificando se há de 0 a 8 dígitos entre 1 e 8.
-    handleBornAndStayRule :: String -> Bool
-    handleBornAndStayRule regra = let regraFormatada = filter (not . isSpace) regra
+    handleStayRule :: String -> Bool
+    handleStayRule regra = let regraFormatada = filter (not . isSpace) regra
                                   in length regraFormatada <= 8 && all (`elem` "012345678") regraFormatada
+
+    handleBornRule :: String -> Bool
+    handleBornRule regra = let regraFormatada = filter (not . isSpace) regra
+                                  in length regraFormatada <= 8 && all (`elem` "12345678") regraFormatada
 
     -- Faz o tratamento da entrada de cor, verifica se a entrada é um número entre 1 e 22
     handleColorChoice :: Int -> Bool

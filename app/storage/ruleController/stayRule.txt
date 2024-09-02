@@ -19,7 +19,7 @@
                      
                                                                                  QUANTOS VIZINHOS UMA CELULA VIVA PRECISA PRA SE MANTER VIVA?
                      
-                                                                                         POR FAVOR, INSIRA DE 0 A 8 NUMEROS ENTRE 1 E 8
+                                                                                         POR FAVOR, INSIRA DE 0 A 8 NUMEROS ENTRE 0 E 8
 
 
 
