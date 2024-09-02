@@ -209,7 +209,7 @@ module Controllers.SimulationController where
         printEmptyLines 2
         printMidScreen "Aperte qualquer tecla para para a simulacao"
         hFlush stdout
-        threadDelay 150000
+        threadDelay 100000
 
 ---------------------------------------------------------------------------------------------------------
 
