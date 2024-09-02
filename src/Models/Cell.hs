@@ -51,5 +51,14 @@ module Models.Cell where
             "CIANO BRILHANTE" -> [SetColor Foreground Vivid Cyan]
             "BRANCO" -> [SetColor Foreground Dull White]
             "BRANCO BRILHANTE" -> [SetColor Foreground Vivid White]
+
+            "DOURADO" -> [SetPaletteColor Foreground 214]
+            "ROXO" -> [SetPaletteColor Foreground 57]
+            "VERDE ÁGUA" -> [SetPaletteColor Foreground 50]
+            "SALMÃO" -> [SetPaletteColor Foreground 217]
+            "LARANJA" -> [SetPaletteColor Foreground 202]
+            "ROSINHA" -> [SetPaletteColor Foreground 219]
+            "ROSA SHOCK" -> [SetPaletteColor Foreground 201]
+            "VERDE NEON" -> [SetPaletteColor Foreground 46]
             _ -> [Reset]
 

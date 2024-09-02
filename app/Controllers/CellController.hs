@@ -14,6 +14,7 @@ module Controllers.CellController where
     import Control.Concurrent(threadDelay)
     import qualified Data.ByteString.Lazy as B
 
+    import Text.Read
     menuCells :: FilePath -> IO()
     menuCells path = do
 
@@ -75,7 +76,7 @@ module Controllers.CellController where
         setCursorColumn 85
         nascStr <- getLine
         if handleBornAndStayRule nascStr then do
-            let nascList = map (\x -> read [x] :: Int) nascStr
+            let nascList = map (\x -> read [x] :: Int) (filter isDigit nascStr)
             addStayRule path nameCellT $ Set.toList (Set.fromList nascList)
         
         else do
@@ -91,7 +92,7 @@ module Controllers.CellController where
 
         stayStr <- getLine
         if handleBornAndStayRule stayStr then do
-            let stayList = map (\x -> read [x] :: Int) stayStr
+            let stayList = map (\x -> read [x] :: Int) (filter isDigit stayStr)
             let regra = Rule nascList $ Set.toList (Set.fromList stayList)
             addColor path nameCellT regra
         
@@ -105,70 +106,99 @@ module Controllers.CellController where
     addColor path nameCellT regra = do
         printColors
         setCursorColumn 85
-        colorI <- readLn :: IO Int
-        if handleColorChoice colorI then do
-            let cell = Cell nameCellT regra $ fromJust $ selectColor colorI
-            addCell path cell
-        else do
-            putStrLn "INPUT ERRADO, TENTE NOVAMENTE"
-            threadDelay 800000
-            addColor path nameCellT regra
+        colorI <- getLine
+        case readMaybe colorI :: Maybe Int of 
+            Just color -> 
+                if handleColorChoice color then do
+                    let cell = Cell nameCellT regra $ fromJust $ selectColor color
+                    addCell path cell
+                else do
+                    putStrLn "INPUT ERRADO, TENTE NOVAMENTE"
+                    threadDelay 800000
+                    addColor path nameCellT regra
+            Nothing -> do
+                    putStrLn "INPUT ERRADO, TENTE NOVAMENTE"
+                    threadDelay 800000
+                    addColor path nameCellT regra
 
     printColors :: IO()
     printColors = do
         clearScreen
         cursorUpLine 30
-        setCursorColumn 90
-        putStrLn "QUAL A COR DA CÉLULA?"
-        threadDelay 130000
-        setCursorColumn 85
-        putStrLn "Cores dependem do tema do seu terminal\n"
-        setCursorColumn 85
-        threadDelay 130000
+        printMidScreen "QUAL A COR DA CÉLULA?"
+        printColorsHelper 85
+        printMidScreen "Cores dependem do tema do seu terminal\n"
+        printColorsHelper 85
         setSGR [SetColor Foreground Dull Red]
         putStr "1) VERMELHO     "
         setSGR [SetColor Foreground Vivid Red]
         putStrLn "2) VERMELHO BRILHANTE"
-        setCursorColumn 85
-        threadDelay 130000
+        printColorsHelper 85
         setSGR [SetColor Foreground Dull Green]
         putStr "3) VERDE        "
         setSGR [SetColor Foreground Vivid Green]
         putStrLn "4) VERDE BRILHANTE"
-        setCursorColumn 85
-        threadDelay 130000
+        printColorsHelper 85
         setSGR [SetColor Foreground Dull Yellow]
         putStr "5) AMARELO      "
         setSGR [SetColor Foreground Vivid Yellow]
         putStrLn "6) AMARELO BRILHANTE"
-        setCursorColumn 85
-        threadDelay 130000
+        printColorsHelper 85
         setSGR [SetColor Foreground Dull Blue]
         putStr "7) AZUL         "
         setSGR [SetColor Foreground Vivid Blue]
         putStrLn "8) AZUL BRILHANTE"
-        setCursorColumn 85
-        threadDelay 130000
+        printColorsHelper 85
         setSGR [SetColor Foreground Dull Magenta]
         putStr "9) MAGENTA      "
         setSGR [SetColor Foreground Vivid Magenta]
         putStrLn "10) MAGENTA BRILHANTE"
-        setCursorColumn 85
-        threadDelay 130000
+        printColorsHelper 85
         setSGR [SetColor Foreground Dull Cyan]
         putStr "11) CIANO       "
         setSGR [SetColor Foreground Vivid Cyan]
         putStrLn "12) CIANO BRILHANTE"
-        setCursorColumn 85
-        threadDelay 130000
+        printColorsHelper 85
         setSGR [SetColor Foreground Dull White]
         putStr "13) BRANCO      "
         setSGR [SetColor Foreground Vivid White]
         putStrLn "14) BRANCO BRILHANTE"
-        setCursorColumn 85
-        threadDelay 130000
+        printColorsHelper 85
+        setSGR [Reset]
+        printMidScreen "--- CORES INDEPENDENTES DO TERMINAL ---"
+
+        printColorsHelper 95
+        setSGR [SetPaletteColor Foreground 214]
+        putStrLn "15) DOURADO     "
+        printColorsHelper 95
+        setSGR [SetPaletteColor Foreground 57]
+        putStrLn "16) ROXO"
+        printColorsHelper 95 
+        setSGR [SetPaletteColor Foreground 50]
+        putStrLn "17) VERDE ÁGUA  "
+        printColorsHelper 95
+        setSGR [SetPaletteColor Foreground 217]
+        putStrLn "18) SALMÃO    "
+        printColorsHelper 95
+        setSGR [SetPaletteColor Foreground 202]
+        putStrLn "19) LARANJA     "
+        printColorsHelper 95
+        setSGR [SetPaletteColor Foreground 219]
+        putStrLn "20) ROSINHA   "
+        printColorsHelper 95
+        setSGR [SetPaletteColor Foreground 201]
+        putStrLn "21) ROSA SHOCK  "
+        printColorsHelper 95
+        setSGR [SetPaletteColor Foreground 46]
+        putStrLn "22) VERDE NEON"
+        setSGR [Reset]
         printEmptyLines 20
-        setCursorColumn 85
+
+    printColorsHelper  :: Int ->  IO ()
+    printColorsHelper n = do
+        setCursorColumn n
+        threadDelay 130000
+
 
 
     removeAutomata :: FilePath -> [Cell] -> IO()
@@ -216,13 +246,22 @@ module Controllers.CellController where
         12 -> Just "CIANO BRILHANTE"
         13 -> Just "BRANCO"
         14 -> Just "BRANCO BRILHANTE"
+        15 -> Just "DOURADO" 
+        16 -> Just "ROXO"
+        17 -> Just "VERDE ÁGUA"
+        18 -> Just "SALMÃO"
+        19 -> Just "LARANJA"
+        20 -> Just "ROSINHA"
+        21 -> Just "ROSA SHOCK"
+        22 -> Just "VERDE NEON"
         _ -> Nothing
 
     -- Faz o tratemento das entradas das regras de Nascimento e Permanência
     handleBornAndStayRule :: String -> Bool
-    handleBornAndStayRule regra = length regra <= 8 && all (`elem` "12345678") regra
+    handleBornAndStayRule regra = let regraFormatada = filter (not . isSpace) regra
+                                  in length regraFormatada <= 8 && all (`elem` "12345678") regraFormatada
 
     -- Faz o tratamento da entrada de cor, verifica se ela não é um 'Enter' e se é um char entre '1' e '7'
     -- Editar função pra tratar o buffer do teclado
     handleColorChoice :: Int -> Bool
-    handleColorChoice cor = cor > 0 && cor < 15
+    handleColorChoice cor = cor > 0 && cor < 23
