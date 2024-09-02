@@ -8,12 +8,12 @@
 
 
 
-                                                                              Células podem estar mortas (pretas) ou vivas
+                                                                             Células podem estar mortas (pretas) ou vivas
                                                                                           
 
-                                                                              Todas as células são de um tipo específico, que
-                                                                                    define que regras essa célula segue.
+                                                                           Todas as células são de um tipo específico, que
+                                                                                 define que regras essa célula segue.
 
-                                                                              O tipo mais popular é o Conway's Game of Life,
-                                                                                          definido assim:
+                                                                            O tipo mais popular é o Conway's Game of Life,
+                                                                                           definido assim:
                                                                                           

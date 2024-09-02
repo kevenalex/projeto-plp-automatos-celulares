@@ -30,7 +30,8 @@ module Controllers.Tutorial where
         _ <- getLine
 
         printScreen "app/storage/tutorial/apresentaRegras.txt" True False
-        printMidScreen $ show conways
+        setCursorColumn 90
+        print conways
         printEmptyLinesWithDelay 25
         printMidScreen "aperte Enter para continuar..."
         _ <- getLine
@@ -51,7 +52,8 @@ module Controllers.Tutorial where
         printGridTutorial $ gridUpdate gridInicial
 
         printEmptyLinesWithDelay 1
-        printMidScreen $ show conways
+        setCursorColumn 90
+        print conways
         printScreen "app/storage/tutorial/explicaStay.txt" False False
         
         printEmptyLinesWithDelay 18
@@ -70,18 +72,17 @@ module Controllers.Tutorial where
         printEmptyLinesWithDelay 1
         printGridTutorial $ gridUpdate grid2
         printMidScreen "aperte Enter para ver nada catastrófico..."
-
         _ <- getLine
         let grid3 = insertCells (gridGenerate 10 25) conways [(4, 20), (5,20), (4, 21), (5,21)]
         let gridAtaque = insertCells grid3 highLife [(4,1), (5,1), (4,2), (5,2), (6,2), (3,3), (5,3), (6,3), (3,4), (4,4), (5,4), (4,5)]
-        printMidScreen $ "Meu Deus! Um pato do tipo " ++ show highLife ++ " está atacando nosso quadrado " ++ show conways ++ "!"
+        setCursorColumn 47
+        putStrLn $ "Meu Deus! Um pato do tipo " ++ show highLife ++ " está atacando nosso quadrado " ++ show conways ++ "!"
         printGridTutorial gridAtaque
         printMidScreen "aperte Enter para continuar!"
         _ <- getLine
         hSetBuffering stdout (BlockBuffering Nothing)
         ataque gridAtaque 0
         hSetBuffering stdout NoBuffering
-
         printScreen "app/storage/tutorial/Final.txt" False False
         printMidScreen "aperte Enter para voltar!"
         _ <- getLine
