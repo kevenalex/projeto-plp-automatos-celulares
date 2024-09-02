@@ -47,7 +47,7 @@ module Controllers.SimulationController where
 
     printRow :: [Maybe Cell] -> IO ()
     printRow row = do
-        setCursorColumn $ 100 - length row `div` 2
+        setCursorColumn $ 100 - length row
         mapM_ printCell row
         putStrLn ""
 
