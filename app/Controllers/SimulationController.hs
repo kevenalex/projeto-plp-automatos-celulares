@@ -13,7 +13,7 @@ module Controllers.SimulationController where
     import Files.Scene
     import Text.Read (readMaybe)
     import Utils.Render
-    
+
 
     -- Funções que gerem a impressão da Matrix (Maybe Cell)
     -- ------------------------------------------------------------------------------------------------
@@ -25,8 +25,45 @@ module Controllers.SimulationController where
     printGridWithNumbers :: Matrix (Maybe Cell) ->  IO ()
     printGridWithNumbers matrix = do
         clearScreen
-        putStrLn $ buildLineWithNumber $ ncols matrix
-        
+        setCursorColumn $ 103 - ncols matrix
+        mapM_ (\i -> if even i then do
+            
+                    setSGR [SetPaletteColor Foreground 255]
+                    putStr $ formatLowNumber i
+                    setSGR [Reset]
+
+                else do 
+
+                    setSGR [SetPaletteColor Foreground 247]
+                    putStr $ formatLowNumber i
+                    setSGR [Reset]
+
+
+            ) [1..(ncols matrix)]
+
+        putStrLn ""
+
+        mapM_ (\i -> if even i then do 
+
+                    setCursorColumn $ 100 - ncols matrix
+                    setSGR [SetPaletteColor Foreground 255]
+                    putStr $ formatLowNumber i ++ " "
+                    printRowNoSpace $ gridToLists matrix !! (i - 1)
+                    setSGR [Reset]
+                    
+                else do 
+
+                    setCursorColumn $ 100 - ncols matrix
+                    setSGR [SetPaletteColor Foreground 247]
+                    putStr $ formatLowNumber i ++ " "
+                    printRowNoSpace $ gridToLists matrix !! (i - 1)
+                    setSGR [Reset]
+
+            ) [1..(nrows matrix)]
+
+    formatLowNumber :: Int -> String
+    formatLowNumber n = if n < 10 then " " ++ show n
+                        else show n
 
 
 
@@ -42,15 +79,14 @@ module Controllers.SimulationController where
         mapM_ printCell row
         putStrLn ""
 
-    printRowWithNumber :: [Maybe Cell] -> IO ()
-    printRowWithNumber row = do
-        setCursorColumn $ 100 - length row `div` 2
-        
+    printRowNoSpace :: [Maybe Cell] -> IO ()
+    printRowNoSpace row = do
+        mapM_ printCell row
+        putStrLn ""
 
-    
     printCell :: Maybe Cell -> IO ()
     printCell cell = do
-        case cell of 
+        case cell of
             Nothing -> do
                 setSGR [SetColor Foreground Vivid Black]
                 putStr "██"
@@ -76,9 +112,6 @@ module Controllers.SimulationController where
 
 
     -- Retorna a String formatada dos números correspondentes a cada coluna de uma Matrix (Maybe Cell)
-    buildLineWithNumber :: Int -> String
-    buildLineWithNumber n = intercalate "|" list ++ " "
-        where list = [if c > 9 then show c else " " ++ show c | c <-[1..n]]
 
     -- buildLine :: [Maybe Cell] -> IO()
     -- buildLine cellRow = [printCell cell | cell <- cellRow]
@@ -98,11 +131,11 @@ module Controllers.SimulationController where
         prepareSimulate (gridGenerate altura largura) path
 
     prepareSimulate :: Matrix (Maybe Cell) -> FilePath -> IO()
-    prepareSimulate matrix arq = do 
+    prepareSimulate matrix arq = do
         cellsJayzon <- readCells arq
-        case decode cellsJayzon :: Maybe [Cell] of 
+        case decode cellsJayzon :: Maybe [Cell] of
             Nothing -> putStrLn "faltou o array de celulas"
-            Just cells -> do 
+            Just cells -> do
                 hSetBuffering stdout (BlockBuffering Nothing) -- Ligando o buffer
                 hSetBuffering stdin NoBuffering
                 simulate cells matrix 0
@@ -119,8 +152,8 @@ module Controllers.SimulationController where
         actionChooser cells matrix count option
 
     actionChooser :: [Cell] -> Matrix (Maybe Cell) -> Int -> String -> IO()
-    actionChooser cells grid count opt = 
-        if null opt 
+    actionChooser cells grid count opt =
+        if null opt
             then simulate cells grid count
 
         else case head opt of
@@ -139,14 +172,14 @@ module Controllers.SimulationController where
         hSetEcho stdin False            -- Desabilita a ecoação do input no terminal
         let checkInput = do
                 inputAvaliable <- hReady stdin
-                if inputAvaliable then do 
+                if inputAvaliable then do
                     hSetEcho stdin True
                     simulate cells grid count
                 else do
                   loopFunction grid
                   runLoop cells (gridUpdate grid) (count + 1)
         checkInput
-    
+
     loopFunction ::Matrix (Maybe Cell) -> IO()
     loopFunction grid = do
         printGrid  grid
@@ -156,7 +189,7 @@ module Controllers.SimulationController where
 
 ---------------------------------------------------------------------------------------------------------
 
-    
+
     nextStep :: [Cell] -> Matrix (Maybe Cell) -> Int-> IO()
     nextStep cells grid count = simulate cells (gridUpdate grid) (count + 1)
 
@@ -168,15 +201,18 @@ module Controllers.SimulationController where
     insertion cells grid count = do
         hSetBuffering stdin LineBuffering
 
+        clearScreen
+        printGridWithNumbers grid
+
         printMidScreen "Qual celula voce deseja adicionar ?"
         _ <- printCelsJson cells 1
         hFlush stdout
         cell <- readLn :: IO Int
-        
+
         printMidScreen "Em pares de numeros separados por espacos e virgulas, digite onde deseja adicionar essa celula"
         printMidScreen "Por exemplo: '1 3,3 1' adicionara celulas na posicao linha 1 coluna 3 e na posicao linha 3 coluna 1"
         hFlush stdout
-        coordernates <- getLine        
+        coordernates <- getLine
         let coordinates = parsePairs coordernates
         let newGrid = insertCells grid (cells !! (cell-1)) coordinates
 
@@ -194,7 +230,7 @@ module Controllers.SimulationController where
 -----------------------------------------------------------------------------------------------------
     parsePairs :: String -> [(Int, Int)]
     parsePairs "" = []
-    parsePairs s = 
+    parsePairs s =
         let (pairStr, rest) = break (== ',') s  -- Quebra a string ao encontrar uma vírgula
             pair = parsePair pairStr
         in case pair of
@@ -202,7 +238,7 @@ module Controllers.SimulationController where
             Nothing -> error $ "Entrada inválida: " ++ pairStr
 
     parsePair :: String -> Maybe (Int, Int)
-    parsePair s = 
+    parsePair s =
         let (x, rest) = break (== ' ') s  -- Quebra a string ao encontrar um espaço
             y = dropWhile (== ' ') rest   -- Remove espaços adicionais
         in do
@@ -218,7 +254,7 @@ module Controllers.SimulationController where
     saveScene cells grid count = do
         putStrLn "Digite um nome para essa cena:"
         hFlush stdout
-        nome <- getLine 
+        nome <- getLine
         let scene = Scene nome (nrows grid) (ncols grid) (toList grid)
         addScene "./app/storage/scenes.json" scene
         simulate cells grid count
