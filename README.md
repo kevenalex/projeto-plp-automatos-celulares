@@ -9,7 +9,7 @@
 
 - Rodar `stack build` no diretório clonado
 
-- Depois que ele buildar, executar o `main` ou `main.exe` no windows
+- Depois que ele buildar, rodar `stack run`
 
 ## Requerimentos
 - Terminal com suporte para UTF-8 e pelo menos 16 cores, com uma fonte que contenha o caractere █ (unix tem por default, talvez tenha que instalar uma nerdfont no windows)
