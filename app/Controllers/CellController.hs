@@ -272,7 +272,7 @@ module Controllers.CellController where
     -- espaços em branco e verificando se há de 0 a 8 dígitos entre 1 e 8.
     handleBornAndStayRule :: String -> Bool
     handleBornAndStayRule regra = let regraFormatada = filter (not . isSpace) regra
-                                  in length regraFormatada <= 8 && all (`elem` "12345678") regraFormatada
+                                  in length regraFormatada <= 8 && all (`elem` "012345678") regraFormatada
 
     -- Faz o tratamento da entrada de cor, verifica se a entrada é um número entre 1 e 22
     handleColorChoice :: Int -> Bool
