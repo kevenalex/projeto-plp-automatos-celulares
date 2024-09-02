@@ -83,7 +83,7 @@ module Controllers.Tutorial where
         hSetBuffering stdout (BlockBuffering Nothing)
         ataque gridAtaque 0
         hSetBuffering stdout NoBuffering
-        printScreen "app/storage/tutorial/Final.txt" False False
+        printScreen "app/storage/tutorial/final.txt" False False
         printMidScreen "aperte Enter para voltar!"
         _ <- getLine
 
