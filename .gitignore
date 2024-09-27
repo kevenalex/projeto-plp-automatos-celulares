@@ -1,4 +1,6 @@
 .stack-work/
 *~
+
+.vscode
 app/Main
 Main.exe
