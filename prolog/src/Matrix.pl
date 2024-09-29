@@ -37,6 +37,10 @@ get(Matrix, X, Y, Value):-
 get(_, _, _, dead).
 
 
+% Só existe por consistência com o get, Matrix.put(X/Y, Value) é bem mais ergonômico, mas talvez te levasse a fazer 
+% Matrix.get() que não tem verificação de limites, diferente do meu get.
+put(X, Y, Value, Matrix, Out) :- Out = Matrix.put(X/Y, Value).
+
 
 % Pega parte de uma Linha X da Matrix, do indice YStart até YEnd -1.
 % A lista retornada é em ordem decrescente.
@@ -85,11 +89,13 @@ dict_size(Dict,Size) :-
 %     append([2], Square2, S),
 %     writeln(S).
 
+
 % test2:-
 %     A = _{
 %         0:_{0:a, 1:b, 2:c}, 
 %         1:_{0:d, 1:f, 2:g}, 
 %         2:_{0:h, 1:i, 2:j}
 %             },
-%     spliceLine(1, 0, 3, A, Out),
+%     % spliceLine(1, 0, 3, A, Out),
+%     put(4, 1, cuzinho, A, Out),
 %     writeln(Out).
