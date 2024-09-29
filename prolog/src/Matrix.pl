@@ -36,26 +36,29 @@ get(Matrix, X, Y, Value):-
 %     (Y > Lines ; X > Cols)).
 get(_, _, _, dead).
 
-% "Take" numa linha de uma matrix, pega de 0 até Y e coloca numa lista.
-% Mesmo corte estranho do createArrayDict
-getLine(_, 0, _, []):- !.
-getLine(X, Y, Matrix, [N | Out]):-
-    Y > 0,
-    Y1 is Y - 1,
-    getLine(X, Y1, Matrix, Out),
-    get(Matrix, X, Y1, N).
 
+
+% Pega parte de uma Linha X da Matrix, do indice YStart até YEnd -1.
+% A lista retornada é em ordem decrescente.
+spliceLine(X, YStart, YEnd, Matrix, [N | Out]):-
+    YStart < YEnd,
+    Y is YEnd -1,
+    spliceLine(X, YStart, Y, Matrix, Out),
+    get(Matrix, X, Y, N), !. % não entendi porque preciso desse corte, mas é a mesma coisa co ArrayDict dnv.
+spliceLine(_, Y, Y, _, []).
 
 
 % Retorna uma lista com os 8 valores ao redor do ponto (X, Y).
+% A ordem da lista é: [abaixo do ponto, acima, esquerda, direita].
 getSquareAround(X, Y, Matrix, Out):-
     UpX is X - 1,
     DownX is X + 1,
     LeftY is Y - 1,
     RightY is Y + 1,
+    LineLenght is Y + 2,
 
-    getLine(UpX, RightY, Matrix, Up),
-    getLine(DownX, RightY, Matrix, Down),
+    spliceLine(UpX, LeftY ,LineLenght, Matrix, Up),
+    spliceLine(DownX, LeftY, LineLenght, Matrix, Down),
     get(Matrix, X, LeftY, Left),
     get(Matrix, X, RightY, Right),
 
@@ -71,13 +74,22 @@ dict_size(Dict,Size) :-
    Size is (Arity-1)//2.
 
 
-test :-
-    createSquareMatrix(5, cu, Matrix),
-    % getLine(1, 5, Matrix, Out),
-    % writeln(Out),
-    getSquareAround(0, 0, Matrix, Square),
-    getSquareAround(2, 2, Matrix, Square2),
-    writeln(Square),
-    writeln(Square2),
-    append([2], Square2, S),
-    writeln(S).
+% test :-
+%     createSquareMatrix(5, cu, Matrix),
+%     % getLine(1, 5, Matrix, Out),
+%     % writeln(Out),
+%     getSquareAround(0, 0, Matrix, Square),
+%     getSquareAround(2, 2, Matrix, Square2),
+%     writeln(Square),
+%     writeln(Square2),
+%     append([2], Square2, S),
+%     writeln(S).
+
+% test2:-
+%     A = _{
+%         0:_{0:a, 1:b, 2:c}, 
+%         1:_{0:d, 1:f, 2:g}, 
+%         2:_{0:h, 1:i, 2:j}
+%             },
+%     spliceLine(1, 0, 3, A, Out),
+%     writeln(Out).
