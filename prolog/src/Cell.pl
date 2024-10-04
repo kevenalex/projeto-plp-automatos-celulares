@@ -1,4 +1,4 @@
-:- module(cell, [])
+:- module(cell, []).
 
 cell(dead, preto, [], []).
 % Cell é o predicado que relaciona um tipo de célula(identificada pelo nome) 

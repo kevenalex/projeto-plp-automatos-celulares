@@ -1,4 +1,5 @@
 :- module(matrix, []).
+:- use_module(library(http/json)).
 
 % Um dicionário fingindo ser um array, não um array de dicionários. Preenchido com Value, Size vezes.
 % Se eu não cortar aqui, ele diz que Dict = ao dicionario esperado 
@@ -24,15 +25,15 @@ createSquareMatrix(N, Value, Matrix):- createMatrix(N, N, Value, Matrix).
 get(Matrix, X, Y, Value):-
     X > -1,
     Y > -1,
-    dict_size(Matrix, Lines),
+    dictSize(Matrix, Lines),
     X < Lines,
-    dict_size(Matrix.0, Cols),
+    dictSize(Matrix.0, Cols),
     Y < Cols, % Estruturado dessa forma pra tentar salvar perfomance não fazendo testes desnecessários
     Value = Matrix.get(X/Y), !.
 % get(Matrix, X, Y, dead) :-
 %     (X < 0; Y < 0);
-%     (dict_size(Matrix.0, Cols),
-%     dict_size(Matrix, Lines),
+%     (dictSize(Matrix.0, Cols),
+%     dictSize(Matrix, Lines),
 %     (Y > Lines ; X > Cols)).
 get(_, _, _, dead).
 
@@ -71,11 +72,28 @@ getSquareAround(X, Y, Matrix, Out):-
     append(Down, Partial2, Out).
 
 
-dict_size(Dict,Size) :-
+dictSize(Dict,Size) :-
    assertion(is_dict(Dict)),
    assertion(var(Size);integer(Size)),
    compound_name_arity(Dict,_,Arity),
    Size is (Arity-1)//2.
+
+
+matrixSize(Matrix, X, Y) :-
+    dictSize(Matrix, X),
+    dictSize(Matrix.0, Y).
+
+
+arrayToList(Array, List):- 
+    dict_pairs(Array, _, L),
+    pairs_values(L, List).
+
+
+matrixToList(Matrix, List) :-
+    arrayToList(Matrix, L),
+    maplist(arrayToList,L , List).
+
+
 
 
 % test :-
@@ -99,3 +117,16 @@ dict_size(Dict,Size) :-
 %     % spliceLine(1, 0, 3, A, Out),
 %     put(4, 1, cuzinho, A, Out),
 %     writeln(Out).
+
+test3 :- 
+    A = _{
+        0:_{0:a, 1:b, 2:c}, 
+        1:_{0:d, 1:f, 2:g}, 
+        2:_{0:h, 1:i, 2:j}
+            },
+    arrayToList(A, L),
+    writeln(L),
+    matrixToList(A, Re),
+    writeln(Re),
+    json_write(current_output, json([name=test, matrix=Re])).
+
