@@ -12,15 +12,6 @@ createArrayDict(Size, Value, Dict) :-
     Dict = Partial.put(N, Value).
 
 
-abs(X, Y) :-
-    X >= 0,
-    Y is X.
-
-abs(X, Y) :-
-    X < 0,
-    Y is -X.
-
-
 matrixFromList([], _{}):- !.
 matrixFromList(List, Matrix):-
     matrixFromList(List, 0, Matrix).
