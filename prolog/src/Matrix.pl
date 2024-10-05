@@ -85,6 +85,10 @@ spliceLine(X, YStart, YEnd, Matrix, [N | Out]):-
     get(Matrix, X, Y, N), !. % não entendi porque preciso desse corte, mas é a mesma coisa co ArrayDict dnv.
 spliceLine(_, Y, Y, _, []).
 
+% A lista retornada é em ordem decrescente.
+getLine(X, Matrix, Out):-
+    dict_size(Matrix.X, Y),
+    spliceLine(X, 0, Y, Matrix, Out).
 
 % Retorna uma lista com os 8 valores ao redor do ponto (X, Y).
 % A ordem da lista é: [abaixo do ponto, acima, esquerda, direita].
