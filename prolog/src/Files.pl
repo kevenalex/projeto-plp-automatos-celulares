@@ -1,33 +1,29 @@
 :- module(files, []).
-:- use_module(matrix).
+:- use_module("./Matrix.pl").
 :- use_module(library(http/json)).
 
 
-saveScene(Name, Matrix, Path):-
-    exists_file(Path),
-    fileNotEmpty(Path),
+saveScene(Name, Matrix):-
+    exists_file("../storage/scenes.json"),
+    fileNotEmpty("../storage/scenes.json"),
 
-    open(Path, read, ScenesFile),
+    open("../storage/scenes.json", read, ScenesFile),
     json_read_dict(ScenesFile, Scenes),
     close(ScenesFile),
 
-    matrix:matrixSize(Matrix, X, Y),
     matrix:matrixToList(Matrix, List),
 
-    open(Path, write, File),
-    Scene = _{matrix:List, x:X, y:Y},
-
-    json_write_dict(File, Scenes.put(Name, Scene)),
+    open("../storage/scenes.json", write, File),
+    json_write_dict(File, Scenes.put(Name, List)),
     close(File), !.
 
 
-% Pra quando arquivo não existe
-saveScene(Name, Matrix, Path) :-
-    matrix:matrixSize(Matrix, X, Y),
+% Pra quando o arquivo não existe
+saveScene(Name, Matrix) :-
     matrix:matrixToList(Matrix, List),
 
-    open(Path, write, File),
-    json_write(File, json([Name=json([matrix=List, x=X, y=Y])])),
+    open("../storage/scenes.json", write, File),
+    json_write(File, json([Name=List])),
     close(File).
 
 
@@ -37,6 +33,10 @@ fileNotEmpty(FilePath) :-
     close(Stream), 
     Char \= end_of_file.
 
+getSceneMatrix(Name, Matrix):-
+    open("../storage/scenes.json", read, File),
+    json_read_dict(File, Dict),
+    matrix:matrixFromList(Dict.Name, Matrix).
 
 
 main:-
@@ -45,5 +45,7 @@ main:-
         1:_{0:d, 1:f, 2:g}, 
         2:_{0:h, 1:i, 2:j}
             },
-    saveScene(adhjasdjkl, A, "../storage/scenes.json").
+    saveScene(cu, A),
+    getSceneMatrix(cu, R),
+    writeln(R).
 

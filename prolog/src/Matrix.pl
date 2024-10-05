@@ -12,31 +12,6 @@ createArrayDict(Size, Value, Dict) :-
     Dict = Partial.put(N, Value).
 
 
-matrixFromList([], _{}):- !.
-matrixFromList(List, Matrix):-
-    matrixFromList(List, 0, Matrix).
-
-
-matrixFromList([], _, _{}).
-matrixFromList([H|T], Ctt, Matrix):-
-    NewCtt is Ctt + 1,
-    matrixFromList(T, NewCtt, Partial),
-    arrayFromList(H, Array),
-    Matrix = Partial.put(Ctt, Array).
-
-
-arrayFromList(List, Array):-
-    length(List, Size),
-    arrayFromList(0, Size, List, Array).
-      
-
-arrayFromList(Index, Index, [], _{}):- !.
-arrayFromList(Index, Size, [H|T], Dict):-
-    NextIndex is Index + 1,
-    arrayFromList(NextIndex, Size, T, Parcial),
-    Dict = Parcial.put(Index, H).
-
-
 createMatrix(0, _, _, _{}):-!.
 createMatrix(Lines, Cols, Value, Matrix):-
     N is Lines - 1,
@@ -120,6 +95,30 @@ arrayToList(Array, List):-
 matrixToList(Matrix, List) :-
     arrayToList(Matrix, L),
     maplist(arrayToList,L , List).
+
+matrixFromList([], _{}):- !.
+matrixFromList(List, Matrix):-
+    matrixFromList(List, 0, Matrix).
+
+
+matrixFromList([], _, _{}).
+matrixFromList([H|T], Ctt, Matrix):-
+    NewCtt is Ctt + 1,
+    matrixFromList(T, NewCtt, Partial),
+    arrayFromList(H, Array),
+    Matrix = Partial.put(Ctt, Array).
+
+
+arrayFromList(List, Array):-
+    length(List, Size),
+    arrayFromList(0, Size, List, Array).
+      
+
+arrayFromList(Index, Index, [], _{}):- !.
+arrayFromList(Index, Size, [H|T], Dict):-
+    NextIndex is Index + 1,
+    arrayFromList(NextIndex, Size, T, Parcial),
+    Dict = Parcial.put(Index, H).
 
 
 % test :-
