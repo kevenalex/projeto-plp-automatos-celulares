@@ -1,5 +1,6 @@
 :- module(files, []).
 :- use_module("./Matrix.pl").
+:- use_module("./Cell.pl").
 :- use_module(library(http/json)).
 
 
@@ -27,16 +28,25 @@ saveScene(Name, Matrix) :-
     close(File).
 
 
+getSceneMatrix(Name, Matrix):-
+    open("../storage/scenes.json", read, File),
+    json_read_dict(File, Dict),
+    matrix:matrixFromList(Dict.Name, Matrix).
+
+
 fileNotEmpty(FilePath) :-
     open(FilePath, read, Stream),
     get_char(Stream, Char),      
     close(Stream), 
     Char \= end_of_file.
 
-getSceneMatrix(Name, Matrix):-
-    open("../storage/scenes.json", read, File),
-    json_read_dict(File, Dict),
-    matrix:matrixFromList(Dict.Name, Matrix).
+
+saveCells:-
+    open("../storage/cells.json", write, File),
+    cell:listCells(Cells),
+    json_write(File, json([Cells])),
+    close(File).
+    
 
 
 main:-
@@ -48,4 +58,5 @@ main:-
     saveScene(cu, A),
     getSceneMatrix(cu, R),
     writeln(R).
+
 
