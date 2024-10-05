@@ -12,6 +12,40 @@ createArrayDict(Size, Value, Dict) :-
     Dict = Partial.put(N, Value).
 
 
+abs(X, Y) :-
+    X >= 0,
+    Y is X.
+
+abs(X, Y) :-
+    X < 0,
+    Y is -X.
+
+
+matrixFromList([], _{}):- !.
+matrixFromList(List, Matrix):-
+    matrixFromList(List, 0, Matrix).
+
+
+matrixFromList([], _, _{}).
+matrixFromList([H|T], Ctt, Matrix):-
+    NewCtt is Ctt + 1,
+    matrixFromList(T, NewCtt, Partial),
+    arrayFromList(H, Array),
+    Matrix = Partial.put(Ctt, Array).
+
+
+arrayFromList(List, Array):-
+    length(List, Size),
+    arrayFromList(0, Size, List, Array).
+      
+
+arrayFromList(Index, Index, [], _{}):- !.
+arrayFromList(Index, Size, [H|T], Dict):-
+    NextIndex is Index + 1,
+    arrayFromList(NextIndex, Size, T, Parcial),
+    Dict = Parcial.put(Index, H).
+
+
 createMatrix(0, _, _, _{}):-!.
 createMatrix(Lines, Cols, Value, Matrix):-
     N is Lines - 1,
@@ -41,7 +75,6 @@ get(_, _, _, dead).
 % Só existe por consistência com o get, Matrix.put(X/Y, Value) é bem mais ergonômico, mas talvez te levasse a fazer 
 % Matrix.get() que não tem verificação de limites, diferente do meu get.
 put(X, Y, Value, Matrix, Out) :- Out = Matrix.put(X/Y, Value).
-
 
 % Pega parte de uma Linha X da Matrix, do indice YStart até YEnd -1.
 % A lista retornada é em ordem decrescente.
@@ -94,8 +127,6 @@ matrixToList(Matrix, List) :-
     maplist(arrayToList,L , List).
 
 
-
-
 % test :-
 %     createSquareMatrix(5, cu, Matrix),
 %     % getLine(1, 5, Matrix, Out),
@@ -130,3 +161,16 @@ test3 :-
     writeln(Re),
     json_write(current_output, json([name=test, matrix=Re])).
 
+test4 :- 
+    A = _{0:a, 1:b, 2:c},
+    arrayToList(A, L),
+    writeln(L),
+    arrayFromList(L, Array),
+    writeln(Array).
+
+test5 :-
+    A = [[a, b, c], [d, e, f], [h, i, j]],
+
+    matrixFromList(A, B),
+
+    writeln(B).
