@@ -1,0 +1,23 @@
+
+
+
+
+
+
+
+
+
+
+                                                                              B significa Birth, indica quantos vizinhos uma
+                                                                            célula morta precisa pra nascer, simboliza reprodução.
+
+
+                                                                                  O Game of Life é B/3, então precisa de 
+                                                                                   3 células vivas  para criar uma nova.
+
+
+
+
+
+                                                                        aperte Enter pra ver o que vai acontecer com as células abaixo...
+
