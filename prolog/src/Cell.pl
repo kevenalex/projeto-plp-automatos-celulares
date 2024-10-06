@@ -1,17 +1,20 @@
 :- module(cell, []).
 
-cell(dead, preto, [], []).
 % Cell é o predicado que relaciona um tipo de célula(identificada pelo nome) 
 % a suas regras e sua cor.
-createCell(Name, Color, StayRule, BirthRule) :- isValidColor(Color), 
+createCell(Name, Color, StayRule, BirthRule) :-isValidColor(Color), 
     assert(cell(Name, Color, StayRule, BirthRule)).
 deleteCell(Name) :- retract(cell(Name, _, _, _)).
 :- dynamic cell/4.
 
 
 % Pra quando as celulas forem lidas do json.
-createCells([]).
-createCells([[N,C,S,B]|T]):- createCells(T), createCell(N, C, S, B).
+createCells([]) :- 
+    listCellNames(Names),
+    (member("dead", Names) -> !
+    ; createCell("dead", "preto", [], [])).
+
+createCells([[N,C,S,B]|T]):-  createCell(N, C, S, B), createCells(T).
 
 
 % Lista todas as células
@@ -25,6 +28,6 @@ getCellBirth(Name, Birth) :- cell(Name, _, _, Birth).
 % esboço, esse predicado deveria relacionar a cor ao código de escape necessário
 % pra imprimir texto com aquela cor no terminal, 
 % e assim ao mesmo tempo indicar as cores válidas pro sistema.
-isValidColor(azul).
-isValidColor(vermelho).
-isValidColor(azul).
+isValidColor("preto").
+isValidColor("vermelho").
+isValidColor("azul").

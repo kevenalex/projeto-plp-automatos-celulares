@@ -48,7 +48,8 @@ saveCells:-
     cellsToList(Cells,List),
     json_write(File, json([cells=List])),
     close(File), !.
-    
+
+
 cellsToList([], []):- !.
 cellsToList([H|T], Out) :- 
     cellsToList(T, Parcial),
@@ -56,7 +57,7 @@ cellsToList([H|T], Out) :-
     Out = [[H, C, S, B] | Parcial].
 
 
-getCells(Cells) :-
+getCells:-
     open("../storage/cells.json", read, File),
     json_read_dict(File, Dict),
     cell:createCells(Dict.cells).
@@ -74,6 +75,9 @@ main:-
 
 
 main2:-
-    cell:createCell(cu, azul, [1], [2]),
-    cell:createCell(asd, vermelho, [1], [2]),
-    saveCells.
+    % cell:createCell("cu", "azul", [1], [2]),
+    % cell:createCell("asd", "vermelho", [1], [2]),
+    % saveCells,
+    getCells,
+    cell:listCellNames(R), writeln(R).
+    % cell:cell(X,_,_,_), writeln()
