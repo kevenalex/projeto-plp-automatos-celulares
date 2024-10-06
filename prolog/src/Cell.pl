@@ -1,5 +1,6 @@
 :- module(cell, []).
 
+cell(dead, "black", [], []).
 % Cell é o predicado que relaciona um tipo de célula(identificada pelo nome) 
 % a suas regras e sua cor.
 createCell(Name, Color, StayRule, BirthRule) :-isValidColor(Color), 
@@ -28,6 +29,7 @@ getCellBirth(Name, Birth) :- cell(Name, _, _, Birth).
 % esboço, esse predicado deveria relacionar a cor ao código de escape necessário
 % pra imprimir texto com aquela cor no terminal, 
 % e assim ao mesmo tempo indicar as cores válidas pro sistema.
-isValidColor("preto").
-isValidColor("vermelho").
-isValidColor("azul").
+isValidColor("blue").
+isValidColor("red").
+isValidColor("green").
+isValidColor("white").
