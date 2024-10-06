@@ -16,47 +16,75 @@ matrixUpdate(Matrix, NewMatrix):-
 
 
 matrixUpdateRecur(Matriz, NumLinhas, NumColunas, NewMatrix) :-
-    percorre_linhas(Matriz, 1, NumLinhas, NumColunas, NewMatrix).
-
-% Percorre as linhas da matriz
-percorre_linhas(_, LinhaAtual, NumLinhas, _) :- LinhaAtual > NumLinhas, !. % Condição de parada
-percorre_linhas(Matriz, LinhaAtual, NumLinhas, NumColunas, NewMatrix) :-
-    percorre_colunas(Matriz, LinhaAtual, 1, NumColunas, Partial),  % Percorre as colunas da linha atual
-    NovaLinha is LinhaAtual + 1,
-    percorre_linhas(Matriz, NovaLinha, NumLinhas, NumColunas).
-
-% Percorre as colunas de uma linha específica
-percorre_colunas(_, _, ColunaAtual, NumColunas, NewMatrix) :- ColunaAtual > NumColunas, !. % Condição de parada
-percorre_colunas(Matriz, LinhaAtual, ColunaAtual, NumColunas, NewMatrix) :-
-    cellUpdate([LinhaAtual, ColunaAtual], Matrix, Cell),
-    put(LinhaAtual, ColunaAtual, Cell, Matrix, NewMatrix),
-    NovaColuna is ColunaAtual + 1,
-    percorre_colunas(Matriz, LinhaAtual, NovaColuna, NumColunas, NewMatrix).
+    percorre_linhas(Matriz, 0, NumLinhas, NumColunas, NewMatrix).
 
 
+percorre_linhas(_, RowIndex, NumLinhas, _, _{}):- RowIndex >= NumLinhas, !.
+percorre_linhas(Matrix, RowIndex, NumLinhas, NumColunas, NewMatrix):-
+    NewRowIndex is RowIndex + 1,
+
+    percorre_linhas(Matrix, NewRowIndex, NumLinhas, NumColunas, Out),
+
+    updateLine(Matrix, RowIndex, Matrix.get(RowIndex), 0, NumColunas, NewLine),
+    NewMatrix = Out.put(RowIndex, NewLine).
+
+
+updateLine(_, _, _, Index, ColsLimit, _{}):- Index >= ColsLimit, !.
+updateLine(Matrix, Row, Line, Index, ColsLimit, NewLine1):-
+    NewIndex is Index + 1,
+
+    updateLine(Matrix, Row, Line, NewIndex, ColsLimit, NewLine2),
+
+    cellUpdate([Row, Index], Matrix, Cell),
+    
+    NewLine1 = NewLine2.put(Index, Cell).
+
+
+% % Percorre as linhas da matriz
+% percorre_linhas(_, LinhaAtual, NumLinhas, _) :- LinhaAtual > NumLinhas, !. % Condição de parada
+% percorre_linhas(Matriz, LinhaAtual, NumLinhas, NumColunas, NewMatrix) :-
+%     percorre_colunas(Matriz, LinhaAtual, 1, NumColunas, Partial),  % Percorre as colunas da linha atual
+%     NovaLinha is LinhaAtual + 1,
+%     percorre_linhas(Matriz, NovaLinha, NumLinhas, NumColunas).
+
+% % Percorre as colunas de uma linha específica
+% percorre_colunas(_, _, ColunaAtual, NumColunas, NewMatrix) :- ColunaAtual > NumColunas, !. % Condição de parada
+% percorre_colunas(Matriz, LinhaAtual, ColunaAtual, NumColunas, NewMatrix) :-
+%     cellUpdate([LinhaAtual, ColunaAtual], Matrix, Cell),
+%     put(LinhaAtual, ColunaAtual, Cell, Matrix, NewMatrix),
+%     NovaColuna is ColunaAtual + 1,
+%     percorre_colunas(Matriz, LinhaAtual, NovaColuna, NumColunas, NewMatrix).
+
+
+% Dada uma célula qualquer da matrix, atribui a Cell o próximo estado da mesma.
 cellUpdate([X, Y], Matrix, Cell):-
     get(Matrix, X, Y, Value),
     (Value = dead -> deadUpdateCell([X , Y], Matrix, Cell)
     ; liveUpdateCell([X, Y], Matrix, Cell)).
 
 
+% Dada uma posição da matriz com uma célula viva, atribui a Name a célula do próximo estágio
 liveUpdateCell([X, Y], Matrix, Name):-
-    cell:cell(Name, _, StayRule, _),
+    
+    get(Matrix, X, Y, Value),
     numOfLiveNeighbors([X, Y], Matrix, NumNeighbors),
-    (in(NumNeighbors, StayRule) -> Name = Name
+    cell:cell(Value, _, StayRule, _),
+
+    (utils:in(NumNeighbors, StayRule) -> Name = Value
     ; Name = dead).
 
 
 deadUpdateCell([X, Y], Matrix, Cell):-
     numOfLiveNeighbors([X, Y], Matrix, NumNeighbors),
-    lifeCellsCoord([X, Y], Matrix, coordLiveNeighbors),
-    coordsProposedRules(lifeCellsCoord, numOfLiveNeighbors, Matrix, coordsRules),
-    frequencyCells(coordsRules, Matrix, frequenty),
+    lifeCellsCoord([X, Y], Matrix, CoordLiveNeighbors),
+    coordsProposedRules(CoordLiveNeighbors, NumNeighbors, Matrix, CoordsRules),
+    frequencyCells(CoordsRules, CoordsRules, Matrix, Frequenty),
 
-    (coordsRules = [] -> Cell = dead
-    ; biggestOnList(frequencyCells, frequencyCells, [F, Cell])).
+    (CoordsRules = [] -> Cell = dead
+    ; biggestOnList(Frequenty, [_, Cell])).
 
 
+% Retorna o elemento que possui a maior frequência na lista de frequência gerada por frequency cells.
 biggestOnList([[Qnt, Cell]], [Qnt, Cell]):- !.
 biggestOnList([[Qnt1, Cell1]|T], [X, Y]):-
     biggestOnList(T, [Qnt2, Cell2]),
@@ -64,33 +92,42 @@ biggestOnList([[Qnt1, Cell1]|T], [X, Y]):-
     ; X = Qnt2, Y = Cell2).
 
 
-frequencyCells([], _, [[]]).
-frequencyCells([[X, Y]|T], List, Matrix, Out):-
-    frequencyCells(T, Matrix, Partial),
+% Atribui a Out uma lista de tuplas com a frequência e o termo ao qual se refere
+frequencyCells([], _, _, []).
+frequencyCells([[X, Y]|T], Coords, Matrix, Out):-
+    frequencyCells(T, Coords, Matrix, Partial),
     get(Matrix, X, Y, Name),
-    numTimesFoundCell(Name, List, Matrix. Num),
+    numTimesFoundCell(Name, Coords, Matrix, Num),
+
     add_to_set([Num, Name], Partial, Out).
 
+
+% Atribui a variável Qnt a quantidade de vezes que determinada célula aparece em uma sequência de coordenadas.
 numTimesFoundCell(_, [], _, 0).
 numTimesFoundCell(Name, [[X, Y]|T], Matrix, Qnt):-
-    numTimesFoundCell(Name, [[X, Y]|T], Matrix, Sum),
+    numTimesFoundCell(Name, T, Matrix, Sum),
     get(Matrix, X, Y, Value),
     (Name = Value -> Qnt is Sum + 1
-    ; Qnt is Sum).
+    ; Qnt = Sum).
 
 
 add_to_set(X, Set, Set) :- member(X, Set), !.
 add_to_set(X, Set, [X|Set]).
 
 
-coordsProposedRules([], _, _, []).
+% Atribui a Out as coordenadas daquelas células que possuem regras que assumem o nascimento
+% para determinada posição de célula morta.
+coordsProposedRules([], _, _, []):- !.
 coordsProposedRules([[X, Y]|T], Num, Matrix, Out):-
-    coordsProposedRules(T, Num, Matrix, Partial),
-    get(Matrix, X, Y, Name),
-    cell:cell(Name, _, _, BirthRule),
-    (in(Num, BirthRule) -> append([X, Y], Partial, Out)
-    ; Out = Out).
+    
+    coordsProposedRules(T, Num, Matrix, NewOut),
 
+    get(Matrix, X, Y, Name),
+
+    cell:cell(Name, _, _, BirthRule),
+
+    (utils:in(Num, BirthRule) -> append([[X, Y]], NewOut, Out)
+    ; Out = NewOut).
 
 % Atribui a variável NumNeighbors a quantidade de vizinhos vivos ao redor de uma coordenada
 % (x,y).
@@ -122,7 +159,7 @@ isAlive(X, Y, Matrix):-
 
 % Retorna uma lista com as coordenadas válidas dado um arranjo de possíveis
 % coordenadas de uma matriz.
-validCoords([], Matrix, []).
+validCoords([], _, []).
 validCoords([H|T], Matrix, Out):-
     validCoords(T, Matrix, Parcial),
     (validCoord(H, Matrix) -> append([H], Parcial, Out)
@@ -418,7 +455,32 @@ testValidCoords:-
     validCoords(Coords, A, CoordsValidas),
 
     writeln(CoordsValidas).
-    
+
+
+testUpdateLine:-
+
+    createMatrix(3,3, dead, A),
+
+    cell:createCell(conways, red, [2, 3], [3]),
+
+    put(0, 1, conways, A, B),
+    put(1, 1, conways, B, C),
+    put(2, 1, conways, C, D),
+
+    writeln(""),
+    writeln(D),
+    writeln(""),
+
+    F = D.get(0),
+
+    writeln(""),
+    writeln(F),
+    writeln(""),
+
+    updateLine(D, 0, F, 0, 3, NewLine),
+
+    writeln(NewLine).
+
 
 testIsAlive:-
 
@@ -472,9 +534,225 @@ testNumOfLiveNeighbors:-
 
     equals(0, Out2).
 
+testcoordsProposedRules:-
 
+    createMatrix(3,3, dead, A),
+
+    cell:createCell(keven, green, [1], [1, 4]),
+    cell:createCell(leo, red, [1], [4, 3]),
+    cell:createCell(ramon, red, [1], [7]),
+
+
+    put(0, 1, keven, A, B),
+    put(2, 1, leo, B, C),
+    put(1, 2, leo, C, D),
+    put(0, 0, ramon, D, E),
+
+    writeln(E),
+
+    numOfLiveNeighbors([1, 1], E, NumNeighbors),
+
+    writeln(""),
+    writeln(NumNeighbors),
+    writeln(""),
+
+    lifeCellsCoord([1, 1], E, CoordLiveNeighbors),
+    writeln(CoordLiveNeighbors),
+    writeln(""),
+
+    coordsProposedRules(CoordLiveNeighbors, NumNeighbors, E, CoordsRules),
+
+    writeln(CoordsRules).
+
+
+testfrequencyCells:-
+
+    createMatrix(3,3, dead, A),
+
+    cell:createCell(keven, green, [1], [1, 4]),
+    cell:createCell(leo, red, [1], [4, 3]),
+    cell:createCell(ramon, red, [1], [7]),
+
+    put(0, 1, keven, A, B),
+    put(2, 1, leo, B, C),
+    put(1, 2, leo, C, D),
+    put(0, 0, ramon, D, E),
+
+    writeln(""),
+    writeln(E),
+    writeln(""),
+
+    numOfLiveNeighbors([1, 1], E, NumNeighbors),
+
+    lifeCellsCoord([1, 1], E, CoordLiveNeighbors),
+
+    coordsProposedRules(CoordLiveNeighbors, NumNeighbors, E, CoordsRules),
+
+    frequencyCells(CoordsRules, CoordsRules, E, Frequenty),
+
+    writeln(Frequenty).
+
+
+testbiggestOnList:-
+
+    createMatrix(3,3, dead, A),
+
+    cell:createCell(keven, green, [1], [1, 4]),
+    cell:createCell(leo, red, [1], [4, 3]),
+    cell:createCell(ramon, red, [1], [7]),
+
+    put(0, 1, keven, A, B),
+    put(2, 1, leo, B, C),
+    put(1, 2, leo, C, D),
+    put(0, 0, ramon, D, E),
+
+    writeln(""),
+    writeln(E),
+    writeln(""),
+
+    numOfLiveNeighbors([1, 1], E, NumNeighbors),
+
+    lifeCellsCoord([1, 1], E, CoordLiveNeighbors),
+
+    coordsProposedRules(CoordLiveNeighbors, NumNeighbors, E, CoordsRules),
+
+    frequencyCells(CoordsRules, CoordsRules, E, Frequenty),
+
+    biggestOnList(Frequenty, Big),
+
+    writeln(Big).
+
+
+testmatrixUpdate:-
+
+    createMatrix(3,3, dead, A),
+
+    cell:createCell(conways, red, [2, 3], [3]),
+
+    put(0, 1, conways, A, B),
+    put(1, 1, conways, B, C),
+    put(2, 1, conways, C, D),
+
+    writeln(""),
+    writeln(D),
+    writeln(""),
+
+    matrixUpdate(D, E),
+
+    writeln(""),
+    writeln(E),
+    writeln(""),
+
+    matrixUpdate(E, F),
+
+    writeln(""),
+    writeln(F),
+    writeln("").
     
+testCellUpdate:-
 
+    createMatrix(3,3, dead, A),
+
+    cell:createCell(conways, red, [2, 3], [2]),
+
+    put(0, 1, conways, A, B),
+    put(1, 1, conways, B, C),
+    put(2, 1, conways, C, D),
+
+    writeln(D),
+
+    liveUpdateCell([1,1], D, Mid),
+
+    writeln(Mid),
+
+    liveUpdateCell([0,1], D, Top),
+    liveUpdateCell([2,1], D, Down),
+
+    writeln(Top),
+    writeln(Down).
+
+
+testliveUpdateCell:-
+
+    createMatrix(3,3, dead, A),
+
+    cell:createCell(keven, green, [2], [1, 4]),
+    cell:createCell(leo, red, [1], [4, 3]),
+
+    put(1, 1, keven, A, B),
+
+    writeln(""),
+    writeln(B),
+    writeln(""),
+
+    liveUpdateCell([1, 1], B, NewKeven),
+
+    writeln(NewKeven),
+
+    put(0, 0, keven, B, C),
+    put(2, 2, keven, C, D),
+
+    writeln(""),
+    writeln(D),
+    writeln(""),
+
+
+    liveUpdateCell([1, 1], D, NewKeven2),
+
+    writeln(""),
+    writeln(NewKeven2),
+    writeln("").
+
+
+testdeadUpdateCell:- 
+
+    createMatrix(3,3, dead, A),
+
+    cell:createCell(keven, green, [1], [1, 4]),
+    cell:createCell(leo, red, [1], [4, 3]),
+    cell:createCell(ramon, red, [1], [7]),
+
+    put(0, 1, keven, A, B),
+    put(2, 1, leo, B, C),
+    put(1, 2, leo, C, D),
+    put(0, 0, ramon, D, E),
+
+    writeln(""),
+    writeln(E),
+    writeln(""),
+
+    deadUpdateCell([1, 1], E, NewCell),
+
+    writeln(NewCell).
+
+
+testnumTimesFoundCell:-
+    
+    createMatrix(3,3, dead, A),
+
+    cell:createCell(keven, green, [1], [1, 4]),
+    cell:createCell(leo, red, [1], [4, 3]),
+    cell:createCell(ramon, red, [1], [7]),
+
+
+    put(0, 1, keven, A, B),
+    put(2, 1, leo, B, C),
+    put(1, 2, leo, C, D),
+    put(0, 0, ramon, D, E),
+
+    writeln(E),
+
+    numOfLiveNeighbors([1, 1], E, NumNeighbors),
+
+
+    lifeCellsCoord([1, 1], E, CoordLiveNeighbors),
+
+    coordsProposedRules(CoordLiveNeighbors, NumNeighbors, E, CoordsRules),
+
+    numTimesFoundCell(leo, CoordsRules, E, Qnt),
+
+    writeln(""),
+    writeln(Qnt).
 
 % test :-
 %     createSquareMatrix(5, cu, Matrix),
@@ -553,7 +831,4 @@ test7:-
 
     createMatrix(3, 3, dead, Matrix),
     writeln(Matrix),
-    writeln(""),
-
-    
-
+    writeln("").
