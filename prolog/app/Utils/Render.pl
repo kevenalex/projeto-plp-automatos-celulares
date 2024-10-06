@@ -13,6 +13,15 @@ printScreen(FilePath):-
     printStream(Stream),
     close(Stream).
 
+% Predicado para imprimir conteúdo de um arquivo de texto no terminal com atraso
+% printScreen(FilePath, Clear, Delay):-
+%     Clear -> (clearScreen, printScreenWithDelay(FilePath, Delay))
+%     ;
+%     printScreenWithDelay(FilePath, Delay).
+
+% printScreenWithDelay(FilePath, Delay):-
+%     Delay -> m
+
 % Lê o conteúdo (Stream) do arquivo txt, separa-o em linhas e imprime linha 
 % a linha no terminal até o fim do arquivo.
 printStream(Stream):-
@@ -45,9 +54,19 @@ printMidScreen(Text):-
 setCursorColumn(Column):-
     ansi_format([fg(white)], '~` t~*|', [Column]).
 
+
+% clearScreen:- 
+%     (   
+%         current_prolog_flag(os, windows) ->  shell('cls') 
+%         ;   
+%         shell('clear')
+%     ).
+
+clearScreen :- write('\33\[2J').
+
 % Testes dos predicados (todos rodam 100)
 % teste1:-
-%     printScreen("../storage/TesteString.txt"), halt.
+%     printScreen("/home/pedroln/faculdade/projeto-plp-haskell-automatos-celulares/prolog/storage/TesteString.txt"), halt.
 
 % teste2:-
 %     printEmptyLines(5),
