@@ -1,10 +1,170 @@
 :- module(matrix, []).
 :- use_module(library(http/json)).
+:- use_module("./Cell.pl").
+:- use_module("./Utils.pl").
+
 
 % Um dicionário fingindo ser um array, não um array de dicionários. Preenchido com Value, Size vezes.
 % Se eu não cortar aqui, ele diz que Dict = ao dicionario esperado 
 % e da mais uma possibilidade vazia, bem estranho.
 % 0 indexado, desculpa keven é mais complicado e devagar terminar em 1 e ter Tamanho valores inves de Tamanho -1
+
+
+matrixUpdate(Matrix, NewMatrix):-
+    matrixSize(Matrix, Rows, Cols),
+    matrixUpdateRecur(Matrix, Rows, Cols, NewMatrix).
+
+
+matrixUpdateRecur(Matriz, NumLinhas, NumColunas, NewMatrix) :-
+    percorre_linhas(Matriz, 1, NumLinhas, NumColunas, NewMatrix).
+
+% Percorre as linhas da matriz
+percorre_linhas(_, LinhaAtual, NumLinhas, _) :- LinhaAtual > NumLinhas, !. % Condição de parada
+percorre_linhas(Matriz, LinhaAtual, NumLinhas, NumColunas, NewMatrix) :-
+    percorre_colunas(Matriz, LinhaAtual, 1, NumColunas, Partial),  % Percorre as colunas da linha atual
+    NovaLinha is LinhaAtual + 1,
+    percorre_linhas(Matriz, NovaLinha, NumLinhas, NumColunas).
+
+% Percorre as colunas de uma linha específica
+percorre_colunas(_, _, ColunaAtual, NumColunas, NewMatrix) :- ColunaAtual > NumColunas, !. % Condição de parada
+percorre_colunas(Matriz, LinhaAtual, ColunaAtual, NumColunas, NewMatrix) :-
+    cellUpdate([LinhaAtual, ColunaAtual], Matrix, Cell),
+    put(LinhaAtual, ColunaAtual, Cell, Matrix, NewMatrix),
+    NovaColuna is ColunaAtual + 1,
+    percorre_colunas(Matriz, LinhaAtual, NovaColuna, NumColunas, NewMatrix).
+
+
+cellUpdate([X, Y], Matrix, Cell):-
+    get(Matrix, X, Y, Value),
+    (Value = dead -> deadUpdateCell([X , Y], Matrix, Cell)
+    ; liveUpdateCell([X, Y], Matrix, Cell)).
+
+
+liveUpdateCell([X, Y], Matrix, Name):-
+    cell:cell(Name, _, StayRule, _),
+    numOfLiveNeighbors([X, Y], Matrix, NumNeighbors),
+    (in(NumNeighbors, StayRule) -> Name = Name
+    ; Name = dead).
+
+
+deadUpdateCell([X, Y], Matrix, Cell):-
+    numOfLiveNeighbors([X, Y], Matrix, NumNeighbors),
+    lifeCellsCoord([X, Y], Matrix, coordLiveNeighbors),
+    coordsProposedRules(lifeCellsCoord, numOfLiveNeighbors, Matrix, coordsRules),
+    frequencyCells(coordsRules, Matrix, frequenty),
+
+    (coordsRules = [] -> Cell = dead
+    ; biggestOnList(frequencyCells, frequencyCells, [F, Cell])).
+
+
+biggestOnList([[Qnt, Cell]], [Qnt, Cell]):- !.
+biggestOnList([[Qnt1, Cell1]|T], [X, Y]):-
+    biggestOnList(T, [Qnt2, Cell2]),
+    (Qnt1 >= Qnt2 -> X = Qnt1, Y = Cell1
+    ; X = Qnt2, Y = Cell2).
+
+
+frequencyCells([], _, [[]]).
+frequencyCells([[X, Y]|T], List, Matrix, Out):-
+    frequencyCells(T, Matrix, Partial),
+    get(Matrix, X, Y, Name),
+    numTimesFoundCell(Name, List, Matrix. Num),
+    add_to_set([Num, Name], Partial, Out).
+
+numTimesFoundCell(_, [], _, 0).
+numTimesFoundCell(Name, [[X, Y]|T], Matrix, Qnt):-
+    numTimesFoundCell(Name, [[X, Y]|T], Matrix, Sum),
+    get(Matrix, X, Y, Value),
+    (Name = Value -> Qnt is Sum + 1
+    ; Qnt is Sum).
+
+
+add_to_set(X, Set, Set) :- member(X, Set), !.
+add_to_set(X, Set, [X|Set]).
+
+
+coordsProposedRules([], _, _, []).
+coordsProposedRules([[X, Y]|T], Num, Matrix, Out):-
+    coordsProposedRules(T, Num, Matrix, Partial),
+    get(Matrix, X, Y, Name),
+    cell:cell(Name, _, _, BirthRule),
+    (in(Num, BirthRule) -> append([X, Y], Partial, Out)
+    ; Out = Out).
+
+
+% Atribui a variável NumNeighbors a quantidade de vizinhos vivos ao redor de uma coordenada
+% (x,y).
+numOfLiveNeighbors([X, Y], Matrix, NumNeighbors):-
+    lifeCellsCoord([X, Y], Matrix, List),
+    length(List, NumNeighbors).
+
+
+% Dada uma coordenada e uma Matrix, atribui a variável Out, uma lista com as coordenadas
+% das células vivas em volta da mesma.
+lifeCellsCoord(Coord, Matrix, Out):-
+    listOfCoord(Coord, List),
+    validCoords(List, Matrix, ValidCoords),
+    lifeCellsCoordRecur(ValidCoords, Matrix, Out).
+
+
+lifeCellsCoordRecur([], _, []).
+lifeCellsCoordRecur([[X, Y]|T], Matrix, List):-
+    lifeCellsCoordRecur(T, Matrix, Parcial),
+    (isAlive(X, Y, Matrix) -> append([[X, Y]], Parcial, List)
+    ; List = Parcial).
+
+
+% Este fato se valida caso a célula na posição (x,y), não seja uma célula morta.
+isAlive(X, Y, Matrix):-
+    get(Matrix, X, Y, Name),
+    not(Name = dead).
+
+
+% Retorna uma lista com as coordenadas válidas dado um arranjo de possíveis
+% coordenadas de uma matriz.
+validCoords([], Matrix, []).
+validCoords([H|T], Matrix, Out):-
+    validCoords(T, Matrix, Parcial),
+    (validCoord(H, Matrix) -> append([H], Parcial, Out)
+    ; Out = Parcial).
+
+
+% Verifica se uma determinada coordenada está dentro dos limites de uma matriz.
+validCoord([X, Y], Matrix):-
+    matrixSize(Matrix, Rows, Cols),
+    X >= 0,
+    X < Rows,
+    Y >= 0,
+    Y < Cols.
+
+
+% Retorna as 8 coordenadas vizinhas de uma coordenada (x, y).
+listOfCoord(Coord, List):-
+    coordOnTop(Coord, A),
+    coordInBelow(Coord, B),
+    coordInRight(Coord, C),
+    coordInLeft(Coord, D),
+    coordOnTopRight(Coord, E),
+    coordInBelowRight(Coord, F),
+    coordOnTopLeft(Coord, G),
+    coordInBelowLeft(Coord, H),
+
+    List = [A, B, C, D, E, F, G, H].
+
+
+
+
+% Só existe por consistência com o get, Matrix.put(X/Y, Value) é bem mais ergonômico, mas talvez te levasse a fazer 
+% Matrix.get() que não tem verificação de limites, diferente do meu get.
+put(X, Y, Value, Matrix, Out) :- Out = Matrix.put(X/Y, Value).
+
+
+put([], Matrix, _, Matrix).
+put([[X, Y]|T], Matrix, Value, Out):-
+    put(T, Matrix, Value, Parcial),
+    put(X, Y, Value, Parcial, Out).
+
+
 createArrayDict(0, _, _{}):-!.
 createArrayDict(Size, Value, Dict) :-
     N is Size - 1,
@@ -19,9 +179,11 @@ createMatrix(Lines, Cols, Value, Matrix):-
     createMatrix(N, Cols, Value, Partial),
     Matrix = Partial.put(N, Line).
 
+
 createSquareMatrix(N, Value, Matrix):- createMatrix(N, N, Value, Matrix).
 
-% retorna o valor naquele ponto na matrix, se a posição for inválida retorna uma célula morta.
+
+% Retorna o valor naquele ponto na matrix, se a posição for inválida retorna uma célula morta.
 get(Matrix, X, Y, Value):-
     X > -1,
     Y > -1,
@@ -38,9 +200,12 @@ get(Matrix, X, Y, Value):-
 get(_, _, _, dead).
 
 
-% Só existe por consistência com o get, Matrix.put(X/Y, Value) é bem mais ergonômico, mas talvez te levasse a fazer 
-% Matrix.get() que não tem verificação de limites, diferente do meu get.
-put(X, Y, Value, Matrix, Out) :- Out = Matrix.put(X/Y, Value).
+
+
+removeCell([X, Y], Matrix, Out):- put(X, Y, dead, Matrix, Out).
+
+removeCells(List, Matrix, Out):- put(List, Matrix, dead, Out).
+
 
 % Pega parte de uma Linha X da Matrix, do indice YStart até YEnd -1.
 % A lista retornada é em ordem decrescente.
@@ -55,6 +220,7 @@ spliceLine(_, Y, Y, _, []).
 getLine(X, Matrix, Out):-
     dict_size(Matrix.X, Y),
     spliceLine(X, 0, Y, Matrix, Out).
+
 
 % Retorna uma lista com os 8 valores ao redor do ponto (X, Y).
 % A ordem da lista é: [abaixo do ponto, acima, esquerda, direita].
@@ -75,6 +241,7 @@ getSquareAround(X, Y, Matrix, Out):-
     append(Down, Partial2, Out).
 
 
+% Atribui a variável Size, o tamanho do dicionário de entrada.
 dictSize(Dict,Size) :-
    assertion(is_dict(Dict)),
    assertion(var(Size);integer(Size)),
@@ -82,6 +249,8 @@ dictSize(Dict,Size) :-
    Size is (Arity-1)//2.
 
 
+% Atribui as variáveis X e Y, em ordem a quantidade de linhas
+% e colunas da matriz de entrada.
 matrixSize(Matrix, X, Y) :-
     dictSize(Matrix, X),
     dictSize(Matrix.0, Y).
@@ -95,6 +264,7 @@ arrayToList(Array, List):-
 matrixToList(Matrix, List) :-
     arrayToList(Matrix, L),
     maplist(arrayToList,L , List).
+
 
 matrixFromList([], _{}):- !.
 matrixFromList(List, Matrix):-
@@ -121,11 +291,196 @@ arrayFromList(Index, Size, [H|T], Dict):-
     Dict = Parcial.put(Index, H).
 
 
+% Fatos para cálculo de coordenadas.
+
+coordOnTop([X1, Y1], [X2, Y1]):- X2 is X1 - 1.
+
+coordInBelow([X1, Y1], [X2, Y1]):- X2 is X1 + 1.
+
+coordInRight([X1, Y1], [X1, Y2]):- Y2 is Y1 + 1.
+
+coordInLeft([X1, Y1], [X1, Y2]):- Y2 is Y1 - 1.
+
+coordOnTopRight([X1, Y1], [X2, Y2]):- X2 is X1 - 1, Y2 is Y1 + 1.
+
+coordInBelowRight([X1, Y1], [X2, Y2]):- X2 is X1 + 1, Y2 is Y1 + 1.
+
+coordOnTopLeft([X1, Y1], [X2, Y2]):- X2 is X1 - 1, Y2 is Y1 - 1.
+
+coordInBelowLeft([X1, Y1], [X2, Y2]):- X2 is X1 + 1, Y2 is Y1 - 1.
+
+% Testes
+
+equals(X, Y) :- X = Y.
+
+testDictSize:- 
+    A = _{0:a, 1:b, 2:c},
+    B = _{0:a, 1:b, 2:c, 3:d},
+    C = _{},
+
+    dictSize(A, ASize),
+    dictSize(B, BSize),
+    dictSize(C, CSize),
+
+
+    equals(3, ASize),
+    equals(4, BSize),
+    equals(0, CSize).
+
+testMatrixSize:-
+    A = _{
+        0:_{0:a, 1:b, 2:c}, 
+        1:_{0:d, 1:f, 2:g}, 
+        2:_{0:h, 1:i, 2:j}
+            },
+
+    B = _{
+        0:_{0:a, 1:b, 2:c}, 
+        1:_{0:d, 1:f, 2:g}, 
+        2:_{0:h, 1:i, 2:j},
+        3:_{0:k, 1:l, 2:m}
+            },
+
+
+    matrixSize(A, XA, YA),
+    matrixSize(B, XB, YB),
+
+    equals(3, XA), equals(3, YA),
+    equals(4, XB), equals(3, YB).
+
+
+testGet:- 
+    A = _{
+        0:_{0:a, 1:b, 2:c}, 
+        1:_{0:d, 1:cell:cell(dead, preto, [], []), 2:g}, 
+        2:_{0:h, 1:i, 2:j}
+            },
+
+    get(A, 1, 1, Value11),
+    get(A, 0, 0, Value00),
+    get(A, 2, 2, Value22),
+
+    equals(Value00, a),
+    equals(Value11, cell:cell(dead,preto,[],[])),
+    equals(Value22, j).
+
+
+testListOfCoords:-
+ 
+
+    listOfCoord([1, 1], [A, B, C, D, E, F, G, H]),
+
+
+    equals([0,1], A),
+
+    equals([2,1], B),
+
+    equals([1,2], C),
+
+    equals([1,0], D),
+
+    equals([0,2], E),
+
+    equals([2,2], F),
+
+    equals([0,0], G),
+
+    equals([2,0], H).
+
+
+testValidCoord:-
+     A = _{
+        0:_{0:a, 1:b, 2:c}, 
+        1:_{0:d, 1:f, 2:g}, 
+        2:_{0:h, 1:i, 2:j}
+            },
+
+    not(validCoord([-1, 0], A)),
+    not(validCoord([0, 3], A)),
+    not(validCoord([3, 0], A)),
+    validCoord([0, 0], A),
+    validCoord([1, 1], A),
+    validCoord([2, 2], A).
+
+
+testValidCoords:-
+
+    A = _{
+        0:_{0:a, 1:b, 2:c}, 
+        1:_{0:d, 1:f, 2:g}, 
+        2:_{0:h, 1:i, 2:j}
+            },
+
+    listOfCoord([0, 0], Coords),
+
+    writeln(Coords),
+
+    validCoords(Coords, A, CoordsValidas),
+
+    writeln(CoordsValidas).
+    
+
+testIsAlive:-
+
+    createMatrix(3,3, dead, A),
+
+    Leo = cell:cell(leo, _, _, _),
+    Keven = cell:cell(keven, _, _, _),
+
+    put(1, 1, Keven, A, B),
+    put(2, 1, Leo, B, C),
+
+    isAlive(1, 1, C),
+    isAlive(2, 1, C),
+    not(isAlive(0, 0, C)),
+    not(isAlive(0, 1, C)).
+
+
+testLifeCellsCoord:-
+
+    createMatrix(3,3, dead, A),
+
+    Leo = cell:cell(leo, _, _, _),
+    Keven = cell:cell(keven, _, _, _),
+
+    put(1, 1, Keven, A, B),
+    put(2, 1, Leo, B, C),
+    put(0, 2, Keven, C, D),
+
+    lifeCellsCoord([1, 1], D, Out),
+
+    equals([[2,1],[0,2]], Out).
+
+testNumOfLiveNeighbors:-
+    
+    createMatrix(3,3, dead, A),
+
+    Leo = cell:cell(leo, _, _, _),
+    Keven = cell:cell(keven, _, _, _),
+
+    put(1, 1, Keven, A, B),
+    put(2, 1, Leo, B, C),
+    put(0, 2, Keven, C, D),
+
+    numOfLiveNeighbors([1, 1], D, Out1),
+
+    equals(2, Out1),
+
+    removeCell([1,1], D, E),
+
+    numOfLiveNeighbors([0, 0], E, Out2),
+
+    equals(0, Out2).
+
+
+    
+
+
 % test :-
 %     createSquareMatrix(5, cu, Matrix),
 %     % getLine(1, 5, Matrix, Out),
 %     % writeln(Out),
-%     getSquareAround(0, 0, Matrix, Square),
+%     getSquareArounB(0, 0, Matrix, Square),
 %     getSquareAround(2, 2, Matrix, Square2),
 %     writeln(Square),
 %     writeln(Square2),
@@ -143,6 +498,7 @@ arrayFromList(Index, Size, [H|T], Dict):-
 %     put(4, 1, cuzinho, A, Out),
 %     writeln(Out).
 
+
 test3 :- 
     A = _{
         0:_{0:a, 1:b, 2:c}, 
@@ -155,6 +511,7 @@ test3 :-
     writeln(Re),
     json_write(current_output, json([name=test, matrix=Re])).
 
+
 test4 :- 
     A = _{0:a, 1:b, 2:c},
     arrayToList(A, L),
@@ -162,9 +519,41 @@ test4 :-
     arrayFromList(L, Array),
     writeln(Array).
 
+
 test5 :-
     A = [[a, b, c], [d, e, f], [h, i, j]],
 
     matrixFromList(A, B),
 
     writeln(B).
+
+% Teste de put em uma Matrix
+
+test6 :-
+    createMatrix(3, 3, dead, Matrix),
+
+    writeln(Matrix),
+
+    _coords = [[0,0], [1,1], [2,2]],
+
+    Leo = cell:cell(leo, _, _, _),
+
+    put(_coords, Matrix, Leo, NewMatrix),
+
+    writeln(""),
+
+    writeln(NewMatrix),
+
+    removeCell([0, 0], NewMatrix, Out),
+
+    writeln(Out).
+
+% Teste de Coordenadas válidas
+test7:-
+
+    createMatrix(3, 3, dead, Matrix),
+    writeln(Matrix),
+    writeln(""),
+
+    
+
