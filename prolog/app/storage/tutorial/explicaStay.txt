@@ -1,0 +1,19 @@
+
+
+                                                                 Uma célula bebê nasceu! E todos os pais morreram... O que aconteceu?
+                                                                        
+                                                                            Como diz na regra de nascimento (B) da célula,
+                                                                         a célula do meio era morta e tinha 3 vizinhos, então nasceu,
+                                                                                   mas as de fora morreram, porque?
+
+
+                                                                       Pra explicar isso vamos entender a regra depois de birth,
+                                                                              S de Stay, que define quantos vizinhos uma 
+                                                                                célula viva precisa pra continuar viva.
+                                                                            
+                                                                            O Game of Life é S/23(2 e 3, não vinte e três) 
+                                                                                    então, olhando por outro lado, 
+                                                                         uma célula com 1 ou 0 vizinhos morre de solidão e uma
+                                                                            com mais de 3 vizinhos morre de superpopulação.
+
+                                                                    Ou seja, os 3 pais da nossa célula bebê morreram de solidão :(
