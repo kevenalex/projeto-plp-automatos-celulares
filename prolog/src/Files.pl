@@ -43,10 +43,23 @@ fileNotEmpty(FilePath) :-
 
 saveCells:-
     open("../storage/cells.json", write, File),
-    cell:listCells(Cells),
-    json_write(File, json([Cells])),
-    close(File).
+    cell:listCellNames(Cells),
+    writeln(Cells),
+    cellsToList(Cells,List),
+    json_write(File, json([cells=List])),
+    close(File), !.
     
+cellsToList([], []):- !.
+cellsToList([H|T], Out) :- 
+    cellsToList(T, Parcial),
+    cell:cell(H, C, S, B),
+    Out = [[H, C, S, B] | Parcial].
+
+
+getCells(Cells) :-
+    open("../storage/cells.json", read, File),
+    json_read_dict(File, Dict),
+    cell:createCells(Dict.cells).
 
 
 main:-
@@ -60,3 +73,7 @@ main:-
     writeln(R).
 
 
+main2:-
+    cell:createCell(cu, azul, [1], [2]),
+    cell:createCell(asd, vermelho, [1], [2]),
+    saveCells.
