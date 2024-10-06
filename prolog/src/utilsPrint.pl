@@ -4,11 +4,13 @@
 
 printCell(Cell):-
     cell:getCellColor(Cell, Color),
-    ansi_format([fg(Color)], "██", []).
+    atom_string(Acolor, Color),
+    ansi_format([fg(Acolor)], "██", []).
 
 toStringCell(Cell):-
     cell:cell(Cell, Color, Stay, Birth),
-    ansi_format([fg(Color)], "~w B~w/S~w", [Cell, Birth, Stay]).
+    atom_string(Acolor, Color),
+    ansi_format([fg(Acolor)], "~w B~w/S~w", [Cell, Birth, Stay]).
 
 printLine([]):- writeln("").
 printLine([H|T]):-
@@ -26,6 +28,10 @@ printMatrixList([H|T]):-
 
 test:-
     matrix:createSquareMatrix(4,dead, Matrix0),
-    cell:createCell(cellNova, blue, [1,2,3], [2,3,4]),
+    cell:createCell(cellNova, "blue", [1,2,3], [2,3,4]),
     matrix:put(1,2,cellNova, Matrix0, Matrix),
     printMatrix(Matrix).
+
+test2:-
+    cell:createCell(cellNova, "blue", [1,2,3], [2,3,4]),
+    printCell(cellNova).
