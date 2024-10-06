@@ -1,6 +1,5 @@
 :- module(cell, []).
 
-cell(dead, "black", [], []).
 % Cell é o predicado que relaciona um tipo de célula(identificada pelo nome) 
 % a suas regras e sua cor.
 createCell(Name, Color, StayRule, BirthRule) :-isValidColor(Color), 
@@ -13,7 +12,7 @@ deleteCell(Name) :- retract(cell(Name, _, _, _)).
 createCells([]) :- 
     listCellNames(Names),
     (member("dead", Names) -> !
-    ; createCell("dead", "preto", [], [])).
+    ; createCell("dead", "black", [], [])).
 
 createCells([[N,C,S,B]|T]):-  createCell(N, C, S, B), createCells(T).
 
