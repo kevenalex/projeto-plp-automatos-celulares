@@ -28,10 +28,34 @@ saveScene(Name, Matrix) :-
     close(File).
 
 
+deleteScene(StringName) :-
+    atom_string(Name, StringName),
+    open("../storage/scenes.json", read, File),
+    json_read_dict(File, Dict),
+    del_dict(Name, Dict, _, Scenes),
+    close(File),
+
+    open("../storage/scenes.json", write, File2),
+    json_write_dict(File2, Scenes),
+    close(Files2).
+
+
+
 getSceneMatrix(Name, Matrix):-
     open("../storage/scenes.json", read, File),
     json_read_dict(File, Dict),
-    matrix:matrixFromList(Dict.Name, Matrix).
+    matrix:matrixFromList(Dict.Name, Matrix),
+    close(File).
+
+
+
+getSceneNames(List):-
+    open("../storage/scenes.json", read, File),
+    json_read_dict(File, Dict),
+    dict_pairs(Dict, _, L),
+    pairs_keys(L, List),
+    close(File).
+
 
 
 fileNotEmpty(FilePath) :-

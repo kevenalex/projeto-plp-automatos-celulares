@@ -1,7 +1,6 @@
 :- module(prints, []).
 :- use_module("./Matrix.pl").
 :- use_module( "./Cell.pl").    
-:- set_prolog_flag(encoding, utf8).
 
 printCell(Cell):-
     cell:getCellColor(Cell, Color),

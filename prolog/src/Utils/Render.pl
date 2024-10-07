@@ -25,15 +25,6 @@ printStream(Stream):-
             true
     ).
 
-printStreamMid(Stream):-
-    read_line_to_string(Stream, Line),
-    (
-        Line \= end_of_file -> 
-            printMidScreen(Line),
-            printStream(Stream)
-        ;
-            true
-    ).
 
 % Imprime N linhas vazias no terminal.
 printEmptyLines(0).
@@ -55,6 +46,14 @@ printMidScreen(Text):-
 % Move o cursor do terminal para uma coluna específica.
 setCursorColumn(Column):-
     ansi_format([fg(white)], '~` t~*|', [Column]).
+
+
+clear_screen:-
+    (   current_prolog_flag(unix, true) % Verifica se é linux e limpa, se não limpa para outros OS.
+    ->  shell(clear)
+    ;   process_create(path(cmd), ['/C', 'cls'], [process(PID)]),
+        process_wait(PID, _Status)
+    ).
 
 % Testes dos predicados (todos rodam 100)
 % teste1:-
