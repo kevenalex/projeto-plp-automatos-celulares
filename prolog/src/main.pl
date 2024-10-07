@@ -21,7 +21,7 @@ option("1") :-
     matrix:createSquareMatrix(35, "dead", M),
     simulation:run(M), main, !.
 option("2") :- scenesController:main, main, !.
-option("3") :- render:printMid(celulas), main, !.
+option("3") :- cellController:main, main, !.
 option("4") :- render:printMid(tutorial), main, !.
 option("5") :- halt.
 option(_) :- render:printMid("OPÇÃO INVÁLIDA"), sleep(2), main.
