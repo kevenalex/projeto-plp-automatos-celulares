@@ -1,7 +1,7 @@
 :- module(matrix, []).
 :- use_module(library(http/json)).
 :- use_module("./Cell.pl").
-:- use_module("./Utils/Render.pl").
+:- use_module("../app/Utils/Render.pl").
 
 
 % Um dicionário fingindo ser um array, não um array de dicionários. Preenchido com Value, Size vezes.
@@ -461,7 +461,7 @@ testUpdateLine:-
 
     createMatrix(3,3, "dead", A),
 
-    cell:createCell(conways, red, [2, 3], [3]),
+    cell:createCell(conways, "red", [2, 3], [3]),
 
     put(0, 1, conways, A, B),
     put(1, 1, conways, B, C),
@@ -538,15 +538,15 @@ testcoordsProposedRules:-
 
     createMatrix(3,3, "dead", A),
 
-    cell:createCell(keven, green, [1], [1, 4]),
-    cell:createCell(leo, red, [1], [4, 3]),
-    cell:createCell(ramon, red, [1], [7]),
+    cell:createCell("keven", "green", [1], [1, 4]),
+    cell:createCell("leo", "red", [1], [4, 3]),
+    cell:createCell("ramon", "red", [1], [7]),
 
 
-    put(0, 1, keven, A, B),
-    put(2, 1, leo, B, C),
-    put(1, 2, leo, C, D),
-    put(0, 0, ramon, D, E),
+    put(0, 1, "keven", A, B),
+    put(2, 1, "leo", B, C),
+    put(1, 2, "leo", C, D),
+    put(0, 0, "ramon", D, E),
 
     writeln(E),
 
@@ -569,14 +569,14 @@ testfrequencyCells:-
 
     createMatrix(3,3, "dead", A),
 
-    cell:createCell(keven, green, [1], [1, 4]),
-    cell:createCell(leo, red, [1], [4, 3]),
-    cell:createCell(ramon, red, [1], [7]),
+    cell:createCell("keven", "green", [1], [1, 4]),
+    cell:createCell("leo", "red", [1], [4, 3]),
+    cell:createCell("ramon", "red", [1], [7]),
 
-    put(0, 1, keven, A, B),
-    put(2, 1, leo, B, C),
-    put(1, 2, leo, C, D),
-    put(0, 0, ramon, D, E),
+    put(0, 1, "keven", A, B),
+    put(2, 1, "leo", B, C),
+    put(1, 2, "leo", C, D),
+    put(0, 0, "ramon", D, E),
 
     writeln(""),
     writeln(E),
@@ -597,14 +597,14 @@ testbiggestOnList:-
 
     createMatrix(3,3, "dead", A),
 
-    cell:createCell(keven, green, [1], [1, 4]),
-    cell:createCell(leo, red, [1], [4, 3]),
-    cell:createCell(ramon, red, [1], [7]),
+    cell:createCell("keven", "green", [1], [1, 4]),
+    cell:createCell("leo", "red", [1], [4, 3]),
+    cell:createCell("ramon", "red", [1], [7]),
 
-    put(0, 1, keven, A, B),
-    put(2, 1, leo, B, C),
-    put(1, 2, leo, C, D),
-    put(0, 0, ramon, D, E),
+    put(0, 1, "keven", A, B),
+    put(2, 1, "leo", B, C),
+    put(1, 2, "leo", C, D),
+    put(0, 0, "ramon", D, E),
 
     writeln(""),
     writeln(E),
@@ -623,19 +623,22 @@ testbiggestOnList:-
     writeln(Big).
 
 
-testmatrixUpdate:-
+testMatrixUpdate:-
 
     createMatrix(3,3, "dead", A),
 
-    cell:createCell(conways, red, [2, 3], [3]),
 
-    put(0, 1, conways, A, B),
-    put(1, 1, conways, B, C),
-    put(2, 1, conways, C, D),
+    cell:createCell("conways", "red", [2, 3], [3]),
+
+    put(0, 1, "conways", A, B),
+    put(1, 1, "conways", B, C),
+    put(2, 1, "conways", C, D),
 
     writeln(""),
     writeln(D),
     writeln(""),
+
+    writeln("HIT"),
 
     matrixUpdate(D, E),
 
@@ -653,11 +656,11 @@ testCellUpdate:-
 
     createMatrix(3,3, "dead", A),
 
-    cell:createCell(conways, red, [2, 3], [2]),
+    cell:createCell("conways", "red", [2, 3], [2]),
 
-    put(0, 1, conways, A, B),
-    put(1, 1, conways, B, C),
-    put(2, 1, conways, C, D),
+    put(0, 1, "conways", A, B),
+    put(1, 1, "conways", B, C),
+    put(2, 1, "conways", C, D),
 
     writeln(D),
 
@@ -676,10 +679,10 @@ testliveUpdateCell:-
 
     createMatrix(3,3, "dead", A),
 
-    cell:createCell(keven, green, [2], [1, 4]),
-    cell:createCell(leo, red, [1], [4, 3]),
+    cell:createCell("keven", "green", [2], [1, 4]),
+    cell:createCell("leo", "red", [1], [4, 3]),
 
-    put(1, 1, keven, A, B),
+    put(1, 1, "keven", A, B),
 
     writeln(""),
     writeln(B),
@@ -689,8 +692,8 @@ testliveUpdateCell:-
 
     writeln(NewKeven),
 
-    put(0, 0, keven, B, C),
-    put(2, 2, keven, C, D),
+    put(0, 0, "keven", B, C),
+    put(2, 2, "keven", C, D),
 
     writeln(""),
     writeln(D),
@@ -708,14 +711,14 @@ testdeadUpdateCell:-
 
     createMatrix(3,3, "dead", A),
 
-    cell:createCell(keven, green, [1], [1, 4]),
-    cell:createCell(leo, red, [1], [4, 3]),
-    cell:createCell(ramon, red, [1], [7]),
+    cell:createCell("keven", "green", [1], [1, 4]),
+    cell:createCell("leo", "red", [1], [4, 3]),
+    cell:createCell("ramon", "red", [1], [7]),
 
-    put(0, 1, keven, A, B),
-    put(2, 1, leo, B, C),
-    put(1, 2, leo, C, D),
-    put(0, 0, ramon, D, E),
+    put(0, 1, "keven", A, B),
+    put(2, 1, "leo", B, C),
+    put(1, 2, "leo", C, D),
+    put(0, 0, "ramon", D, E),
 
     writeln(""),
     writeln(E),
@@ -730,15 +733,15 @@ testnumTimesFoundCell:-
     
     createMatrix(3,3, "dead", A),
 
-    cell:createCell(keven, green, [1], [1, 4]),
-    cell:createCell(leo, red, [1], [4, 3]),
-    cell:createCell(ramon, red, [1], [7]),
+    cell:createCell("keven", "green", [1], [1, 4]),
+    cell:createCell("leo", "red", [1], [4, 3]),
+    cell:createCell("ramon", "red", [1], [7]),
 
 
-    put(0, 1, keven, A, B),
-    put(2, 1, leo, B, C),
-    put(1, 2, leo, C, D),
-    put(0, 0, ramon, D, E),
+    put(0, 1, "keven", A, B),
+    put(2, 1, "leo", B, C),
+    put(1, 2, "leo", C, D),
+    put(0, 0, "ramon", D, E),
 
     writeln(E),
 
@@ -749,7 +752,7 @@ testnumTimesFoundCell:-
 
     coordsProposedRules(CoordLiveNeighbors, NumNeighbors, E, CoordsRules),
 
-    numTimesFoundCell(leo, CoordsRules, E, Qnt),
+    numTimesFoundCell("leo", CoordsRules, E, Qnt),
 
     writeln(""),
     writeln(Qnt).

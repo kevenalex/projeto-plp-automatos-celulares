@@ -1,5 +1,7 @@
 :- module(cell, []).
 
+cell("dead", "black", [], []).
+
 % Cell é o predicado que relaciona um tipo de célula(identificada pelo nome) 
 % a suas regras e sua cor.
 createCell(Name, Color, StayRule, BirthRule) :-isValidColor(Color), 

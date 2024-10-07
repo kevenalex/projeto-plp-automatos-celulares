@@ -1,7 +1,6 @@
 {
   "cells": [
     ["dead", "black",  [],  [] ],
-    ["cu", "blue",  [2, 3 ],  [3 ] ],
-    ["asd", "red",  [1 ],  [2 ] ]
+    ["teste alteracao em render", "green",  [4, 5, 6 ],  [1, 2, 3 ] ]
   ]
 }
