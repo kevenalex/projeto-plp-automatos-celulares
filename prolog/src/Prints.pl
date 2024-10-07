@@ -27,11 +27,12 @@ printCell(Cell):-
     cell:getCellColor(Cell, Color),
     atom_string(Acolor, Color),
     ansi_format([fg(Acolor)], "██", []).
-% test:-
-%     matrix:createSquareMatrix(4,"dead", Matrix0),
-%     cell:createCell(cellNova, "blue", [1,2,3], [2,3,4]),
-%     matrix:put(1,2,cellNova, Matrix0, Matrix),
-%     printMatrix(Matrix).
+
+test:-
+    matrix:createSquareMatrix(4,"dead", Matrix0),
+    cell:createCell(cellNova, "blue", [1,2,3], [2,3,4]),
+    matrix:put(1,2,cellNova, Matrix0, Matrix),
+    printMatrix(Matrix).
 
 test2:-
     cell:createCell(cellNova, "blue", [1,2,3], [2,3,4]),
