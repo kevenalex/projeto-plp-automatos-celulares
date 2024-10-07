@@ -27,3 +27,16 @@ option("4") :- render:printMid(tutorial), main, !.
 option("5") :- halt.
 option(_) :- render:printMid("OPÇÃO INVÁLIDA"), sleep(2), main.
 
+
+test:-
+A = _{
+        0:_{0:a, 1:b, 2:c}, 
+        1:_{0:d, 1:f, 2:g}, 
+        2:_{0:h, 1:i, 2:j}
+            },
+    files:getCells,
+    read(List),
+    matrix:put(List, A, cu, B),
+    writeln(B).
+
+stringNumber(String, Number) :- number_string(Number, String).

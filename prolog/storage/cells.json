@@ -1,9 +1,9 @@
 {
   "cells": [
     ["dead", "black",  [],  [] ],
-    ["game of life", "green",  [2, 3 ],  [ 3 ] ],
-    ["maze", "cyan", [1,2,3,4,5], [3]],
-    ["seeds", "yellow", [1], [1]],
-    ["high life", "red", [2,3], [3,6]]
+    ["game of life", "green",  [2, 3 ],  [3 ] ],
+    ["maze", "cyan",  [1, 2, 3, 4, 5 ],  [3 ] ],
+    ["seeds", "yellow",  [1 ],  [1 ] ],
+    ["high life", "red",  [2, 3 ],  [3, 6 ] ]
   ]
 }
