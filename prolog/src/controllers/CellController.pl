@@ -4,9 +4,12 @@
 :-use_module("../src/Cell.pl").
 
 menuCells(FilePath):-
+
     read_line_to_string(user_input, Choice),
     option(Choice, FilePath).
 
+% Inicio do procedimento de criação da Celula, recebendo o nome da Celula e chamando a função
+% para adicionar a regra de nascimento
 addAutomata(FilePath):-
     render:printScreen("../app/storage/ruleController/nameCellQuestion.txt"),
 
@@ -14,7 +17,8 @@ addAutomata(FilePath):-
     read_line_to_string(user_input, CellName),
 
     addBirthRule(CellName, FilePath).
-
+% Criação da Regra de Nascimento da Celula, o usuario pode inserir de 0 a 8 digitos entre 1 e 8.
+% (tem que ver se os digitos validos pra criar celula ainda são esses, se não forem, alterar em isAllValidBirthDigits)
 addBirthRule(CellName, FilePath):-
     render:printScreen("../app/storage/ruleController/birthRule.txt"),
     
@@ -30,6 +34,8 @@ addBirthRule(CellName, FilePath):-
         addBirthRule(CellName, FilePath)
     ).
 
+% Criação da Regra de Permanencia da Celula, o usuario pode inserir de 0 a 8 digitos entre 1 e 8.
+% (tem que ver se os digitos validos pra criar celula ainda são esses, se não forem, alterar em isAllValidStayDigits)
 addStayRule(FilePath, CellName, BirthList):-
     render:printScreen("../app/storage/ruleController/stayRule.txt"),
 
@@ -44,6 +50,7 @@ addStayRule(FilePath, CellName, BirthList):-
         addBirthRule(CellName, FilePath)
     ).
 
+% Criação da cor da celula, tem que alterar o Color Menu que imprime na tela (ta o antigo de haskell)
 addColor(FilePath, CellName, BirthList, StayList):-
     render:printScreen("../app/storage/ruleController/colorMenu.txt"), %tem que alterar o Color Menu
 
@@ -58,6 +65,28 @@ addColor(FilePath, CellName, BirthList, StayList):-
         addColor(FilePath, CellName, BirthList, StayList)
     ).
 
+% menu de exclusao de celula por nome, ta funcional, mas precisa deixar bonito os prints
+% alem de que ele só considera as celulas que foram criadas em Cell.pl, e nao as que estao em cell.json
+removeAutomata(FilePath):-
+    cell:listCellNames(Cells),
+    (Cells = [] ->
+        write('esta vazio'),
+        menuCells(FilePath)
+    ;
+        render:printScreen("../app/storage/ruleController/listOfCells.txt"),
+        render:printEmptyLines(2),
+        cell:listCellNames(Celulas),
+        write(Celulas),
+        % render:printMidScreen(Celulas),
+        render:printEmptyLines(1),
+        render:printScreen("../app/storage/ruleController/removeCellMenu.txt"),
+        render:setCursorColumn(85),
+        read_line_to_string(user_input, CellName),
+        cell:deleteCell(CellName),
+        menuCells(FilePath)
+    ).
+
+% verifica se nao tem espaço em branco, se tudo é numero entre 1 e 8, se o length <= 8 e tira digitos repetidos
 handleStayRule(StayRule):-
     string_chars(StayRule, Chars),
     exclude(=( ' ' ), Chars, RegraFormatada),
@@ -65,6 +94,7 @@ handleStayRule(StayRule):-
     Length =< 8,
     isAllValidStayDigits(RegraFormatada).
 
+% verifica se nao tem espaço em branco, se tudo é numero entre 0 e 8, se o length <= 8 e tira digitos repetidos
 handleBirthRule(BirthRule) :-
     string_chars(BirthRule, Chars),
     exclude(=( ' ' ), Chars, RegraFormatada),
@@ -72,18 +102,22 @@ handleBirthRule(BirthRule) :-
     Length =< 8,
     isAllValidBirthDigits(RegraFormatada).
 
+% predicado auxiliar pra verificar se o char é digito
 isDigit(Char) :-
     char_type(Char, digit).
 
+% predicado auxiliar pra transformar char em int
 charToInt(Char, Int) :-
     atom_number(Char, Int).
 
+% faz aquele mapeamento de 123 virar [1,2,3]
 stayList(StayRule, StayList) :-
     string_chars(StayRule, Chars),
     include(isDigit, Chars, DigitChars),
     maplist(charToInt, DigitChars, StayListNoDuplicates),
     list_to_set(StayListNoDuplicates, StayList).
 
+% faz aquele mapeamento de 123 virar [1,2,3]
 nascList(BirthRule, BirthList) :-
     string_chars(BirthRule, Chars),
     include(isDigit, Chars, DigitChars),
@@ -104,7 +138,7 @@ isAllValidStayDigits([H|T]) :-
 
 option("1", FilePath):- addAutomata(FilePath).
 option("2", FilePath):- removeAutomata(FilePath).
-option("3", FilePath):- menuCells(FilePath).
+option("3", FilePath):- !.
 option(_, FilePath):- menuCells(FilePath).
 
 test:-
