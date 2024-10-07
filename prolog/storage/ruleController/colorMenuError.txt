@@ -15,30 +15,30 @@
 
 
 
-                                                                                                COR DE CELULA INVALIDA
+                                                                                               COR DE CELULA INVALIDA
                      
-                                                                                       1) VERMELHO  2) VERDE  3) AMARELO  4) AZUL
-                                                                                       5) MAGENTA   6) CIANO  7) BRANCO
-                     
-                                                                                               QUAL A COR DA SUA CELULA?
+                                                                                          -blue           |  -white 
+                                                                                          -red            |  -yellow 
+                                                                                          -green          |  -black
+                                                                                          -magenta        |  -cyan
+                                                                                          -bright red     |  -bright green
+                                                                                          -bright yellow  |  -bright blue
+                                                                                          -brigth magenta |  -bright cyan
+                                                                                          -bright white   |
+
+                                                                                           CORES INDEPENTENTES DO SISTEMA
+
+                                                                                            -golden       |  -purple
+                                                                                            -water green  |  -salmon
+                                                                                            -orange       |  -pink
+                                                                                            -hot pink     |  -neon green 
+                    
+                                                                                              QUAL A COR DA SUA CELULA?
 
 
 
 
                                                         
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

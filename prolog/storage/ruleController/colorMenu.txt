@@ -17,30 +17,28 @@
 
                                                                                                   CRIANDO UMA CELULA
                      
-                                                                                                   -blue  |  -white
-                                                                                                   -red   |  -yellow
-                                                                                                   -green |  -black
+                                                                                          -blue           |  -white 
+                                                                                          -red            |  -yellow 
+                                                                                          -green          |  -black
+                                                                                          -magenta        |  -cyan
+                                                                                          -bright red     |  -bright green
+                                                                                          -bright yellow  |  -bright blue
+                                                                                          -brigth magenta |  -bright cyan
+                                                                                          -bright white   |
 
-                     
-                                                                                               QUAL A COR DA SUA CELULA?
+                                                                                           CORES INDEPENTENTES DO SISTEMA
+
+                                                                                            -golden       |  -purple
+                                                                                            -water green  |  -salmon
+                                                                                            -orange       |  -pink
+                                                                                            -hot pink     |  -neon green 
+                    
+                                                                                              QUAL A COR DA SUA CELULA?
 
 
 
 
                                                         
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
