@@ -17,8 +17,9 @@
 
                                                                                                   CRIANDO UMA CELULA
                      
-                                                                                       1) VERMELHO  2) VERDE  3) AMARELO  4) AZUL
-                                                                                       5) MAGENTA   6) CIANO  7) BRANCO
+                                                                                        blue) AZUL  red) VERMELHO  green) VERDE  
+
+                                                                                             white) BRANCO     black) PRETO
                      
                                                                                                QUAL A COR DA SUA CELULA?
 
