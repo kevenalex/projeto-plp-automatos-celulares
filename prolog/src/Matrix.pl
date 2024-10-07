@@ -1,7 +1,6 @@
 :- module(matrix, []).
 :- use_module(library(http/json)).
 :- use_module("./Cell.pl").
-:- use_module("../app/Utils/Render.pl").
 
 
 % Um dicionário fingindo ser um array, não um array de dicionários. Preenchido com Value, Size vezes.

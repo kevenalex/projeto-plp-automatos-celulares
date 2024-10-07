@@ -3,6 +3,8 @@
 :- use_module("./Files.pl").
 :- use_module("./Utils/Render.pl").
 :- use_module("./controllers/ScenesController.pl").
+:- use_module("./controllers/CellController.pl").
+:- use_module("./controllers/SimulationController.pl").
 
 
 :- set_prolog_flag(encoding, utf8).
@@ -15,7 +17,9 @@ main :-
     option(Option).
 
 
-option("1") :- render:printMid(sandbox), main, !.
+option("1") :- 
+    matrix:createSquareMatrix(5, "dead", M),
+    simulationController:run(M), main, !.
 option("2") :- scenesController:main, main, !.
 option("3") :- render:printMid(celulas), main, !.
 option("4") :- render:printMid(tutorial), main, !.

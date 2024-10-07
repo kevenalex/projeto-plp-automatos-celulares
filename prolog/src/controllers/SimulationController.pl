@@ -4,6 +4,10 @@
 :- use_module("../Cell.pl").
 :- use_module("../Prints.pl").
 
+
+
+
+
 run(Matrix):-
     matrix:matrixUpdate(Matrix, NewMatrix),
     prints:printMatrix(Matrix),
