@@ -2,6 +2,7 @@
 :- use_module("./Prints.pl").
 :- use_module("./Files.pl").
 :- use_module("./Utils/Render.pl").
+:- use_module("./Tutorial.pl").
 :- use_module("./controllers/ScenesController.pl").
 :- use_module("./controllers/CellController.pl").
 :- use_module("./controllers/SimulationController.pl").
@@ -24,7 +25,7 @@ option("1") :-
 
 option("2") :- scenesController:main, main, !.
 option("3") :- cellController:main, main, !.
-option("4") :- render:printMid(tutorial), main, !.
+option("4") :- tutorial:tutorial, main, !.
 option("5") :- halt.
 option(_) :- render:printMid("OPÇÃO INVÁLIDA"), sleep(2), main.
 
