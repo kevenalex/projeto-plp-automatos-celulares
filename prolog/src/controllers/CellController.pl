@@ -6,8 +6,10 @@
 main:-
     render:printEmptyLines(17),
     render:printMid("CELULAS:"),
-    cell:listCellNames(Cells),
-    write(Cells),
+    files:getCells,
+    render:setCursorColumn(95),
+    prints:toStringCell(Cells),
+    writeln(""),
     render:printMid(" 1) ADICIONAR CELULA   2) DELETAR CELULA   3) VOLTAR"),
     read_line_to_string(user_input, Option),
     option(Option, "../storage/cells.json").
@@ -75,7 +77,7 @@ removeAutomata(FilePath):-
     cell:listCellNames(Cells),
     (Cells = [] ->
         write('esta vazio'),
-        menuCells(FilePath)
+        main
     ;
         render:printScreen("../storage/ruleController/listOfCells.txt"),
         render:printEmptyLines(2),
@@ -87,7 +89,7 @@ removeAutomata(FilePath):-
         render:setCursorColumn(85),
         read_line_to_string(user_input, CellName),
         cell:deleteCell(CellName),
-        menuCells(FilePath)
+        main
     ).
 
 % verifica se nao tem espaço em branco, se tudo é numero entre 1 e 8, se o length <= 8 e tira digitos repetidos
@@ -143,4 +145,4 @@ isAllValidStayDigits([H|T]) :-
 option("1", FilePath):- addAutomata(FilePath).
 option("2", FilePath):- removeAutomata(FilePath).
 option("3", FilePath):- !.
-option(_, FilePath):- menuCells(FilePath).
+option(_, FilePath):- main.
