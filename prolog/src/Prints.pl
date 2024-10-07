@@ -1,6 +1,7 @@
 :- module(prints, []).
 :- use_module("./Matrix.pl").
 :- use_module( "./Cell.pl").    
+:-use_module("./Utils/Render.pl").
 
 
 toStringCell(Cell):-
@@ -26,6 +27,7 @@ printLine([H|T]):-
 printCell(Cell):-
     cell:getCellColor(Cell, Color),
     atom_string(Acolor, Color),
+    render:setCursorColumn(98),
     ansi_format([fg(Acolor)], "██", []).
 
 test:-

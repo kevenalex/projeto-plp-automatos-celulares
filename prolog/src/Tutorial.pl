@@ -1,5 +1,5 @@
 :-module(tutorial, []).
-:-use_module("../app/Utils/Render.pl").
+:-use_module("./Utils/Render.pl").
 :-use_module("./Cell.pl").
 :-use_module("./Prints.pl").
 :-use_module("./Matrix.pl").
@@ -12,20 +12,21 @@ tutorial:-
     matrix:createSquareMatrix(3, "dead", Square),
 
     render:clearScreen,
-    render:printScreen("../app/storage/tutorial/intro.txt"),
+    render:printScreen("../storage/tutorial/intro.txt"),
     read_line_to_string(user_input, _),
     
     render:clearScreen,
-    render:printScreen("../app/storage/tutorial/apresentaRegras.txt"),
+    render:printScreen("../storage/tutorial/apresentaRegras.txt"),
     render:setCursorColumn(90),
-    prints:printCell("GameOfLife"),
+    prints:toStringCell("GameOfLife"),
     render:printEmptyLines(25),
     render:printMidScreen("aperte Enter para continuar..."),
     read_line_to_string(user_input, _),
 
-    prints:printCell("GameOfLife"),
+    render:setCursorColumn(90),
+    prints:toStringCell("GameOfLife"),
 
-    render:printScreen("../app/storage/tutorial/explicaBirth.txt"),
+    render:printScreen("../storage/tutorial/explicaBirth.txt"),
     matrix:put([[0,0], [0,2], [2,1]], Square, "GameOfLife", GridInicial),
     prints:printMatrix(GridInicial),
     render:printEmptyLines(20),
@@ -41,8 +42,8 @@ tutorial:-
 
     render:printEmptyLines(1),
     render:setCursorColumn(90),
-    prints:printCell("GameOfLife"),
-    render:printScreen("../app/storage/tutorial/explicaStay.txt"),
+    prints:toStringCell("GameOfLife"),
+    render:printScreen("../storage/tutorial/explicaStay.txt"),
 
     render:printEmptyLines(18),
     render:printMidScreen("aperte Enter para continuar..."),
@@ -55,7 +56,7 @@ tutorial:-
 
     prints:printMatrix(Grid3),
     render:printEmptyLines(1),
-    render:setCursorColumn(101),
+    render:setCursorColumn(100),
     render:printMidScreen("|"),
     render:printMidScreen("V"),
     render:printEmptyLines(1),
@@ -65,39 +66,43 @@ tutorial:-
     
     read_line_to_string(user_input, _),
     matrix:createMatrix(10, 25, "dead", Grid4),
-    matrix:put([[4, 20], [5,20], [4, 21], [5,21]], Grid4, "GameOfLife", Grid5),
-    matrix:put([[4,1], [5,1], [4,2], [5,2], [6,2], [3,3], [5,3], [6,3], [3,4], [4,4], [5,4], [4,5]], Grid5, "High Life", GridAtaque),
+    matrix:put([[3, 19], [4,19], [3, 20], [4,20]], Grid4, "GameOfLife", Grid5),
+    matrix:put([[3,0], [4,0], [3,1], [4,1], [5,1], [2,2], [4,2], [5,2], [2,3], [3,3], [4,3], [3,4]], Grid5, "High Life", GridAtaque),
     render:setCursorColumn(47),
     write("Meu Deus! Um pato do tipo"),
-    prints:printCell("High Life"),
+    render:setCursorColumn(90),
+    prints:toStringCell("High Life"),
     write(" está atacando nosso quadrado "),
-    prints:printCell("GameOfLife"),
+    render:setCursorColumn(90),
+    prints:toStringCell("GameOfLife"),
     write("!"),
     prints:printMatrix(GridAtaque),
     render:printMidScreen("aperte Enter para continuar..."),
     read_line_to_string(user_input, _),
 
-    loopGrid(GridAtaque, 0),
+    loopGrid(GridAtaque, GridAtaque, 0),
 
-    render:printScreen("../app/storage/tutorial/final.txt"),
+    render:printScreen("../storage/tutorial/final.txt"),
     render:printMidScreen("aperte Enter para voltar!"),
     read_line_to_string(user_input, _).
 
 
-loopGrid(_, 65):- !.
-loopGrid(Matrix, Num):-
-    matrix:matrixUpdate(Matrix, NewMatrix),
+loopGrid(Matrix, NewMatrix, N):- N \= 0,Matrix = NewMatrix, !.
+loopGrid(Matrix, _, Num):-
+    render:clearScreen,
+    render:printEmptyLines(44),
+    matrix:matrixUpdate(Matrix, Matrix2),
     NewNum is Num + 1,
 
-    prints:printMatrix(NewMatrix),
+    prints:printMatrix(Matrix2),
 
     render:printMidScreen("aperte Enter para continuar..."),
     read_line_to_string(user_input, _),
 
-    loopGrid(NewMatrix, NewNum).
+    loopGrid(Matrix2, Matrix, NewNum).
 
 teste1:-
     tutorial.
     % cell:createCell(GameOfLife, "green", [3], [2,3]),
-    % prints:printCell(GameOfLife), halt.
+    % prints:toStringCell(GameOfLife), halt.
 % conways = Cell "Game of Life" (Rule [3] [2,3]) "VERDE  BRILHANTE"
