@@ -29,7 +29,7 @@
                                                                                            CORES INDEPENTENTES DO SISTEMA
 
                                                                                             -golden       |  -purple
-                                                                                            -water green  |  -salmon
+                                                                                            -aquamarine   |  -salmon
                                                                                             -orange       |  -pink
                                                                                             -hot pink     |  -neon green 
                     
