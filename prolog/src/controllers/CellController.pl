@@ -3,15 +3,19 @@
 :-use_module("../Utils/Render.pl").
 :-use_module("../src/Cell.pl").
 
-menuCells(FilePath):-
-
-    read_line_to_string(user_input, Choice),
-    option(Choice, FilePath).
+main:-
+    render:printEmptyLines(17),
+    render:printMid("CELULAS:"),
+    cell:listCellNames(Cells),
+    write(Cells),
+    render:printMid(" 1) ADICIONAR CELULA   2) DELETAR CELULA   3) VOLTAR"),
+    read_line_to_string(user_input, Option),
+    option(Option, "../storage/cells.json").
 
 % Inicio do procedimento de criação da Celula, recebendo o nome da Celula e chamando a função
 % para adicionar a regra de nascimento
 addAutomata(FilePath):-
-    render:printScreen("../app/storage/ruleController/nameCellQuestion.txt"),
+    render:printScreen("../storage/ruleController/nameCellQuestion.txt"),
 
     render:setCursorColumn(85),
     read_line_to_string(user_input, CellName),
@@ -20,7 +24,7 @@ addAutomata(FilePath):-
 % Criação da Regra de Nascimento da Celula, o usuario pode inserir de 0 a 8 digitos entre 1 e 8.
 % (tem que ver se os digitos validos pra criar celula ainda são esses, se não forem, alterar em isAllValidBirthDigits)
 addBirthRule(CellName, FilePath):-
-    render:printScreen("../app/storage/ruleController/birthRule.txt"),
+    render:printScreen("../storage/ruleController/birthRule.txt"),
     
     render:setCursorColumn(85),
     read_line_to_string(user_input, BirthRule),
@@ -29,7 +33,7 @@ addBirthRule(CellName, FilePath):-
         nascList(BirthRule, BirthList),
         addStayRule(FilePath, CellName, BirthList)
         ;
-        render:printScreen("../app/storage/ruleController/birthRuleError.txt"),
+        render:printScreen("../storage/ruleController/birthRuleError.txt"),
         sleep(0.8),
         addBirthRule(CellName, FilePath)
     ).
@@ -37,7 +41,7 @@ addBirthRule(CellName, FilePath):-
 % Criação da Regra de Permanencia da Celula, o usuario pode inserir de 0 a 8 digitos entre 1 e 8.
 % (tem que ver se os digitos validos pra criar celula ainda são esses, se não forem, alterar em isAllValidStayDigits)
 addStayRule(FilePath, CellName, BirthList):-
-    render:printScreen("../app/storage/ruleController/stayRule.txt"),
+    render:printScreen("../storage/ruleController/stayRule.txt"),
 
     render:setCursorColumn(85),
     read_line_to_string(user_input, StayRule),
@@ -45,14 +49,14 @@ addStayRule(FilePath, CellName, BirthList):-
         stayList(StayRule, StayList),
         addColor(FilePath, CellName, BirthList, StayList)
         ;
-        render:printScreen("../app/storage/ruleController/stayRuleError.txt"),
+        render:printScreen("../storage/ruleController/stayRuleError.txt"),
         sleep(0.8),
         addBirthRule(CellName, FilePath)
     ).
 
 % Criação da cor da celula, tem que alterar o Color Menu que imprime na tela (ta o antigo de haskell)
 addColor(FilePath, CellName, BirthList, StayList):-
-    render:printScreen("../app/storage/ruleController/colorMenu.txt"), %tem que alterar o Color Menu
+    render:printScreen("../storage/ruleController/colorMenu.txt"), %tem que alterar o Color Menu
 
     render:setCursorColumn(85),
     read_line_to_string(user_input, Color),
@@ -60,7 +64,7 @@ addColor(FilePath, CellName, BirthList, StayList):-
         cell:createCell(CellName, Color, StayList, BirthList),
         files:saveCells
         ;
-        render:printScreen("../app/storage/ruleController/colorMenuError.txt"),
+        render:printScreen("../storage/ruleController/colorMenuError.txt"),
         sleep(0.8),
         addColor(FilePath, CellName, BirthList, StayList)
     ).
@@ -73,13 +77,13 @@ removeAutomata(FilePath):-
         write('esta vazio'),
         menuCells(FilePath)
     ;
-        render:printScreen("../app/storage/ruleController/listOfCells.txt"),
+        render:printScreen("../storage/ruleController/listOfCells.txt"),
         render:printEmptyLines(2),
         cell:listCellNames(Celulas),
         write(Celulas),
         % render:printMidScreen(Celulas),
         render:printEmptyLines(1),
-        render:printScreen("../app/storage/ruleController/removeCellMenu.txt"),
+        render:printScreen("../storage/ruleController/removeCellMenu.txt"),
         render:setCursorColumn(85),
         read_line_to_string(user_input, CellName),
         cell:deleteCell(CellName),
@@ -140,15 +144,3 @@ option("1", FilePath):- addAutomata(FilePath).
 option("2", FilePath):- removeAutomata(FilePath).
 option("3", FilePath):- !.
 option(_, FilePath):- menuCells(FilePath).
-
-test:-
-    % cell:createCell("teste", "blue", [1], [2]),
-    % files:saveCells,
-    % cell:createCell("teste2", "green", [1], [2]),
-    % files:saveCells,
-    % cell:createCell("teste3", "white", [1], [2]),
-    % files:saveCells,
-    % cell:listCellNames(R),
-    % write(R),
-    % cell:createCell(GameOfLife, "green", [2], [2,3]),
-    menuCells("../storage/cells.json").
