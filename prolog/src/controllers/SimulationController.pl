@@ -23,8 +23,30 @@ option("", Matrix):- matrix:matrixUpdate(Matrix, NewMatrix), run(NewMatrix), !.
 option("1", Matrix):- addCells(Matrix, NewMatrix),run(NewMatrix), !.
 option("2", Matrix):- removeCells(Matrix, NewMatrix), run(NewMatrix), !.
 option("3", Matrix):- salvar(Matrix), run(Matrix), !.
-option("4", Matrix):- run(Matrix), !.
+option("4", _):- !.
 option(_, Matrix):- render:printMid("OPÇÃO INVÁLIDA"), sleep(2), run(Matrix).
+
+
+addCells(Matrix, NewMatrix) :-
+    render:printMid("QUAL CÉLULA?."),
+    cell:listCellNames(List),
+    writeln(List),
+    % render:printMid(List),
+    read_line_to_string(user_input, Name),
+    read(X), read(Y),
+    matrix:put(X, Y, Name, Matrix, NewMatrix).
+%     adiciona(Name, List ,Matrix, NewMatrix),
+%     ( member(dead, List) ->
+%         (render:printMid("DIGITE AS COORDENADAS NO FORMATO [[X, Y], [X, Y]]."),
+%         , matrix:put(List, Matrix, Name, NewMatrix))
+%         ;  (render:printMid("OPÇÃO INVÁLIDA"), sleep(1), NewMatrix = Matrix)
+%         ).
+
+% adiciona(Name, List ,Matrix, NewMatrix) :- 
+%     member(Name, List), 
+%     render:printMid("DIGITE AS COORDENADAS NO FORMATO [[X, Y], [X, Y]]."),
+    
+% adiciona(Name, List ,Matrix, NewMatrix)
 
 
 salvar(Matrix) :-
