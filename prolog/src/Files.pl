@@ -37,14 +37,15 @@ deleteScene(StringName) :-
 
     open("../storage/scenes.json", write, File2),
     json_write_dict(File2, Scenes),
-    close(Files2).
+    close(File2).
 
 
 
 getSceneMatrix(Name, Matrix):-
     open("../storage/scenes.json", read, File),
     json_read_dict(File, Dict),
-    matrix:matrixFromList(Dict.Name, Matrix),
+    atom_string(AtomName, Name),
+    matrix:matrixFromList(Dict.AtomName, Matrix),
     close(File).
 
 

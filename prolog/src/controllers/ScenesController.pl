@@ -9,11 +9,12 @@ main:-
     render:printEmptyLines(17),
     render:printMid("CENAS SALVAS:"),
     listScenes,
+    render:printMid(" 1) SIMULAR CENA   2) DELETAR CENA   3) VOLTAR"),
     read_line_to_string(user_input, Option),
     option(Option).
 
-option("1"):- simula, main, !.
-option("2"):- deleta, main, !.
+option("1"):- simula, !.
+option("2"):- deleta, !.
 option("3"):- !.
 option(_).
 
@@ -24,17 +25,16 @@ listScenes:-
 listScenes([H|T]):-
     render:printMid(H), listScenes(T).
 listScenes([]) :- 
-    render:printEmptyLines(2),
-    render:printMid(" 1) SIMULAR CENA   2) DELETAR CENA   3) VOLTAR").
+    render:printEmptyLines(2).
 
 simula:-
     render:clearScreen,
-    listScenes,
     render:printEmptyLines(17),
-    render:printMid("ESCOLHA A CENA QUE DESEJA SIMULAR:").
-    read_line_to_string(current_output, Name),
+    listScenes,
+    render:printMid("ESCOLHA A CENA QUE DESEJA SIMULAR:"),
+    read_line_to_string(user_input, Name),
     files:getSceneMatrix(Name, Matrix),
-    simula:run(Matrix).
+    simulation:run(Matrix).
 
 
 deleta:-

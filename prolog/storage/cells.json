@@ -1,6 +1,6 @@
 {
   "cells": [
     ["dead", "black",  [],  [] ],
-    ["teste alteracao em render", "green",  [4, 5, 6 ],  [1, 2, 3 ] ]
+    ["game of life", "green",  [2, 3 ],  [ 3 ] ]
   ]
 }

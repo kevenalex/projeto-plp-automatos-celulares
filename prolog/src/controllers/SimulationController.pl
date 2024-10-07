@@ -10,21 +10,28 @@
 
 
 run(Matrix):-
-    render:clearScreen,
+    % render:clearScreen,
     prints:printMatrix(Matrix),
-    matrix:matrixUpdate(Matrix, NewMatrix),
-    read_line_to_string(current_output, Option),
-    option(Option, NewMatrix).
+    render:printMid("1) ADICIONAR CÉLULAS 2) REMOVER CÉLULAS 3) SALVAR CENA 4) VOLTAR"),
+    render:printMid("ENTER PRA CONTINUAR"),
+    read_line_to_string(user_input, Option),
+    option(Option, Matrix).
+    
 
-option(" ", Matrix):- run(Matrix).
-option("1", Matrix):- run(Matrix).
-option("2", Matrix):- run(Matrix).
-option("3", Matrix):- run(Matrix).
-option("4", Matrix):- run(Matrix).
+option("", Matrix):- matrix:matrixUpdate(Matrix, NewMatrix), run(NewMatrix), !.
+option("1", Matrix):- addCells(Matrix, NewMatrix),run(NewMatrix), !.
+option("2", Matrix):- removeCells(Matrix, NewMatrix), run(NewMatrix), !.
+option("3", Matrix):- salvar(Matrix), run(Matrix), !.
+option("4", Matrix):- run(Matrix), !.
+option(_, Matrix):- render:printMid("OPÇÃO INVÁLIDA"), sleep(2), run(Matrix).
 
-checkSpace:-
-    get_single_char(Code),
-    Code == 32.
+
+salvar(Matrix) :-
+    render:printMid("DIGITE O NOME DA CENA"),
+    read_line_to_string(user_input, Name),
+    files:saveScene(Name, Matrix),
+    render:printMid("cena salva.").
+
 
 test:-
     matrix:createSquareMatrix(4,"dead", Matrix0),
