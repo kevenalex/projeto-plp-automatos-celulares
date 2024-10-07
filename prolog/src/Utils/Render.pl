@@ -58,9 +58,14 @@ clearScreen:-
 
 listCellsPrint([]).
 listCellsPrint([H|T]):-
+    render:setCursorColumn(90),
     prints:toStringCell(H),
     writeln(""),
     listCellsPrint(T).
+
+listCellsPrints:-
+    cell:listCellNames(Cells),
+    listCellsPrint(Cells).
 
 % Testes dos predicados (todos rodam 100)
 % teste1:-
