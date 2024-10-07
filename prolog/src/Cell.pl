@@ -1,6 +1,5 @@
 :- module(cell, []).
 
-cell("dead", "black", [], []).
 
 % Cell é o predicado que relaciona um tipo de célula(identificada pelo nome) 
 % a suas regras e sua cor.
@@ -11,12 +10,13 @@ deleteCell(Name) :- retract(cell(Name, _, _, _)).
 
 
 % Pra quando as celulas forem lidas do json.
-createCells([]) :- 
+createCells(List) :- retractall(cell(_, _, _, _)), createCellsRecur(List).
+createCellsRecur([]) :- 
     listCellNames(Names),
     (member("dead", Names) -> !
     ; createCell("dead", "black", [], [])).
 
-createCells([[N,C,S,B]|T]):-  createCell(N, C, S, B), createCells(T).
+createCellsRecur([[N,C,S,B]|T]):-  createCell(N, C, S, B), createCellsRecur(T).
 
 
 % Lista todas as células
