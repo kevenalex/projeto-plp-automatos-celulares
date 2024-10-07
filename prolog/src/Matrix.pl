@@ -59,7 +59,7 @@ updateLine(Matrix, Row, Line, Index, ColsLimit, NewLine1):-
 % Dada uma célula qualquer da matrix, atribui a Cell o próximo estado da mesma.
 cellUpdate([X, Y], Matrix, Cell):-
     get(Matrix, X, Y, Value),
-    (Value = dead -> deadUpdateCell([X , Y], Matrix, Cell)
+    (Value = "dead" -> deadUpdateCell([X , Y], Matrix, Cell)
     ; liveUpdateCell([X, Y], Matrix, Cell)).
 
 
@@ -71,7 +71,7 @@ liveUpdateCell([X, Y], Matrix, Name):-
     cell:cell(Value, _, StayRule, _),
 
     (utils:in(NumNeighbors, StayRule) -> Name = Value
-    ; Name = dead).
+    ; Name = "dead").
 
 
 deadUpdateCell([X, Y], Matrix, Cell):-
@@ -80,7 +80,7 @@ deadUpdateCell([X, Y], Matrix, Cell):-
     coordsProposedRules(CoordLiveNeighbors, NumNeighbors, Matrix, CoordsRules),
     frequencyCells(CoordsRules, CoordsRules, Matrix, Frequenty),
 
-    (CoordsRules = [] -> Cell = dead
+    (CoordsRules = [] -> Cell = "dead"
     ; biggestOnList(Frequenty, [_, Cell])).
 
 
@@ -154,7 +154,7 @@ lifeCellsCoordRecur([[X, Y]|T], Matrix, List):-
 % Este fato se valida caso a célula na posição (x,y), não seja uma célula morta.
 isAlive(X, Y, Matrix):-
     get(Matrix, X, Y, Name),
-    not(Name = dead).
+    not(Name = "dead").
 
 
 % Retorna uma lista com as coordenadas válidas dado um arranjo de possíveis
@@ -234,14 +234,14 @@ get(Matrix, X, Y, Value):-
 %     (dictSize(Matrix.0, Cols),
 %     dictSize(Matrix, Lines),
 %     (Y > Lines ; X > Cols)).
-get(_, _, _, dead).
+get(_, _, _, "dead").
 
 
 
 
-removeCell([X, Y], Matrix, Out):- put(X, Y, dead, Matrix, Out).
+removeCell([X, Y], Matrix, Out):- put(X, Y, "dead", Matrix, Out).
 
-removeCells(List, Matrix, Out):- put(List, Matrix, dead, Out).
+removeCells(List, Matrix, Out):- put(List, Matrix, "dead", Out).
 
 
 % Pega parte de uma Linha X da Matrix, do indice YStart até YEnd -1.
@@ -389,7 +389,7 @@ testMatrixSize:-
 testGet:- 
     A = _{
         0:_{0:a, 1:b, 2:c}, 
-        1:_{0:d, 1:cell:cell(dead, preto, [], []), 2:g}, 
+        1:_{0:d, 1:cell:cell("dead", preto, [], []), 2:g}, 
         2:_{0:h, 1:i, 2:j}
             },
 
@@ -398,7 +398,7 @@ testGet:-
     get(A, 2, 2, Value22),
 
     equals(Value00, a),
-    equals(Value11, cell:cell(dead,preto,[],[])),
+    equals(Value11, cell:cell("dead",preto,[],[])),
     equals(Value22, j).
 
 
@@ -459,7 +459,7 @@ testValidCoords:-
 
 testUpdateLine:-
 
-    createMatrix(3,3, dead, A),
+    createMatrix(3,3, "dead", A),
 
     cell:createCell(conways, red, [2, 3], [3]),
 
@@ -484,7 +484,7 @@ testUpdateLine:-
 
 testIsAlive:-
 
-    createMatrix(3,3, dead, A),
+    createMatrix(3,3, "dead", A),
 
     Leo = cell:cell(leo, _, _, _),
     Keven = cell:cell(keven, _, _, _),
@@ -500,7 +500,7 @@ testIsAlive:-
 
 testLifeCellsCoord:-
 
-    createMatrix(3,3, dead, A),
+    createMatrix(3,3, "dead", A),
 
     Leo = cell:cell(leo, _, _, _),
     Keven = cell:cell(keven, _, _, _),
@@ -515,7 +515,7 @@ testLifeCellsCoord:-
 
 testNumOfLiveNeighbors:-
     
-    createMatrix(3,3, dead, A),
+    createMatrix(3,3, "dead", A),
 
     Leo = cell:cell(leo, _, _, _),
     Keven = cell:cell(keven, _, _, _),
@@ -536,7 +536,7 @@ testNumOfLiveNeighbors:-
 
 testcoordsProposedRules:-
 
-    createMatrix(3,3, dead, A),
+    createMatrix(3,3, "dead", A),
 
     cell:createCell(keven, green, [1], [1, 4]),
     cell:createCell(leo, red, [1], [4, 3]),
@@ -567,7 +567,7 @@ testcoordsProposedRules:-
 
 testfrequencyCells:-
 
-    createMatrix(3,3, dead, A),
+    createMatrix(3,3, "dead", A),
 
     cell:createCell(keven, green, [1], [1, 4]),
     cell:createCell(leo, red, [1], [4, 3]),
@@ -595,7 +595,7 @@ testfrequencyCells:-
 
 testbiggestOnList:-
 
-    createMatrix(3,3, dead, A),
+    createMatrix(3,3, "dead", A),
 
     cell:createCell(keven, green, [1], [1, 4]),
     cell:createCell(leo, red, [1], [4, 3]),
@@ -625,7 +625,7 @@ testbiggestOnList:-
 
 testmatrixUpdate:-
 
-    createMatrix(3,3, dead, A),
+    createMatrix(3,3, "dead", A),
 
     cell:createCell(conways, red, [2, 3], [3]),
 
@@ -651,7 +651,7 @@ testmatrixUpdate:-
     
 testCellUpdate:-
 
-    createMatrix(3,3, dead, A),
+    createMatrix(3,3, "dead", A),
 
     cell:createCell(conways, red, [2, 3], [2]),
 
@@ -674,7 +674,7 @@ testCellUpdate:-
 
 testliveUpdateCell:-
 
-    createMatrix(3,3, dead, A),
+    createMatrix(3,3, "dead", A),
 
     cell:createCell(keven, green, [2], [1, 4]),
     cell:createCell(leo, red, [1], [4, 3]),
@@ -706,7 +706,7 @@ testliveUpdateCell:-
 
 testdeadUpdateCell:- 
 
-    createMatrix(3,3, dead, A),
+    createMatrix(3,3, "dead", A),
 
     cell:createCell(keven, green, [1], [1, 4]),
     cell:createCell(leo, red, [1], [4, 3]),
@@ -728,7 +728,7 @@ testdeadUpdateCell:-
 
 testnumTimesFoundCell:-
     
-    createMatrix(3,3, dead, A),
+    createMatrix(3,3, "dead", A),
 
     cell:createCell(keven, green, [1], [1, 4]),
     cell:createCell(leo, red, [1], [4, 3]),
@@ -808,7 +808,7 @@ test5 :-
 % Teste de put em uma Matrix
 
 test6 :-
-    createMatrix(3, 3, dead, Matrix),
+    createMatrix(3, 3, "dead", Matrix),
 
     writeln(Matrix),
 
@@ -829,6 +829,6 @@ test6 :-
 % Teste de Coordenadas válidas
 test7:-
 
-    createMatrix(3, 3, dead, Matrix),
+    createMatrix(3, 3, "dead", Matrix),
     writeln(Matrix),
     writeln("").

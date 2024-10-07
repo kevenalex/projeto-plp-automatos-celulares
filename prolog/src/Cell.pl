@@ -32,3 +32,5 @@ isValidColor("blue").
 isValidColor("red").
 isValidColor("green").
 isValidColor("white").
+isValidColor("black").
+
