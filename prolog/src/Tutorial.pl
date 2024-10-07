@@ -7,8 +7,8 @@
 :-set_prolog_flag(encoding, utf8).
 
 tutorial:-
-    cell:createCell("GameOfLife", "green", [3], [2, 3]),
-    cell:createCell("High Life", "red", [3, 6], [2, 3]),
+    cell:createCell("GameOfLife", "green", [2, 3], [3]),
+    cell:createCell("High Life", "red", [2, 3], [3, 6]),
     matrix:createSquareMatrix(3, "dead", Square),
 
     render:clearScreen,
@@ -26,8 +26,7 @@ tutorial:-
     prints:printCell("GameOfLife"),
 
     render:printScreen("../app/storage/tutorial/explicaBirth.txt"),
-    matrix:put([[1,1], [1,3], [3,2]], Square, "GameOfLife", GridInicial),
-    writeln("HIT"),
+    matrix:put([[0,0], [0,2], [2,1]], Square, "GameOfLife", GridInicial),
     prints:printMatrix(GridInicial),
     render:printEmptyLines(20),
     read_line_to_string(user_input, _),
