@@ -1,4 +1,5 @@
 :-module(render, []).
+:-use_module("../Prints.pl").
 :-use_module(library(ansi_term)).
 :-set_prolog_flag(encoding, utf8).
 
@@ -54,6 +55,12 @@ clearScreen:-
     ;   process_create(path(cmd), ['/C', 'cls'], [process(PID)]),
         process_wait(PID, _Status)
     ).
+
+listCellsPrint([]).
+listCellsPrint([H|T]):-
+    prints:toStringCell(H),
+    writeln(""),
+    listCellsPrint(T).
 
 % Testes dos predicados (todos rodam 100)
 % teste1:-

@@ -28,9 +28,11 @@ option(_, Matrix):- render:printMid("OPÇÃO INVÁLIDA"), sleep(2), run(Matrix),
 
 
 addCells(Matrix, NewMatrix) :-
-    render:printMid("QUAL CÉLULA?."),
+    render:printMid("QUAL CÉLULA?"),
     cell:listCellNames(List),
-    writeln(List),
+    % writeln(List),
+    render:listCellsPrint(List),
+    % writeln(List),
     read_line_to_string(user_input, Name),
     render:printMid("DIGITE AS COORDENADAS NO FORMATO [[X, Y], [X, Y]]."),
     read(Coords),

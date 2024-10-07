@@ -1,7 +1,7 @@
 :- module(prints, []).
 :- use_module("./Matrix.pl").
 :- use_module( "./Cell.pl").    
-:-use_module("./Utils/Render.pl").
+:- use_module("./Utils/Render.pl").
 
 
 toStringCell(Cell):-

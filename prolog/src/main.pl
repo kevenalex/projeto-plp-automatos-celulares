@@ -21,6 +21,7 @@ main :-
 option("1") :- 
     matrix:createSquareMatrix(35, "dead", M),
     simulation:run(M), main, !.
+
 option("2") :- scenesController:main, main, !.
 option("3") :- cellController:main, main, !.
 option("4") :- render:printMid(tutorial), main, !.
