@@ -6,7 +6,7 @@
 - José Ramon Severo
 - Pedro Lobo
 - Leonardo Almeida
-
+- Victor Jacob
 ### Instruções de instalação dentro dos diretórios de cada linguagem
 
 ![image](https://github.com/user-attachments/assets/a9b24ea2-0b3a-4991-b8e6-5fb3f4815f02)
