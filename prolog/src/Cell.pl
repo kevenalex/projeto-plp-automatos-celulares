@@ -35,4 +35,6 @@ isValidColor("red").
 isValidColor("green").
 isValidColor("white").
 isValidColor("black").
+isValidColor("cyan").
+isValidColor("yellow").
 
