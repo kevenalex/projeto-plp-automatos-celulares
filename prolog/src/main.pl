@@ -12,6 +12,7 @@
 
 
 main :-
+    files:getCells,
     render:printScreen("../storage/mainMenu/mainMenu.txt"),
     read_line_to_string(user_input, Option),
     option(Option).

@@ -25,6 +25,7 @@ printLine([H|T]):-
     printLine(T).
 
 printCell(Cell):-
+    % writeln(Cell),
     cell:getCellColor(Cell, Color),
     atom_string(Acolor, Color),
     render:setCursorColumn(98),

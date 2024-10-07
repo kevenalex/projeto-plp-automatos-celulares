@@ -4,7 +4,7 @@
 :- use_module(library(http/json)).
 
 
-saveScene(Name, Matrix):-
+saveScene(StringName, Matrix):-
     exists_file("../storage/scenes.json"),
     fileNotEmpty("../storage/scenes.json"),
 
@@ -14,6 +14,7 @@ saveScene(Name, Matrix):-
 
     matrix:matrixToList(Matrix, List),
 
+    atom_string(Name, StringName),
     open("../storage/scenes.json", write, File),
     json_write_dict(File, Scenes.put(Name, List)),
     close(File), !.

@@ -1,1 +1,17 @@
-{"linha": [ ["dead", "game of life", "dead" ],  ["dead", "game of life", "dead" ],  ["dead", "game of life", "dead" ] ]}
+{
+  "cuzino": [
+    ["dead", "game of life", "dead" ],
+    ["dead", "game of life", "dead" ],
+    ["dead", "game of life", "dead" ]
+  ],
+  "cuzon": [
+    ["dead", "dead", "dead" ],
+    ["game of life", "game of life", "game of life" ],
+    ["dead", "dead", "dead" ]
+  ],
+  "linha": [
+    ["dead", "game of life", "dead" ],
+    ["dead", "game of life", "dead" ],
+    ["dead", "game of life", "dead" ]
+  ]
+}

@@ -10,7 +10,8 @@
 
 
 run(Matrix):-
-    % render:clearScreen,
+    render:clearScreen,
+    render:printEmptyLines(10),
     prints:printMatrix(Matrix),
     render:printMid("1) ADICIONAR CÉLULAS 2) REMOVER CÉLULAS 3) SALVAR CENA 4) VOLTAR"),
     render:printMid("ENTER PRA CONTINUAR"),
@@ -41,7 +42,7 @@ test:-
 
 test2:-
     matrix:createSquareMatrix(4,"dead", Matrix0),
-    cell:createCell(conways, "blue", [2,3], [3]),
-    matrix:put([[1,0],[1,1],[1,2]], Matrix0, conways, Matrix),
+    cell:createCell("game of life", "green", [2,3], [3]),
+    matrix:put([[1,0],[1,1],[1,2]], Matrix0, "game of life", Matrix),
     run(Matrix).
     
