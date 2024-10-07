@@ -3,19 +3,24 @@
 :- use_module("../Matrix.pl").
 :- use_module("../Cell.pl").
 :- use_module("../Prints.pl").
+:- use_module("./Utils/Render.pl").
 
 
 
 
 
 run(Matrix):-
-    matrix:matrixUpdate(Matrix, NewMatrix),
+    render:clearScreen,
     prints:printMatrix(Matrix),
-    (checkSpace -> 
-        run(NewMatrix)
-    ;
-        render:printMidScreen("eba adoro gays")
-    ).
+    matrix:matrixUpdate(Matrix, NewMatrix),
+    read_line_to_string(current_output, Option),
+    option(Option, NewMatrix).
+
+option(" ", Matrix):- run(Matrix).
+option("1", Matrix):- run(Matrix).
+option("2", Matrix):- run(Matrix).
+option("3", Matrix):- run(Matrix).
+option("4", Matrix):- run(Matrix).
 
 checkSpace:-
     get_single_char(Code),

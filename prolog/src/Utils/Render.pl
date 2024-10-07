@@ -48,7 +48,7 @@ setCursorColumn(Column):-
     ansi_format([fg(white)], '~` t~*|', [Column]).
 
 
-clear_screen:-
+clearScreen:-
     (   current_prolog_flag(unix, true) % Verifica se é linux e limpa, se não limpa para outros OS.
     ->  shell(clear)
     ;   process_create(path(cmd), ['/C', 'cls'], [process(PID)]),

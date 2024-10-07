@@ -18,8 +18,8 @@ main :-
 
 
 option("1") :- 
-    matrix:createSquareMatrix(5, "dead", M),
-    simulationController:run(M), main, !.
+    matrix:createSquareMatrix(35, "dead", M),
+    simulation:run(M), main, !.
 option("2") :- scenesController:main, main, !.
 option("3") :- render:printMid(celulas), main, !.
 option("4") :- render:printMid(tutorial), main, !.

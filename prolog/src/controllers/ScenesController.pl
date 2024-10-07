@@ -2,6 +2,7 @@
 :- use_module("./Matrix.pl").
 :- use_module("./Prints.pl").
 :- use_module("./Files.pl").
+:- use_module("./controllers/SimulationController.pl").
 
 
 main:-
@@ -27,13 +28,17 @@ listScenes([]) :-
     render:printMid(" 1) SIMULAR CENA   2) DELETAR CENA   3) VOLTAR").
 
 simula:-
-    render:clear_screen,
+    render:clearScreen,
     listScenes,
     render:printEmptyLines(17),
     render:printMid("ESCOLHA A CENA QUE DESEJA SIMULAR:").
+    read_line_to_string(current_output, Name),
+    files:getSceneMatrix(Name, Matrix),
+    simula:run(Matrix).
+
 
 deleta:-
-    render:clear_screen,
+    render:clearScreen,
     render:printEmptyLines(17),
     listScenes,
     render:printMid("ESCOLHA A CENA QUE DESEJA DELETAR:"),
