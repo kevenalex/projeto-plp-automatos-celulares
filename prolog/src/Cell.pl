@@ -3,8 +3,10 @@
 
 % Cell é o predicado que relaciona um tipo de célula(identificada pelo nome) 
 % a suas regras e sua cor.
-createCell(Name, Color, StayRule, BirthRule) :-isValidColor(Color), 
-    assert(cell(Name, Color, StayRule, BirthRule)).
+createCell(Name, Color, StayRule, BirthRule) :-
+    colorToHex(Color, HexColor),
+    isValidColor(HexColor), 
+    assert(cell(Name, HexColor, StayRule, BirthRule)).
 deleteCell(Name) :- retract(cell(Name, _, _, _)).
 :- dynamic cell/4.
 
@@ -37,4 +39,9 @@ isValidColor("white").
 isValidColor("black").
 isValidColor("cyan").
 isValidColor("yellow").
+isValidColor("dourado"):- isValidColor("#FFD700").
+isValidColor("#FFD700").
+
+colorToHex("dourado", "#FFD700").
+colorToHex(Color, Color).
 
