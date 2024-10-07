@@ -1,16 +1,22 @@
-:-use_module("./Matrix.pl").
-:-use_module("./Prints.pl").
-:-use_module("./Files.pl").
+:- use_module("./Matrix.pl").
+:- use_module("./Prints.pl").
+:- use_module("./Files.pl").
+:- use_module("./Utils/Render.pl").
+
+:- set_prolog_flag(encoding, utf8).
 
 
 
 main :-
-    files:getCells,
-    matrix:createSquareMatrix(3, "dead", M),
-    matrix:put([[1,0], [1,1], [1,2]], M, "cu", M1),
-    prints:printMatrix(M1),
-    writeln(""),
+    render:printScreen("../storage/mainMenu/mainMenu.txt"),
+    read_line_to_string(user_input, Option),
+    option(Option).
 
-    matrix:matrixUpdate(M1, M2),
-    prints:printMatrix(M2).
-    
+
+option("1") :- render:printMid(sandbox), main, !.
+option("2") :- render:printMid(cenas), main, !.
+option("3") :- render:printMid(celulas), main, !.
+option("4") :- render:printMid(tutorial), main, !.
+option("5") :- halt.
+option(_) :- render:printMid("OPÇÃO INVÁLIDA"), sleep(2), main.
+

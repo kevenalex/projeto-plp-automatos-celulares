@@ -1,7 +1,7 @@
 :- module(matrix, []).
 :- use_module(library(http/json)).
 :- use_module("./Cell.pl").
-:- use_module("./Utils.pl").
+:- use_module("./Utils/Render.pl").
 
 
 % Um dicionário fingindo ser um array, não um array de dicionários. Preenchido com Value, Size vezes.
@@ -70,7 +70,7 @@ liveUpdateCell([X, Y], Matrix, Name):-
     numOfLiveNeighbors([X, Y], Matrix, NumNeighbors),
     cell:cell(Value, _, StayRule, _),
 
-    (utils:in(NumNeighbors, StayRule) -> Name = Value
+    (member(NumNeighbors, StayRule) -> Name = Value
     ; Name = "dead").
 
 
@@ -126,7 +126,7 @@ coordsProposedRules([[X, Y]|T], Num, Matrix, Out):-
 
     cell:cell(Name, _, _, BirthRule),
 
-    (utils:in(Num, BirthRule) -> append([[X, Y]], NewOut, Out)
+    (member(Num, BirthRule) -> append([[X, Y]], NewOut, Out)
     ; Out = NewOut).
 
 % Atribui a variável NumNeighbors a quantidade de vizinhos vivos ao redor de uma coordenada
